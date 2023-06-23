@@ -78,7 +78,7 @@ class _LoginViewState extends State<LoginView> {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                    left: 16.0, right: 16.0, bottom: 16.0),
+                    left: 16.0, right: 16.0, bottom: 8.0),
                 child: ElevatedButton(
                   onPressed: () async {
                     UserAuth userAuth = await viewModel.login(email, password);
@@ -107,9 +107,40 @@ class _LoginViewState extends State<LoginView> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.white,
+                    surfaceTintColor: Colors.white,
                     minimumSize: const Size.fromHeight(40),
                   ),
-                  child: const Text('Login'),
+                  child: const Text('Login', style: TextStyle(color: Colors.black)),
+                ),
+              ),
+              // divider with text saying "or" in the middle
+              const Padding(
+                padding: EdgeInsets.only(
+                    left: 16.0, right: 16.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey,
+                        height: 36,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        'or',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey,
+                        height: 36,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               // or sign in with Google
@@ -144,6 +175,9 @@ class _LoginViewState extends State<LoginView> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.white,
+                      surfaceTintColor: Colors.white,
                       minimumSize: const Size.fromHeight(40),
                     ),
                     child: const Row(

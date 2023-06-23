@@ -14,7 +14,9 @@ class UserViewModel extends LoadingViewModel {
     UserAuth userAuth = UserAuth();
     try {
       userAuth = await repo.login(email, password);
-      userPreferences.saveUser(userAuth);
+      if(userAuth.userModel != null) {
+        userPreferences.saveUser(userAuth);
+      }
       isLoading = false;
     } catch (e) {
       print("Exception on UserViewModel: $e");
@@ -28,7 +30,9 @@ class UserViewModel extends LoadingViewModel {
     UserAuth userAuth = UserAuth();
     try {
       userAuth = await repo.loginWithGoogle();
-      userPreferences.saveUser(userAuth);
+      if(userAuth.userModel != null) {
+        userPreferences.saveUser(userAuth);
+      }
       isLoading = false;
     } catch (e) {
       print("Exception on UserViewModel: $e");
