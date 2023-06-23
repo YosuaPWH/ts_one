@@ -5,7 +5,7 @@ import 'package:ts_one/data/users/users.dart';
 abstract class UserRepo {
   Future<UserAuth> login(String email, String password);
   // Future<UserAuth> loginWithGoogle();
-  Future<UserModel> addNewUser(UserModel userModel);
+  Future<UserModel> addUser(UserModel userModel);
   Future<void> logout();
 }
 
@@ -19,7 +19,7 @@ class UserRepoImpl implements UserRepo {
 
   @override
   Future<UserAuth> login(String email, String password) async {
-    UserAuth userAuth = UserAuth(userModel: null);
+    UserAuth userAuth = UserAuth();
 
     try {
       // try to login with firebase auth
@@ -34,13 +34,12 @@ class UserRepoImpl implements UserRepo {
         UserModel userModel = UserModel.fromFirebaseUser(userData.data()!);
 
         // return user auth with user model and message
-        userAuth = UserAuth(userCredential: userCredential, userModel: userModel);
+        userAuth.userModel = userModel;
+        userAuth.userCredential = userCredential;
       }
     } catch (e) {
-      print(e.toString());
-      userAuth = UserAuth(userCredential: null, userModel: null);
+      print("Exception un UserRepo: $e");
     }
-
     return userAuth;
   }
 
@@ -72,7 +71,7 @@ class UserRepoImpl implements UserRepo {
    */
 
   @override
-  Future<UserModel> addNewUser(UserModel userModel) async {
+  Future<UserModel> addUser(UserModel userModel) async {
     UserModel newUserModel = UserModel();
 
     try {

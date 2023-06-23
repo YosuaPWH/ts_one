@@ -12,21 +12,27 @@ class UserPreferences extends ChangeNotifier {
   static String keyIsLogin = "IS_LOGIN";
   static String keyUserID = "USER_ID";
   static String keyEmail = "EMAIL";
+  static String keyName = "NAME";
   static String keyStaffNo = "STAFF_NO";
   static String keyPosition = "POSITION";
+  static String keySubPosition = "SUB_POSITION";
   static String keyLicenseNo = "LICENSE_NO";
   static String keyLicenseLastPassed = "LICENSE_LAST_PASSED";
   static String keyLicenseExpiry = "LICENSE_EXPIRY";
+  static String keyPrivileges = "PRIVILEGES";
 
   void saveUser(UserAuth userAuth) {
     preferences.setBool(UserPreferences.keyIsLogin, true);
     preferences.setString(UserPreferences.keyUserID, userAuth.userCredential!.user!.uid);
     preferences.setString(UserPreferences.keyEmail, userAuth.userCredential!.user!.email!);
+    preferences.setString(UserPreferences.keyName, userAuth.userModel!.name);
     preferences.setString(UserPreferences.keyStaffNo, userAuth.userModel!.staffNo);
     preferences.setString(UserPreferences.keyPosition, userAuth.userModel!.position);
+    preferences.setString(UserPreferences.keySubPosition, userAuth.userModel!.subPosition);
     preferences.setString(UserPreferences.keyLicenseNo, userAuth.userModel!.licenseNo);
     preferences.setString(UserPreferences.keyLicenseLastPassed, userAuth.userModel!.licenseLastPassed.toString());
     preferences.setString(UserPreferences.keyLicenseExpiry, userAuth.userModel!.licenseExpiry.toString());
+    preferences.setStringList(UserPreferences.keyPrivileges, userAuth.userModel!.privileges);
     notifyListeners();
   }
 
@@ -34,11 +40,14 @@ class UserPreferences extends ChangeNotifier {
     preferences.setBool(UserPreferences.keyIsLogin, false);
     preferences.setString(UserPreferences.keyUserID, "");
     preferences.setString(UserPreferences.keyEmail, "");
+    preferences.setString(UserPreferences.keyName, "");
     preferences.setString(UserPreferences.keyStaffNo, "");
     preferences.setString(UserPreferences.keyPosition, "");
+    preferences.setString(UserPreferences.keySubPosition, "");
     preferences.setString(UserPreferences.keyLicenseNo, "");
     preferences.setString(UserPreferences.keyLicenseLastPassed, "");
     preferences.setString(UserPreferences.keyLicenseExpiry, "");
+    preferences.setStringList(UserPreferences.keyPrivileges, []);
     notifyListeners();
   }
 
@@ -73,6 +82,15 @@ class UserPreferences extends ChangeNotifier {
     return preferences.getString(UserPreferences.keyStaffNo) ?? "";
   }
 
+  void saveName(String name) {
+    preferences.setString(UserPreferences.keyName, name);
+    notifyListeners();
+  }
+
+  String getName() {
+    return preferences.getString(UserPreferences.keyName) ?? "";
+  }
+
   void savePosition(String position) {
     preferences.setString(UserPreferences.keyPosition, position);
     notifyListeners();
@@ -80,6 +98,15 @@ class UserPreferences extends ChangeNotifier {
 
   String getPosition() {
     return preferences.getString(UserPreferences.keyPosition) ?? "";
+  }
+
+  void saveSubPosition(String subPosition) {
+    preferences.setString(UserPreferences.keySubPosition, subPosition);
+    notifyListeners();
+  }
+
+  String getSubPosition() {
+    return preferences.getString(UserPreferences.keySubPosition) ?? "";
   }
 
   void saveLicenseNo(String licenseNo) {
@@ -107,5 +134,14 @@ class UserPreferences extends ChangeNotifier {
 
   String getLicenseExpiry() {
     return preferences.getString(UserPreferences.keyLicenseExpiry) ?? "";
+  }
+
+  void savePrivileges(List<String> privileges) {
+    preferences.setStringList(UserPreferences.keyPrivileges, privileges);
+    notifyListeners();
+  }
+
+  List<String> getPrivileges() {
+    return preferences.getStringList(UserPreferences.keyPrivileges) ?? [];
   }
 }

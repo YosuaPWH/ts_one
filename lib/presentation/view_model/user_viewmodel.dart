@@ -17,17 +17,17 @@ class UserViewModel extends LoadingViewModel {
       userPreferences.saveUser(userAuth);
       isLoading = false;
     } catch (e) {
-      print(e.toString());
+      print("Exception on UserViewModel: $e");
       isLoading = false;
     }
     return userAuth;
   }
 
-  Future<UserModel> addNewUser(UserModel userModel) async {
+  Future<UserModel> addUser(UserModel userModel) async {
     isLoading = true;
     UserModel newUserModel = UserModel();
     try {
-      newUserModel = await repo.addNewUser(userModel);
+      newUserModel = await repo.addUser(userModel);
       isLoading = false;
     } catch (e) {
       print(e.toString());

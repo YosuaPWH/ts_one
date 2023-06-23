@@ -54,6 +54,8 @@ dependencies:
   firebase_auth: ^4.6.3
   cloud_firestore: ^4.8.1
   focus_detector: ^2.0.1
+  intl: ^0.18.1
+  email_validator: ^2.1.17
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +76,45 @@ flutter:
 
   assets:
     - assets/images/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Poppins-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Poppins-Black.ttf
+          weight: 900
+        - asset: assets/fonts/Poppins-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Poppins-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Poppins-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-LightItalic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-MediumItalic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-SemiBoldItalic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-ThinItalic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-ExtraBoldItalic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-BlackItalic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-ExtraLightItalic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-BoldItalic.ttf
+          style: italic
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

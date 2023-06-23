@@ -33,7 +33,7 @@ class _SplashScreenViewState extends State<SplashScreenView> {
       if(!isLogin) {
         Navigator.pushNamedAndRemoveUntil(context, NamedRoute.login, (route) => false);
       } else {
-        print("Anjay");
+        Navigator.pushNamedAndRemoveUntil(context, NamedRoute.addUser, (route) => false);
       }
     });
   }
@@ -51,7 +51,6 @@ class _SplashScreenViewState extends State<SplashScreenView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("TS1 Simulator",),
             Image(image: AssetImage('assets/images/airasia_logo_circle.png'),width: 300,),
           ],
         ),

@@ -2,6 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ts_one/data/users/user_preferences.dart';
+import 'package:ts_one/di/locator.dart';
+import 'package:ts_one/presentation/routes.dart';
+import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 
 import '../../../data/users/users.dart';
@@ -17,6 +21,7 @@ class _LoginViewState extends State<LoginView> {
   late UserViewModel viewModel;
   String email = "";
   String password = "";
+  UserPreferences userPreferences = getItLocator<UserPreferences>();
 
   @override
   void initState() {
@@ -30,20 +35,19 @@ class _LoginViewState extends State<LoginView> {
     return Consumer<UserViewModel>(
       builder: (_, model, child) {
         return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              title: const Text("Login"),
-            ),
-            body: SafeArea(
+            body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  const Image(
+                    image: AssetImage('assets/images/airasia_logo_circle.png'),
+                    width: 200,
+                  ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
+                    padding: const EdgeInsets.all(32.0),
                     child: Text(
-                      'Login',
-                      style: Theme.of(context).textTheme.headline4,
+                      'Welcome Back',
+                      style: tsOneTextTheme.displayMedium,
                     ),
                   ),
                   Padding(
@@ -82,11 +86,11 @@ class _LoginViewState extends State<LoginView> {
 
                         if (!context.mounted) return;
 
-                        if (userAuth.userModel != null && userAuth.userModel != null) {
+                        if (userAuth.userCredential != null && userAuth.userModel != null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  "Welcome, ${userAuth.userModel!.name}"),
+                                  "Welcome, ${userPreferences.getPosition()} ${userPreferences.getName()}"),
                               duration: const Duration(milliseconds: 3000),
                               action: SnackBarAction(
                                 label: 'Close',
@@ -99,7 +103,7 @@ class _LoginViewState extends State<LoginView> {
                           );
 
                           // Navigator.pushNamedAndRemoveUntil(context,
-                          //     NamedRoute.allStudents, (route) => false);
+                          //     NamedRoute.addUser, (route) => false);
                         }
                       },
                       style: ElevatedButton.styleFrom(

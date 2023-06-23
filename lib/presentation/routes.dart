@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ts_one/main.dart';
+import 'package:ts_one/presentation/view/users/add_user.dart';
 import 'package:ts_one/presentation/view/users/login.dart';
 
 class AppRoutes {
@@ -12,6 +13,12 @@ class AppRoutes {
       case NamedRoute.login:
         return MaterialPageRoute<void>(
           builder: (context) => const LoginView(),
+          settings: settings,
+        );
+
+      case NamedRoute.addUser:
+        return MaterialPageRoute<void>(
+          builder: (context) => const AddUserView(),
           settings: settings,
         );
 
@@ -43,5 +50,5 @@ class NamedRoute {
 
   static const String main = '/';
   static const String login = '/login';
-  static const String addStudent = '/addUser';
+  static const String addUser = '/addUser';
 }
