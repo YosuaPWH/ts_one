@@ -36,94 +36,144 @@ class _LoginViewState extends State<LoginView> {
       builder: (_, model, child) {
         return Scaffold(
             body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Image(
-                    image: AssetImage('assets/images/airasia_logo_circle.png'),
-                    width: 200,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Text(
-                      'Welcome Back',
-                      style: tsOneTextTheme.displayMedium,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 16.0, left: 16.0, right: 16.0, bottom: 16.0),
-                    child: TextField(
-                      onChanged: (value) {
-                        email = value;
-                      },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Email',
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16.0, bottom: 16.0),
-                    child: TextField(
-                      onChanged: (value) {
-                        password = value;
-                      },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Password',
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16.0, bottom: 16.0),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        UserAuth userAuth =
-                        await viewModel.login(email, password);
-
-                        if (!context.mounted) return;
-
-                        if (userAuth.userCredential != null && userAuth.userModel != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  "Welcome, ${userPreferences.getPosition()} ${userPreferences.getName()}"),
-                              duration: const Duration(milliseconds: 3000),
-                              action: SnackBarAction(
-                                label: 'Close',
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
-                                },
-                              ),
-                            ),
-                          );
-
-                          Navigator.pushNamedAndRemoveUntil(context,
-                              NamedRoute.addUser, (route) => false);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(40),
-                      ),
-                      child: const Text('Login'),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-                    child: SizedBox(
-                      height: 2,
-                      child: model.isLoading
-                          ? const LinearProgressIndicator()
-                          : SizedBox(),
-                    ),
-                  ),
-                ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Image(
+                image: AssetImage('assets/images/airasia_logo_circle.png'),
+                width: 200,
               ),
-            ));
+              Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Text(
+                  'Welcome Back',
+                  style: tsOneTextTheme.displayMedium,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 16.0, left: 16.0, right: 16.0, bottom: 16.0),
+                child: TextField(
+                  onChanged: (value) {
+                    email = value;
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Email',
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 16.0, right: 16.0, bottom: 16.0),
+                child: TextField(
+                  onChanged: (value) {
+                    password = value;
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Password',
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 16.0, right: 16.0, bottom: 16.0),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    UserAuth userAuth = await viewModel.login(email, password);
+
+                    if (!context.mounted) return;
+
+                    if (userAuth.userCredential != null &&
+                        userAuth.userModel != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Welcome, ${userPreferences.getPosition()} ${userPreferences.getName()}"),
+                          duration: const Duration(milliseconds: 3000),
+                          action: SnackBarAction(
+                            label: 'Close',
+                            onPressed: () {
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
+                            },
+                          ),
+                        ),
+                      );
+
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, NamedRoute.addUser, (route) => false);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(40),
+                  ),
+                  child: const Text('Login'),
+                ),
+              ),
+              // or sign in with Google
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 16.0, right: 16.0, bottom: 16.0),
+                child: ElevatedButton(
+                    onPressed: () async {
+                      UserAuth userAuth = await viewModel.loginWithGoogle();
+
+                      if (!context.mounted) return;
+
+                      if (userAuth.userCredential != null &&
+                          userAuth.userModel != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                "Welcome, ${userPreferences.getPosition()} ${userPreferences.getName()}"),
+                            duration: const Duration(milliseconds: 3000),
+                            action: SnackBarAction(
+                              label: 'Close',
+                              onPressed: () {
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                              },
+                            ),
+                          ),
+                        );
+
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, NamedRoute.addUser, (route) => false);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(40),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image(
+                          image: AssetImage('assets/images/google_logo.png'),
+                          width: 24,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                            'Sign in with Google',
+                            style: TextStyle(color: Colors.black)
+                        ),
+                      ],
+                    )
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                child: SizedBox(
+                  height: 2,
+                  child: model.isLoading
+                      ? const LinearProgressIndicator()
+                      : SizedBox(),
+                ),
+              ),
+            ],
+          ),
+        ));
       },
     );
     throw UnimplementedError();

@@ -23,6 +23,20 @@ class UserViewModel extends LoadingViewModel {
     return userAuth;
   }
 
+  Future<UserAuth> loginWithGoogle() async {
+    isLoading = true;
+    UserAuth userAuth = UserAuth();
+    try {
+      userAuth = await repo.loginWithGoogle();
+      userPreferences.saveUser(userAuth);
+      isLoading = false;
+    } catch (e) {
+      print("Exception on UserViewModel: $e");
+      isLoading = false;
+    }
+    return userAuth;
+  }
+
   Future<UserModel> addUser(UserModel userModel) async {
     isLoading = true;
     UserModel newUserModel = UserModel();

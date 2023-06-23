@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ts_one/data/users/users.dart';
 
 abstract class UserRepo {
   Future<UserAuth> login(String email, String password);
-  // Future<UserAuth> loginWithGoogle();
+  Future<UserAuth> loginWithGoogle();
   Future<UserModel> addUser(UserModel userModel);
   Future<void> logout();
 }
@@ -43,32 +44,65 @@ class UserRepoImpl implements UserRepo {
     return userAuth;
   }
 
-  /*
   @override
   Future<UserAuth> loginWithGoogle() async {
-    UserAuth userAuth = UserAuth(userModel: null, message: "Something went wrong");
+    UserAuth userAuth = UserAuth();
+
+    GoogleSignIn googleSignIn = GoogleSignIn(
+      // scopes: [
+      //   'email',
+      //   'https://www.googleapis.com/auth/contacts.readonly',
+      // ],
+    );
+
+    GoogleSignInAccount? googleSignInAccount;
 
     try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      googleSignInAccount = await googleSignIn.signIn();
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+      if (googleSignInAccount != null) {
+        // get google auth credential from google sign in account
+        GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+        // get firebase auth credential from google auth credential
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
 
-      // Sign in to firebase with the credential
-      UserCredential userCredential = await _auth!.signInWithCredential(credential);
+        // try to login with firebase auth credential
+        UserCredential userCredential = await _auth!.signInWithCredential(credential);
 
-      // if current user is not null and user credential is not null, it means login is successful
-      if (_auth!.currentUser != null && userCredential.user != null) {
-        // get user data from firestore database by finding the uid of the current user
-        final userData = await _db!.collection('
-   */
+        // if current user is not null and user credential is not null, it means login is successful
+        if (_auth!.currentUser != null && userCredential.user != null) {
+          // get user data from firestore database by finding the uid of the current user
+          final userData = await _db!.collection('users').doc(userCredential.user!.email).get();
+
+          // create user model from firebase user and user data from firestore
+          UserModel userModel = UserModel.fromFirebaseUser(userData.data()!);
+
+          // return user auth with user model and message
+          userAuth.userModel = userModel;
+          userAuth.userCredential = userCredential;
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        userAuth.errorMessage =
+        'The account already exists with a different credential.';
+        print(e.toString());
+      } else if (e.code == 'invalid-credential') {
+        userAuth.errorMessage =
+        'Error occurred while accessing credentials. Try again.';
+        print(e.toString());
+      }
+    } catch (e) {
+      userAuth.errorMessage = 'Error occurred using Google Sign-In. Try again.';
+      print(e.toString());
+    }
+
+    return userAuth;
+  }
 
   @override
   Future<UserModel> addUser(UserModel userModel) async {

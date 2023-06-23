@@ -101,6 +101,7 @@ class UserAuth {
 
   UserCredential? userCredential;
   UserModel? userModel;
+  String errorMessage = "";
 
   @override
   String toString() => 'UserAuth(userCredential: $userCredential, userModel: $userModel)';
