@@ -77,8 +77,8 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    left: 16.0, right: 16.0, bottom: 8.0),
+                padding:
+                    const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
                 child: ElevatedButton(
                   onPressed: () async {
                     UserAuth userAuth = await viewModel.login(email, password);
@@ -103,7 +103,7 @@ class _LoginViewState extends State<LoginView> {
                       );
 
                       Navigator.pushNamedAndRemoveUntil(
-                          context, NamedRoute.addUser, (route) => false);
+                          context, NamedRoute.home, (route) => false);
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -112,13 +112,13 @@ class _LoginViewState extends State<LoginView> {
                     surfaceTintColor: TsOneColor.secondary,
                     minimumSize: const Size.fromHeight(40),
                   ),
-                  child: const Text('Login', style: TextStyle(color: Colors.black)),
+                  child: const Text('Login',
+                      style: TextStyle(color: Colors.black)),
                 ),
               ),
               // divider with text saying "or" in the middle
               const Padding(
-                padding: EdgeInsets.only(
-                    left: 16.0, right: 16.0),
+                padding: EdgeInsets.only(left: 16.0, right: 16.0),
                 child: Row(
                   children: <Widget>[
                     Expanded(
@@ -188,13 +188,10 @@ class _LoginViewState extends State<LoginView> {
                           width: 24,
                         ),
                         SizedBox(width: 8),
-                        Text(
-                            'Sign in with Google',
-                            style: TextStyle(color: Colors.black)
-                        ),
+                        Text('Sign in with Google',
+                            style: TextStyle(color: Colors.black)),
                       ],
-                    )
-                ),
+                    )),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0, right: 16.0),
