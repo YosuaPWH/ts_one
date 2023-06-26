@@ -7,9 +7,9 @@ class AssessmentViewModel extends LoadingViewModel {
 
   final AssessmentRepo repo;
 
-  Future<List<AssessmentPeriodModel>> getAllAssessmentPeriod() async {
+  Future<List<AssessmentPeriod>> getAllAssessmentPeriod() async {
     isLoading = true;
-    List<AssessmentPeriodModel> assessmentPeriods = [];
+    List<AssessmentPeriod> assessmentPeriods = [];
     try {
       assessmentPeriods = await repo.getAllAssessmentPeriods();
       isLoading = false;
@@ -20,9 +20,9 @@ class AssessmentViewModel extends LoadingViewModel {
     return assessmentPeriods;
   }
 
-  Future<AssessmentPeriodModel> getAssessmentPeriodById(String id) async {
+  Future<AssessmentPeriod> getAssessmentPeriodById(String id) async {
     isLoading = true;
-    AssessmentPeriodModel assessmentPeriod = AssessmentPeriodModel();
+    AssessmentPeriod assessmentPeriod = AssessmentPeriod();
     try {
       assessmentPeriod = await repo.getAssessmentPeriodById(id);
       isLoading = false;

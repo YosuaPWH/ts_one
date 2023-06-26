@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
+import 'package:ts_one/util/util.dart';
 
-class AssessmentPeriodModel with ChangeNotifier{
-  AssessmentPeriodModel({
+class AssessmentPeriod with ChangeNotifier{
+  AssessmentPeriod({
     this.id = "",
   });
 
   String id = "";
-  DateTime period = DateTime.now();
-  List<AssessmentVariablesModel> assessmentVariables = [];
+  DateTime period = Util.defaultDateIfNull;
+  List<AssessmentVariables> assessmentVariables = [];
 
   // collection name in firebase
   static String firebaseCollection = "assessment-periods";
@@ -17,7 +18,7 @@ class AssessmentPeriodModel with ChangeNotifier{
   static String keyId = "id";
   static String keyPeriod = "period";
 
-  AssessmentPeriodModel.fromFirebase(Map<String, dynamic> map) {
+  AssessmentPeriod.fromFirebase(Map<String, dynamic> map) {
     id = map[keyId];
     period = DateTime.fromMillisecondsSinceEpoch(map[keyPeriod].seconds * 1000);
   }
@@ -29,13 +30,13 @@ class AssessmentPeriodModel with ChangeNotifier{
     };
   }
 
-  void addAllAssessmentVariables(List<AssessmentVariablesModel> allAssessmentVariables) {
+  void addAllAssessmentVariables(List<AssessmentVariables> allAssessmentVariables) {
     assessmentVariables.addAll(allAssessmentVariables);
     notifyListeners();
   }
 
   @override
   String toString() {
-    return 'AssessmentPeriodModel{id: $id, period: $period}';
+    return 'AssessmentPeriodModel{id: $id, period: $period, assessmentVariables: $assessmentVariables}';
   }
 }

@@ -20,7 +20,7 @@ class AllAssessmentPeriodsView extends StatefulWidget {
 class _AllAssessmentPeriodsViewState extends State<AllAssessmentPeriodsView> {
   late AssessmentViewModel viewModel;
   late UserPreferences userPreferences;
-  late List<AssessmentPeriodModel> assessmentPeriods;
+  late List<AssessmentPeriod> assessmentPeriods;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _AllAssessmentPeriodsViewState extends State<AllAssessmentPeriodsView> {
     super.initState();
   }
 
-  Stream<List<AssessmentPeriodModel>> _getAssessmentPeriods() async* {
+  Stream<List<AssessmentPeriod>> _getAssessmentPeriods() async* {
     yield await viewModel.getAllAssessmentPeriod();
   }
 
@@ -48,7 +48,7 @@ class _AllAssessmentPeriodsViewState extends State<AllAssessmentPeriodsView> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    StreamBuilder<List<AssessmentPeriodModel>>(
+                    StreamBuilder<List<AssessmentPeriod>>(
                         stream: _getAssessmentPeriods(),
                         builder: (context, snapshot) {
                           if(snapshot.hasData) {
@@ -63,9 +63,7 @@ class _AllAssessmentPeriodsViewState extends State<AllAssessmentPeriodsView> {
                                         Navigator.pushNamed(
                                             context,
                                             NamedRoute.detailAssessmentPeriod,
-                                          arguments: RouteSettings(
                                             arguments: snapshot.data![index].id,
-                                          )
                                         );
                                       },
                                       child: ListTile(

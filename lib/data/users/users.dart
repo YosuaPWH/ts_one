@@ -35,9 +35,6 @@ class UserModel with ChangeNotifier {
   static String keyStaffNo = "Staff No";
   static String keyPrivileges = "Privileges";
 
-  // this is used to set the default date if the date is null
-  static DateTime defaultDateIfNull = DateTime(2006, 1, 1, 0, 0, 0, 0, 0);
-
   UserModel.fromFirebaseUser(Map<String, dynamic> map) {
     email = map[keyEmail]; // if null, return empty string
     staffNo = map[keyStaffNo];

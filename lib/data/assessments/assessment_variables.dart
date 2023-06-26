@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
-class AssessmentVariablesModel with ChangeNotifier {
-  AssessmentVariablesModel({
+class AssessmentVariables with ChangeNotifier {
+  AssessmentVariables({
     this.id = "",
     this.assessmentPeriodId = "",
     this.category = "",
@@ -16,7 +16,7 @@ class AssessmentVariablesModel with ChangeNotifier {
   String typeOfAssessment = "";
 
   // collection name in firebase
-  static String firebaseCollection = "assessment_variables";
+  static String firebaseCollection = "assessment-variables";
 
   // all the keys for the map stored in firebase
   static String keyId = "id";
@@ -25,7 +25,7 @@ class AssessmentVariablesModel with ChangeNotifier {
   static String keyName = "name";
   static String keyTypeOfAssessment = "type-of-assessment";
 
-  AssessmentVariablesModel.fromFirebase(Map<String, dynamic> map) {
+  AssessmentVariables.fromFirebase(Map<String, dynamic> map) {
     id = map[keyId];
     assessmentPeriodId = map[keyAssessmentPeriodId];
     category = map[keyCategory];

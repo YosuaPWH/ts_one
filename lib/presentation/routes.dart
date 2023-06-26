@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/main.dart';
 import 'package:ts_one/presentation/main_view.dart';
 import 'package:ts_one/presentation/view/assessment/all_assessment_periods.dart';
@@ -37,7 +38,7 @@ class AppRoutes {
 
       case NamedRoute.detailAssessmentPeriod:
         return MaterialPageRoute<void>(
-          builder: (context) => const DetailAssessmentPeriodView(assessmentPeriodId: "1"),
+          builder: (context) => DetailAssessmentPeriodView(assessmentPeriodId: settings.arguments as String),
           settings: settings,
         );
 

@@ -4,16 +4,16 @@ import 'package:ts_one/data/assessments/assessment_variables.dart';
 
 abstract class AssessmentRepo {
   // assessment period
-  Future<List<AssessmentPeriodModel>> getAllAssessmentPeriods();
-  Future<AssessmentPeriodModel> getAssessmentPeriodById(String id);
-  Future<AssessmentPeriodModel> addAssessmentPeriod(AssessmentPeriodModel assessmentPeriodModel);
-  Future<AssessmentPeriodModel> updateAssessmentPeriod(AssessmentPeriodModel assessmentPeriodModel);
+  Future<List<AssessmentPeriod>> getAllAssessmentPeriods();
+  Future<AssessmentPeriod> getAssessmentPeriodById(String id);
+  Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod assessmentPeriodModel);
+  Future<AssessmentPeriod> updateAssessmentPeriod(AssessmentPeriod assessmentPeriodModel);
   Future<void> deleteAssessmentPeriod(String id);
 
   // assessment variables
-  Future<List<AssessmentVariablesModel>> getAllAssessmentVariables(String assessmentPeriodId);
-  Future<AssessmentVariablesModel> addAssessmentVariable(AssessmentVariablesModel assessmentVariablesModel);
-  Future<AssessmentVariablesModel> updateAssessmentVariable(AssessmentVariablesModel assessmentVariablesModel);
+  Future<List<AssessmentVariables>> getAllAssessmentVariables(String assessmentPeriodId);
+  Future<AssessmentVariables> addAssessmentVariable(AssessmentVariables assessmentVariablesModel);
+  Future<AssessmentVariables> updateAssessmentVariable(AssessmentVariables assessmentVariablesModel);
   Future<void> deleteAssessmentVariable(String id);
 }
 
@@ -26,19 +26,19 @@ class AssessmentRepoImpl implements AssessmentRepo {
 
   // assessment period
   @override
-  Future<List<AssessmentPeriodModel>> getAllAssessmentPeriods() async {
-    List<AssessmentPeriodModel> assessmentPeriods = [];
-    List<AssessmentVariablesModel> assessmentVariables = [];
+  Future<List<AssessmentPeriod>> getAllAssessmentPeriods() async {
+    List<AssessmentPeriod> assessmentPeriods = [];
+    List<AssessmentVariables> assessmentVariables = [];
 
     try {
       // get all assessment periods by sorting from the latest "period" to the oldest
       assessmentPeriods = await _db!
-          .collection(AssessmentPeriodModel.firebaseCollection)
-          .orderBy(AssessmentPeriodModel.keyPeriod, descending: true)
+          .collection(AssessmentPeriod.firebaseCollection)
+          .orderBy(AssessmentPeriod.keyPeriod, descending: true)
           .get()
           .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
-          assessmentPeriods.add(AssessmentPeriodModel.fromFirebase(doc.data() as Map<String, dynamic>));
+          assessmentPeriods.add(AssessmentPeriod.fromFirebase(doc.data() as Map<String, dynamic>));
         });
         return assessmentPeriods;
       });
@@ -50,46 +50,44 @@ class AssessmentRepoImpl implements AssessmentRepo {
   }
 
   @override
-  Future<AssessmentPeriodModel> getAssessmentPeriodById(String id) async {
-    AssessmentPeriodModel assessmentPeriod = AssessmentPeriodModel();
-    List<AssessmentVariablesModel> assessmentVariables = [];
+  Future<AssessmentPeriod> getAssessmentPeriodById(String id) async {
+    AssessmentPeriod assessmentPeriod = AssessmentPeriod();
+    List<AssessmentVariables> assessmentVariables = [];
 
     try {
       assessmentPeriod = await _db!
-          .collection(AssessmentPeriodModel.firebaseCollection)
+          .collection(AssessmentPeriod.firebaseCollection)
           .doc(id)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
-        return AssessmentPeriodModel.fromFirebase(documentSnapshot.data() as Map<String, dynamic>);
+        return AssessmentPeriod.fromFirebase(documentSnapshot.data() as Map<String, dynamic>);
       });
 
       assessmentVariables = await _db!
-          .collection(AssessmentVariablesModel.firebaseCollection)
-          .where(AssessmentVariablesModel.keyAssessmentPeriodId, isEqualTo: id)
+          .collection(AssessmentVariables.firebaseCollection)
+          .where(AssessmentVariables.keyAssessmentPeriodId, isEqualTo: assessmentPeriod.id)
           .get()
           .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
-          assessmentVariables.add(AssessmentVariablesModel.fromFirebase(doc.data() as Map<String, dynamic>));
+          assessmentVariables.add(AssessmentVariables.fromFirebase(doc.data() as Map<String, dynamic>));
         });
         return assessmentVariables;
       });
-
-      assessmentPeriod.addAllAssessmentVariables(assessmentVariables);
+      assessmentPeriod.assessmentVariables = assessmentVariables;
     } catch (e) {
       print("Exception in AssessmentRepo on getAssessmentPeriodById: $e");
     }
-
     return assessmentPeriod;
   }
 
   @override
-  Future<AssessmentPeriodModel> addAssessmentPeriod(AssessmentPeriodModel assessmentPeriodModel) {
+  Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod assessmentPeriodModel) {
     // TODO: implement addAssessmentPeriod
     throw UnimplementedError();
   }
 
   @override
-  Future<AssessmentPeriodModel> updateAssessmentPeriod(AssessmentPeriodModel assessmentPeriodModel) {
+  Future<AssessmentPeriod> updateAssessmentPeriod(AssessmentPeriod assessmentPeriodModel) {
     // TODO: implement updateAssessmentPeriod
     throw UnimplementedError();
   }
@@ -101,19 +99,19 @@ class AssessmentRepoImpl implements AssessmentRepo {
   }
 
   @override
-  Future<List<AssessmentVariablesModel>> getAllAssessmentVariables(String assessmentPeriodId) {
+  Future<List<AssessmentVariables>> getAllAssessmentVariables(String assessmentPeriodId) {
     // TODO: implement getAllAssessmentVariables
     throw UnimplementedError();
   }
 
   @override
-  Future<AssessmentVariablesModel> addAssessmentVariable(AssessmentVariablesModel assessmentVariablesModel) {
+  Future<AssessmentVariables> addAssessmentVariable(AssessmentVariables assessmentVariablesModel) {
     // TODO: implement addAssessmentVariable
     throw UnimplementedError();
   }
 
   @override
-  Future<AssessmentVariablesModel> updateAssessmentVariable(AssessmentVariablesModel assessmentVariablesModel) {
+  Future<AssessmentVariables> updateAssessmentVariable(AssessmentVariables assessmentVariablesModel) {
     // TODO: implement updateAssessmentVariable
     throw UnimplementedError();
   }
