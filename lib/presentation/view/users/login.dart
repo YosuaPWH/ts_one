@@ -107,9 +107,9 @@ class _LoginViewState extends State<LoginView> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.white,
-                    surfaceTintColor: Colors.white,
+                    backgroundColor: TsOneColor.secondary,
+                    foregroundColor: TsOneColor.secondaryContainer,
+                    surfaceTintColor: TsOneColor.secondary,
                     minimumSize: const Size.fromHeight(40),
                   ),
                   child: const Text('Login', style: TextStyle(color: Colors.black)),
@@ -175,9 +175,9 @@ class _LoginViewState extends State<LoginView> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.white,
-                      surfaceTintColor: Colors.white,
+                      backgroundColor: TsOneColor.secondary,
+                      foregroundColor: TsOneColor.secondaryContainer,
+                      surfaceTintColor: TsOneColor.secondary,
                       minimumSize: const Size.fromHeight(40),
                     ),
                     child: const Row(
