@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ts_one/main.dart';
 import 'package:ts_one/presentation/main_view.dart';
+import 'package:ts_one/presentation/view/assessment/all_assessment_periods.dart';
+import 'package:ts_one/presentation/view/assessment/detail_assessment_period.dart';
 import 'package:ts_one/presentation/view/users/add_user.dart';
 import 'package:ts_one/presentation/view/users/login.dart';
 
@@ -24,6 +26,18 @@ class AppRoutes {
       case NamedRoute.addUser:
         return MaterialPageRoute<void>(
           builder: (context) => const AddUserView(),
+          settings: settings,
+        );
+
+      case NamedRoute.allAssessmentPeriods:
+        return MaterialPageRoute<void>(
+          builder: (context) => const AllAssessmentPeriodsView(),
+          settings: settings,
+        );
+
+      case NamedRoute.detailAssessmentPeriod:
+        return MaterialPageRoute<void>(
+          builder: (context) => const DetailAssessmentPeriodView(assessmentPeriodId: "1"),
           settings: settings,
         );
 
@@ -57,4 +71,7 @@ class NamedRoute {
   static const String login = '/login';
   static const String addUser = '/addUser';
   static const String home = '/home';
+
+  static const String allAssessmentPeriods = '/allAssessmentPeriods';
+  static const String detailAssessmentPeriod = '/detailAssessmentPeriod';
 }

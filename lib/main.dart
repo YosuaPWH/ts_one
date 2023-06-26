@@ -4,11 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/di/locator.dart';
+import 'package:ts_one/domain/assessment_repo.dart';
 import 'package:ts_one/domain/user_repo.dart';
 import 'package:ts_one/firebase_options.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view/splash_screen.dart';
+import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 
 void main() async {
@@ -41,6 +43,11 @@ void main() async {
           create: (_) => UserViewModel(
               repo: getItLocator<UserRepo>(),
               userPreferences: getItLocator<UserPreferences>()
+          ),
+      ),
+      ChangeNotifierProvider(
+          create: (_) => AssessmentViewModel(
+              repo: getItLocator<AssessmentRepo>(),
           ),
       ),
     ],

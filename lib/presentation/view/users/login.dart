@@ -207,6 +207,5 @@ class _LoginViewState extends State<LoginView> {
         ));
       },
     );
-    throw UnimplementedError();
   }
 }

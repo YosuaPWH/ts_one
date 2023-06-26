@@ -44,6 +44,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child: const Text("Logout"),
               ),
+              /** TEMPORARY, DELETE AFTER DEBUGGING AllAssessmentPeriods **/
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, NamedRoute.allAssessmentPeriods);
+                  },
+                  child: const Text("All Assessment Periods")
+              )
             ],
           ),
         ),
