@@ -30,10 +30,12 @@ class _SplashScreenViewState extends State<SplashScreenView> {
   void checkLogin() {
     var duration = const Duration(milliseconds: 1500);
     Timer(duration, () {
-      if(!isLogin) {
-        Navigator.pushNamedAndRemoveUntil(context, NamedRoute.login, (route) => false);
+      if (!isLogin) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, NamedRoute.login, (route) => false);
       } else {
-        Navigator.pushNamedAndRemoveUntil(context, NamedRoute.addUser, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(
+            context, NamedRoute.home, (route) => false);
       }
     });
   }
@@ -51,7 +53,10 @@ class _SplashScreenViewState extends State<SplashScreenView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image(image: AssetImage('assets/images/airasia_logo_circle.png'),width: 300,),
+            Image(
+              image: AssetImage('assets/images/airasia_logo_circle.png'),
+              width: 300,
+            ),
           ],
         ),
       ),
