@@ -29,7 +29,7 @@ class UserRepoImpl implements UserRepo {
       // if current user is not null and user credential is not null, it means login is successful
       if (_auth!.currentUser != null && userCredential.user != null) {
         // get user data from firestore database by finding the uid of the current user
-        final userData = await _db!.collection('users').doc(userCredential.user!.email).get();
+        final userData = await _db!.collection(UserModel.firebaseCollection).doc(userCredential.user!.email).get();
 
         // create user model from firebase user and user data from firestore
         UserModel userModel = UserModel.fromFirebaseUser(userData.data()!);
@@ -76,7 +76,7 @@ class UserRepoImpl implements UserRepo {
         // if current user is not null and user credential is not null, it means login is successful
         if (_auth!.currentUser != null && userCredential.user != null) {
           // get user data from firestore database by finding the uid of the current user
-          final userData = await _db!.collection('users').doc(userCredential.user!.email).get();
+          final userData = await _db!.collection(UserModel.firebaseCollection).doc(userCredential.user!.email).get();
 
           // create user model from firebase user and user data from firestore
           UserModel userModel = UserModel.fromFirebaseUser(userData.data()!);
@@ -110,10 +110,10 @@ class UserRepoImpl implements UserRepo {
 
     try {
       // add new user to firestore database
-      await _db!.collection('users').doc(userModel.email).set(userModel.toMap());
+      await _db!.collection(UserModel.firebaseCollection).doc(userModel.email).set(userModel.toMap());
 
       // get user data from firestore database by finding the email of the current user
-      final userData = await _db!.collection('users').doc(userModel.email).get();
+      final userData = await _db!.collection(UserModel.firebaseCollection).doc(userModel.email).get();
 
       // create user model from firebase user and user data from firestore
       newUserModel = UserModel.fromFirebaseUser(userData.data()!);
@@ -127,7 +127,7 @@ class UserRepoImpl implements UserRepo {
   @override
   Future<void> logout() async {
     try {
-      return await _auth!.signOut();
+      return _auth!.signOut();
     } catch (e) {
       print(e.toString());
     }

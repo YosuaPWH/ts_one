@@ -171,7 +171,7 @@ class _LoginViewState extends State<LoginView> {
                         );
 
                         Navigator.pushNamedAndRemoveUntil(
-                            context, NamedRoute.addUser, (route) => false);
+                            context, NamedRoute.home, (route) => false);
                       }
                     },
                     style: ElevatedButton.styleFrom(

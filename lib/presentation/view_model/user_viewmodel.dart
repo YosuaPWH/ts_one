@@ -56,7 +56,8 @@ class UserViewModel extends LoadingViewModel {
 
   Future<void> logout() async {
     try {
-      await repo.logout();
+      repo.logout();
+      userPreferences.clearUser();
     } catch (e) {
       print(e.toString());
     }

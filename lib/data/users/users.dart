@@ -21,6 +21,10 @@ class UserModel with ChangeNotifier {
   DateTime licenseExpiry = DateTime.now();
   List<String> privileges = [];
 
+  // this is the collection name in firebase
+  static String firebaseCollection = "users";
+
+  // all the keys for the map stored in firebase
   static String keyEmail = "Email";
   static String keyLicenseExpiry = "License Expiry";
   static String keyLicenceLastPassed = "License Last Passed";
