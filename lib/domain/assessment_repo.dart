@@ -73,6 +73,7 @@ class AssessmentRepoImpl implements AssessmentRepo {
         });
         return assessmentVariables;
       });
+
       assessmentPeriod.assessmentVariables = assessmentVariables;
     } catch (e) {
       print("Exception in AssessmentRepo on getAssessmentPeriodById: $e");
