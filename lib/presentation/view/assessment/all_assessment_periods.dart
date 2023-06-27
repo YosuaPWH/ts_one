@@ -89,6 +89,17 @@ class _AllAssessmentPeriodsViewState extends State<AllAssessmentPeriodsView> {
                   ],
                 ),
             ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  NamedRoute.addAssessmentPeriod,
+                );
+                model.addAssessmentPeriod(AssessmentPeriod());
+              },
+              backgroundColor: TsOneColor.primary,
+              child: const Icon(Icons.add),
+            )
           );
         });
   }
