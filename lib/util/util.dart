@@ -8,4 +8,7 @@ class Util{
     final String formatted = serverFormater.format(displayDate);
     return formatted;
   }
+
+  // this is used to set the default date if the date is null
+  static DateTime defaultDateIfNull = DateTime(1999, 9, 9, 9, 9, 9, 9, 9);
 }

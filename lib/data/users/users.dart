@@ -21,6 +21,10 @@ class UserModel with ChangeNotifier {
   DateTime licenseExpiry = DateTime.now();
   List<String> privileges = [];
 
+  // this is the collection name in firebase
+  static String firebaseCollection = "users";
+
+  // all the keys for the map stored in firebase
   static String keyEmail = "Email";
   static String keyLicenseExpiry = "License Expiry";
   static String keyLicenceLastPassed = "License Last Passed";
@@ -30,9 +34,6 @@ class UserModel with ChangeNotifier {
   static String keySubPosition = "Sub Position";
   static String keyStaffNo = "Staff No";
   static String keyPrivileges = "Privileges";
-
-  // this is used to set the default date if the date is null
-  static DateTime defaultDateIfNull = DateTime(2006, 1, 1, 0, 0, 0, 0, 0);
 
   UserModel.fromFirebaseUser(Map<String, dynamic> map) {
     email = map[keyEmail]; // if null, return empty string
