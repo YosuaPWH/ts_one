@@ -142,7 +142,7 @@ class UserRepoImpl implements UserRepo {
   @override
   Future<void> logout() async {
     try {
-      return _auth!.signOut();
+      return await _auth!.signOut();
     } catch (e) {
       print(e.toString());
     }

@@ -42,8 +42,7 @@ class AssessmentViewModel extends LoadingViewModel {
     isLoading = true;
     Map<String, bool> listFlightDetails = {};
     try {
-      AssessmentFlightDetails assessmentFlightDetails =
-          await repo.getAllAssessmentFlightDetails();
+      AssessmentFlightDetails assessmentFlightDetails = await repo.getAllAssessmentFlightDetails();
       for (var element in assessmentFlightDetails.flightDetails) {
         listFlightDetails.addAll({element: false});
       }
@@ -53,5 +52,19 @@ class AssessmentViewModel extends LoadingViewModel {
       isLoading = false;
     }
     return listFlightDetails;
+  }
+}
+
+  Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod assessmentPeriodModel) async {
+    isLoading = true;
+    AssessmentPeriod assessmentPeriod = AssessmentPeriod();
+    try {
+      assessmentPeriod = await repo.addAssessmentPeriod(assessmentPeriodModel);
+      isLoading = false;
+    } catch (e) {
+      print("Exception on AssessmentViewModel: $e");
+      isLoading = false;
+    }
+    return assessmentPeriod;
   }
 }

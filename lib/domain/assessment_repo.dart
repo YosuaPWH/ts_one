@@ -8,20 +8,27 @@ import 'package:ts_one/data/assessments/assessment_variables.dart';
 abstract class AssessmentRepo {
   // assessment period
   Future<List<AssessmentPeriod>> getAllAssessmentPeriods();
+
   Future<AssessmentPeriod> getAssessmentPeriodById(String id);
+
   Future<AssessmentPeriod> addAssessmentPeriod(
       AssessmentPeriod assessmentPeriodModel);
+
   Future<AssessmentPeriod> updateAssessmentPeriod(
       AssessmentPeriod assessmentPeriodModel);
+
   Future<void> deleteAssessmentPeriod(String id);
 
   // assessment variables
   Future<List<AssessmentVariables>> getAllAssessmentVariables(
       String assessmentPeriodId);
+
   Future<AssessmentVariables> addAssessmentVariable(
       AssessmentVariables assessmentVariablesModel);
+
   Future<AssessmentVariables> updateAssessmentVariable(
       AssessmentVariables assessmentVariablesModel);
+
   Future<void> deleteAssessmentVariable(String id);
 
   // assessment flight details
@@ -93,6 +100,7 @@ class AssessmentRepoImpl implements AssessmentRepo {
         });
         return assessmentVariables;
       });
+
       assessmentPeriod.assessmentVariables = assessmentVariables;
     } catch (e) {
       print("Exception in AssessmentRepo on getAssessmentPeriodById: $e");
@@ -100,11 +108,56 @@ class AssessmentRepoImpl implements AssessmentRepo {
     return assessmentPeriod;
   }
 
-  @override
-  Future<AssessmentPeriod> addAssessmentPeriod(
-      AssessmentPeriod assessmentPeriodModel) {
-    // TODO: implement addAssessmentPeriod
-    throw UnimplementedError();
+  Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod newAssessmentPeriod) async {
+    AssessmentPeriod lastAssessmentPeriod = AssessmentPeriod();
+    try {
+      /** get the last id of assessment period */
+      lastAssessmentPeriod = await _db!
+          .collection(AssessmentPeriod.firebaseCollection)
+          .orderBy(AssessmentPeriod.keyPeriod, descending: true)
+          .limit(1)
+          .get()
+          .then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          lastAssessmentPeriod =
+              AssessmentPeriod.fromFirebase(doc.data() as Map<String, dynamic>);
+        });
+        return lastAssessmentPeriod;
+      });
+      print("Message from AssessmentRepo on addAssessmentPeriod: $lastAssessmentPeriod");
+
+      /** add 1 to the last id */
+      String oldId = lastAssessmentPeriod.id;
+      // the oldId will always start with "ap-" so we remove it first
+      String removeAp = oldId.replaceAll("ap-", "");
+      // convert the string to int and add 1
+      int newId = int.parse(removeAp) + 1;
+      // convert the newId to string and add "ap-" to the beginning
+      String newIdString = "ap-$newId";
+
+      /** set the id of the assessment period model */
+      newAssessmentPeriod.id = newIdString;
+
+      /** add the assessment period model to firebase */
+      await _db!
+          .collection(AssessmentPeriod.firebaseCollection)
+          .doc(newIdString)
+          .set(newAssessmentPeriod.toFirebase());
+
+      /** get the newly added assessment period model */
+      newAssessmentPeriod = await _db!
+          .collection(AssessmentPeriod.firebaseCollection)
+          .doc(newIdString)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        return AssessmentPeriod.fromFirebase(
+            documentSnapshot.data() as Map<String, dynamic>);
+      });
+    } catch (e) {
+      print("Exception in AssessmentRepo on addAssessmentPeriod: $e");
+    }
+
+    return newAssessmentPeriod;
   }
 
   @override

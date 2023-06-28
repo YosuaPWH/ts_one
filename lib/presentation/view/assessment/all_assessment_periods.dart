@@ -41,52 +41,65 @@ class _AllAssessmentPeriodsViewState extends State<AllAssessmentPeriodsView> {
         builder: (_, model, child) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text("All Assessment Periods"),
+              title: const Text("Form Assessment"),
             ),
-            body: Center(
-              child: Padding(
+            body: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    StreamBuilder<List<AssessmentPeriod>>(
-                        stream: _getAssessmentPeriods(),
-                        builder: (context, snapshot) {
-                          if(snapshot.hasData) {
-                            return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: snapshot.data!.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    surfaceTintColor: TsOneColor.secondaryContainer,
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.pushNamed(
+                    Expanded(
+                      child: StreamBuilder<List<AssessmentPeriod>>(
+                          stream: _getAssessmentPeriods(),
+                          builder: (context, snapshot) {
+                            if(snapshot.hasData) {
+                              return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data!.length,
+                                  itemBuilder: (context, index) {
+                                    return Card(
+                                      surfaceTintColor: TsOneColor.surface,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(
                                             context,
                                             NamedRoute.detailAssessmentPeriod,
                                             arguments: snapshot.data![index].id,
-                                        );
-                                      },
-                                      child: ListTile(
-                                        title: Text("Assessment Template ${snapshot.data![index].id}"),
-                                        subtitle: Text("Effective on ${Util.convertDateTimeDisplay(snapshot.data![index].period.toString())}"),
+                                          );
+                                        },
+                                        child: ListTile(
+                                          title: Text("Form Assessment ${snapshot.data![index].id}"),
+                                          subtitle: Text("Effective on ${Util.convertDateTimeDisplay(snapshot.data![index].period.toString())}"),
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                }
-                            );
+                                    );
+                                  }
+                              );
+                            }
+                            else if (snapshot.hasError) {
+                              return Text(("${snapshot.error}"));
+                            }
+                            else {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
                           }
-                          else if (snapshot.hasError) {
-                            return Text(("${snapshot.error}"));
-                          }
-                          else {
-                            return const CircularProgressIndicator();
-                          }
-                        }
+                      ),
                     ),
                   ],
                 ),
-              ),
             ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  NamedRoute.addAssessmentPeriod,
+                );
+                model.addAssessmentPeriod(AssessmentPeriod());
+              },
+              backgroundColor: TsOneColor.primary,
+              child: const Icon(Icons.add),
+            )
           );
         });
   }

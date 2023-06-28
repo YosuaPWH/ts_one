@@ -14,6 +14,7 @@ class AssessmentVariables with ChangeNotifier {
   String category = "";
   String name = "";
   String typeOfAssessment = "";
+  bool applicableForFlight = true;
 
   // collection name in firebase
   static String firebaseCollection = "assessment-variables";
@@ -24,6 +25,7 @@ class AssessmentVariables with ChangeNotifier {
   static String keyCategory = "category";
   static String keyName = "name";
   static String keyTypeOfAssessment = "type-of-assessment";
+  static String keyApplicableForFlight = "applicable-for-flight";
 
   AssessmentVariables.fromFirebase(Map<String, dynamic> map) {
     id = map[keyId];
@@ -31,6 +33,7 @@ class AssessmentVariables with ChangeNotifier {
     category = map[keyCategory];
     name = map[keyName];
     typeOfAssessment = map[keyTypeOfAssessment];
+    applicableForFlight = map[keyApplicableForFlight];
   }
 
   Map<String, dynamic> toMap() {
@@ -40,11 +43,12 @@ class AssessmentVariables with ChangeNotifier {
       keyCategory: category,
       keyName: name,
       keyTypeOfAssessment: typeOfAssessment,
+      keyApplicableForFlight: applicableForFlight,
     };
   }
 
   @override
   String toString() {
-    return 'AssessmentVariablesModel{id: $id, assessmentPeriodId: $assessmentPeriodId, category: $category, name: $name, typeOfAssessment: $typeOfAssessment}';
+    return 'AssessmentVariablesModel{id: $id, assessmentPeriodId: $assessmentPeriodId, category: $category, name: $name, typeOfAssessment: $typeOfAssessment}, applicableForFlight: $applicableForFlight';
   }
 }

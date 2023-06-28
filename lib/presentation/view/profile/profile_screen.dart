@@ -27,31 +27,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<UserViewModel>(builder: (_, model, child) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text("Profile"),
-        ),
-        body: Center(
-          child: Column(
-            children: [
-              const Text("Profile Screen"),
-              Text("Email: ${userPreferences.getEmail()}"),
-              ElevatedButton(
-                onPressed: () {
-                  viewModel.logout();
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, NamedRoute.login, (route) => false);
-                },
-                child: const Text("Logout"),
-              ),
-              /** TEMPORARY, DELETE AFTER DEBUGGING AllAssessmentPeriods **/
-              ElevatedButton(
+      return SafeArea(
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              children: [
+                const Text("Profile Screen"),
+                Text("Email: ${userPreferences.getEmail()}"),
+                ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, NamedRoute.allAssessmentPeriods);
+                    viewModel.logout();
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, NamedRoute.login, (route) => false);
                   },
-                  child: const Text("All Assessment Periods")
-              )
-            ],
+                  child: const Text("Logout"),
+                ),
+                /** TEMPORARY, DELETE AFTER DEBUGGING AllAssessmentPeriods **/
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, NamedRoute.allAssessmentPeriods);
+                    },
+                    child: const Text("All Assessment Periods")
+                )
+              ],
+            ),
           ),
         ),
       );

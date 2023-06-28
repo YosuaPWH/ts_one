@@ -23,7 +23,7 @@ class AssessmentPeriod with ChangeNotifier{
     period = DateTime.fromMillisecondsSinceEpoch(map[keyPeriod].seconds * 1000);
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toFirebase() {
     return {
       keyId: id,
       keyPeriod: period,

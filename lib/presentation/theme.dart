@@ -29,11 +29,12 @@ ColorScheme tsOneColorScheme = const ColorScheme(
 );
 
 class TsOneColor {
-  static const Color primary = Color(0xFFE32526);
+  static const Color primary = Color(0xFFE32526);  // accordion header expanded
   static const Color primaryContainer = Color(0xFFBB1F1F);
-  static const Color secondary = Color(0xFFFFFFFF);
+  static const Color primaryFaded = Color(0xFFFBDEDE); // accordion border not expanded
+  static const Color secondary = Color(0xFFFFFFFF); // accordion header not expanded
   static const Color secondaryContainer = Color(0xFF7A7A7A); // input border
-  static const Color surface = Color(0xFFF5F5F5); // card background
+  static const Color surface = Color(0xFFF5F5F5); // card background and input background
   static const Color background = Color(0xFFFDFDFD); // all page background
   static const Color error = Colors.redAccent;
   static const Color onPrimary = Color(0xFFFFFFFF);
