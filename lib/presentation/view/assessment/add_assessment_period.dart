@@ -208,9 +208,9 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   _formKey.currentState!.save();
-                                  // viewModel.addAssessmentPeriod(assessmentPeriod);
+                                  viewModel.addAssessmentPeriod(assessmentPeriod);
                                   // Navigator.pop(context);
-                                  print("assessmentPeriod: $assessmentPeriod");
+                                  // print("Message from AddAssessmentPeriodView: $assessmentPeriod");
                                 }
                               },
                               style: ElevatedButton.styleFrom(
@@ -290,6 +290,10 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
           DropdownMenuItem(
             value: "Flight Preparation",
             child: Text("Flight Preparation"),
+          ),
+          DropdownMenuItem(
+            value: "Takeoff",
+            child: Text("Takeoff"),
           ),
           DropdownMenuItem(
             value: "Flight Maneuvers and Procedure",

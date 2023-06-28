@@ -49,10 +49,10 @@ class AssessmentRepoImpl implements AssessmentRepo {
           .orderBy(AssessmentPeriod.keyPeriod, descending: true)
           .get()
           .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
+        for (var doc in querySnapshot.docs) {
           assessmentPeriods.add(AssessmentPeriod.fromFirebase(
               doc.data() as Map<String, dynamic>));
-        });
+        }
         return assessmentPeriods;
       });
     } catch (e) {
@@ -83,10 +83,10 @@ class AssessmentRepoImpl implements AssessmentRepo {
               isEqualTo: assessmentPeriod.id)
           .get()
           .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
+        for (var doc in querySnapshot.docs) {
           assessmentVariables.add(AssessmentVariables.fromFirebase(
               doc.data() as Map<String, dynamic>));
-        });
+        }
         return assessmentVariables;
       });
 
@@ -108,13 +108,17 @@ class AssessmentRepoImpl implements AssessmentRepo {
           .limit(1)
           .get()
           .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
+        for (var doc in querySnapshot.docs) {
           lastAssessmentPeriod =
               AssessmentPeriod.fromFirebase(doc.data() as Map<String, dynamic>);
-        });
+        }
         return lastAssessmentPeriod;
       });
-      print("Message from AssessmentRepo on addAssessmentPeriod: $lastAssessmentPeriod");
+
+      /** if the last id is empty, set it to "ap-0" */
+      if (lastAssessmentPeriod.id == "") {
+        lastAssessmentPeriod.id = "ap-0";
+      }
 
       /** add 1 to the last id */
       String oldId = lastAssessmentPeriod.id;
@@ -133,6 +137,25 @@ class AssessmentRepoImpl implements AssessmentRepo {
           .collection(AssessmentPeriod.firebaseCollection)
           .doc(newIdString)
           .set(newAssessmentPeriod.toFirebase());
+
+      /** Counter for assessment variable id */
+      int assessmentVariableId = 1;
+
+      for (var assessmentVariable in newAssessmentPeriod.assessmentVariables) {
+        assessmentVariable.id = "av-$assessmentVariableId-${newAssessmentPeriod.id}";
+        assessmentVariable.assessmentPeriodId = newAssessmentPeriod.id;
+        assessmentVariableId++;
+      }
+
+      print("Message from AssessmentRepo on addAssessmentPeriod: $newAssessmentPeriod");
+
+      /** add the assessment variables to firebase */
+      newAssessmentPeriod.assessmentVariables.forEach((assessmentVariable) async {
+        await _db!
+            .collection(AssessmentVariables.firebaseCollection)
+            .doc(assessmentVariable.id)
+            .set(assessmentVariable.toFirebase());
+      });
 
       /** get the newly added assessment period model */
       newAssessmentPeriod = await _db!

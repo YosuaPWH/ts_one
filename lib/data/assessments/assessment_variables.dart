@@ -37,7 +37,7 @@ class AssessmentVariables with ChangeNotifier {
     applicableForFlight = map[keyApplicableForFlight];
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toFirebase() {
     return {
       keyId: id,
       keyAssessmentPeriodId: assessmentPeriodId,
