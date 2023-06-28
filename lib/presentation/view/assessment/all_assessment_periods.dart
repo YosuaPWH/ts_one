@@ -95,7 +95,6 @@ class _AllAssessmentPeriodsViewState extends State<AllAssessmentPeriodsView> {
                   context,
                   NamedRoute.addAssessmentPeriod,
                 );
-                model.addAssessmentPeriod(AssessmentPeriod());
               },
               backgroundColor: TsOneColor.primary,
               child: const Icon(Icons.add),
