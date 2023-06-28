@@ -24,12 +24,16 @@ class UserRepoImpl implements UserRepo {
 
     try {
       // try to login with firebase auth
-      UserCredential userCredential = await _auth!.signInWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await _auth!
+          .signInWithEmailAndPassword(email: email, password: password);
 
       // if current user is not null and user credential is not null, it means login is successful
       if (_auth!.currentUser != null && userCredential.user != null) {
         // get user data from firestore database by finding the uid of the current user
-        final userData = await _db!.collection(UserModel.firebaseCollection).doc(userCredential.user!.email).get();
+        final userData = await _db!
+            .collection(UserModel.firebaseCollection)
+            .doc(userCredential.user!.email)
+            .get();
 
         // create user model from firebase user and user data from firestore
         UserModel userModel = UserModel.fromFirebaseUser(userData.data()!);
@@ -49,11 +53,11 @@ class UserRepoImpl implements UserRepo {
     UserAuth userAuth = UserAuth();
 
     GoogleSignIn googleSignIn = GoogleSignIn(
-      // scopes: [
-      //   'email',
-      //   'https://www.googleapis.com/auth/contacts.readonly',
-      // ],
-    );
+        // scopes: [
+        //   'email',
+        //   'https://www.googleapis.com/auth/contacts.readonly',
+        // ],
+        );
 
     GoogleSignInAccount? googleSignInAccount;
 
@@ -62,7 +66,8 @@ class UserRepoImpl implements UserRepo {
 
       if (googleSignInAccount != null) {
         // get google auth credential from google sign in account
-        GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+        GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
 
         // get firebase auth credential from google auth credential
         final credential = GoogleAuthProvider.credential(
@@ -71,12 +76,16 @@ class UserRepoImpl implements UserRepo {
         );
 
         // try to login with firebase auth credential
-        UserCredential userCredential = await _auth!.signInWithCredential(credential);
+        UserCredential userCredential =
+            await _auth!.signInWithCredential(credential);
 
         // if current user is not null and user credential is not null, it means login is successful
         if (_auth!.currentUser != null && userCredential.user != null) {
           // get user data from firestore database by finding the uid of the current user
-          final userData = await _db!.collection(UserModel.firebaseCollection).doc(userCredential.user!.email).get();
+          final userData = await _db!
+              .collection(UserModel.firebaseCollection)
+              .doc(userCredential.user!.email)
+              .get();
 
           // create user model from firebase user and user data from firestore
           UserModel userModel = UserModel.fromFirebaseUser(userData.data()!);
@@ -89,11 +98,11 @@ class UserRepoImpl implements UserRepo {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
         userAuth.errorMessage =
-        'The account already exists with a different credential.';
+            'The account already exists with a different credential.';
         print(e.toString());
       } else if (e.code == 'invalid-credential') {
         userAuth.errorMessage =
-        'Error occurred while accessing credentials. Try again.';
+            'Error occurred while accessing credentials. Try again.';
         print(e.toString());
       }
     } catch (e) {
@@ -110,10 +119,16 @@ class UserRepoImpl implements UserRepo {
 
     try {
       // add new user to firestore database
-      await _db!.collection(UserModel.firebaseCollection).doc(userModel.email).set(userModel.toMap());
+      await _db!
+          .collection(UserModel.firebaseCollection)
+          .doc(userModel.email)
+          .set(userModel.toMap());
 
       // get user data from firestore database by finding the email of the current user
-      final userData = await _db!.collection(UserModel.firebaseCollection).doc(userModel.email).get();
+      final userData = await _db!
+          .collection(UserModel.firebaseCollection)
+          .doc(userModel.email)
+          .get();
 
       // create user model from firebase user and user data from firestore
       newUserModel = UserModel.fromFirebaseUser(userData.data()!);
