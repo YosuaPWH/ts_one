@@ -7,6 +7,7 @@ class AssessmentVariables with ChangeNotifier {
     this.category = "",
     this.name = "",
     this.typeOfAssessment = "",
+    this.applicableForFlight = true,
   });
 
   String id = "";

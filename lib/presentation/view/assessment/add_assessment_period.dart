@@ -132,6 +132,7 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
                                   inputs[index]["name"]!,
                                   inputs[index]["category"]!,
                                   inputs[index]["typeOfAssessment"]!,
+                                  inputs[index]["applicableForFlight"]!,
                                   const Divider(
                                     color: Colors.grey,
                                     height: 36,
@@ -147,52 +148,85 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
                   Expanded(
                     flex: 0,
                     child: SizedBox(
-                      height: 40.0,
+                      height: 88.0,
                       width: double.infinity,
-                      child: Row(
+                      child: Column(
                         children: [
-                          // add the text field dynamically with the add button
                           Expanded(
-                            child: SizedBox(
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      if (inputs.isNotEmpty) {
-                                        inputs.removeLast();
-                                      }
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: tsOneColorScheme.secondary,
-                                    foregroundColor: tsOneColorScheme.secondaryContainer,
-                                    surfaceTintColor: tsOneColorScheme.secondary,
-                                    minimumSize: const Size.fromHeight(40),
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Row(
+                                children: [
+                                  // add the text field dynamically with the add button
+                                  Expanded(
+                                    child: SizedBox(
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              if (inputs.isNotEmpty) {
+                                                assessmentPeriod.assessmentVariables.removeLast();
+                                                controllers.removeLast();
+                                                inputs.removeLast();
+                                              }
+                                            });
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: tsOneColorScheme.secondary,
+                                            foregroundColor: tsOneColorScheme.secondaryContainer,
+                                            surfaceTintColor: tsOneColorScheme.secondary,
+                                            minimumSize: const Size.fromHeight(40),
+                                          ),
+                                          child: const Icon(Icons.remove, color: TsOneColor.onSecondary)
+                                      ),
+                                    ),
                                   ),
-                                  child: const Icon(Icons.remove, color: Colors.black)
+                                  // button to delete the last text field
+                                  Expanded(
+                                    child: SizedBox(
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _buildInput(inputs.length);
+                                            });
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: tsOneColorScheme.secondary,
+                                            foregroundColor: tsOneColorScheme.secondaryContainer,
+                                            surfaceTintColor: tsOneColorScheme.secondary,
+                                            minimumSize: const Size.fromHeight(40),
+                                          ),
+                                          child: const Icon(Icons.add, color: TsOneColor.onSecondary)
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          // button to delete the last text field
                           Expanded(
-                            child: SizedBox(
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _buildInput(inputs.length);
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: tsOneColorScheme.secondary,
-                                    foregroundColor: tsOneColorScheme.secondaryContainer,
-                                    surfaceTintColor: tsOneColorScheme.secondary,
-                                    minimumSize: const Size.fromHeight(40),
-                                  ),
-                                  child: const Icon(Icons.add, color: Colors.black)
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+                                  // viewModel.addAssessmentPeriod(assessmentPeriod);
+                                  // Navigator.pop(context);
+                                  print("assessmentPeriod: $assessmentPeriod");
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: tsOneColorScheme.primary,
+                                foregroundColor: tsOneColorScheme.primaryContainer,
+                                surfaceTintColor: tsOneColorScheme.primary,
+                                minimumSize: const Size.fromHeight(40),
+                              ),
+                              child: const Text(
+                                'Save',
+                                style: TextStyle(color: TsOneColor.onPrimary),
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ]
+                      )
                     ),
                   ),
                 ],
@@ -281,6 +315,26 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
             value: "Advance Maneuvers",
             child: Text("Advance Maneuvers"),
           ),
+          DropdownMenuItem(
+            value: "Teamwork & Communication",
+            child: Text("Teamwork & Communication"),
+          ),
+          DropdownMenuItem(
+            value: "Leadership & Task Management",
+            child: Text("Leadership & Task Management"),
+          ),
+          DropdownMenuItem(
+            value: "Situational Awareness",
+            child: Text("Situational Awareness"),
+          ),
+          DropdownMenuItem(
+            value: "Decision Making",
+            child: Text("Decision Making"),
+          ),
+          DropdownMenuItem(
+            value: "Customer Focus",
+            child: Text("Customer Focus"),
+          ),
         ],
       ),
     );
@@ -288,7 +342,7 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
     // add the dropdown field
     final typeOfAssessmentController = TextEditingController();
     final typeOfAssessmentDropdownField = Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 16.0),
       child: DropdownButtonFormField(
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
@@ -317,6 +371,34 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
       ),
     );
 
+    // add the checkbox for applicable on flight TS-1 or not
+    final applicableForFlight = Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.0),
+          border: Border.all(color: TsOneColor.onSecondary),
+        ),
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            return CheckboxListTile(
+              title: const Text('Applicable for Flight TS-1'),
+              value: assessmentPeriod.assessmentVariables[index].applicableForFlight,
+              onChanged: (value) {
+                setState(() {
+                  assessmentPeriod.assessmentVariables[index].applicableForFlight = value!;
+                });
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.0),
+                side: const BorderSide(color: TsOneColor.onPrimary),
+              ),
+            );
+          }
+        ),
+      ),
+    );
+
     controllers.add({
       'name': nameController,
       'category': categoryController,
@@ -327,6 +409,7 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
       'name': nameTextField,
       'category': categoryDropdownField,
       'typeOfAssessment': typeOfAssessmentDropdownField,
+      'applicableForFlight': applicableForFlight,
     });
   }
 }
