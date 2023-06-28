@@ -53,7 +53,6 @@ class AssessmentViewModel extends LoadingViewModel {
     }
     return listFlightDetails;
   }
-}
 
   Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod assessmentPeriodModel) async {
     isLoading = true;
