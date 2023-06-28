@@ -50,6 +50,6 @@ class AssessmentVariables with ChangeNotifier {
 
   @override
   String toString() {
-    return 'AssessmentVariablesModel{id: $id, assessmentPeriodId: $assessmentPeriodId, category: $category, name: $name, typeOfAssessment: $typeOfAssessment}, applicableForFlight: $applicableForFlight';
+    return 'AssessmentVariablesModel{id: $id, assessmentPeriodId: $assessmentPeriodId, category: $category, name: $name, typeOfAssessment: $typeOfAssessment, applicableForFlight: $applicableForFlight},';
   }
 }

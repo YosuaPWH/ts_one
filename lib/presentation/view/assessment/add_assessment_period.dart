@@ -122,25 +122,24 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
                   Expanded(
                       child: SizedBox(
                         height: 200.0,
-                        child: ListView.builder(
-                          itemCount: inputs.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 16.0),
-                              child: Column(
-                                children: [
-                                  inputs[index]["name"]!,
-                                  inputs[index]["category"]!,
-                                  inputs[index]["typeOfAssessment"]!,
-                                  inputs[index]["applicableForFlight"]!,
-                                  const Divider(
-                                    color: Colors.grey,
-                                    height: 36,
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              for (var i = 0; i < inputs.length; i++)
+                                Column(
+                                  children: [
+                                    inputs[i]["name"]!,
+                                    inputs[i]["category"]!,
+                                    inputs[i]["typeOfAssessment"]!,
+                                    inputs[i]["applicableForFlight"]!,
+                                    const Divider(
+                                      color: Colors.grey,
+                                      height: 36,
+                                    ),
+                                  ]
+                                )
+                            ],
+                          ),
                         ),
                       )
                   ),
@@ -209,8 +208,20 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
                                 if (_formKey.currentState!.validate()) {
                                   _formKey.currentState!.save();
                                   viewModel.addAssessmentPeriod(assessmentPeriod);
-                                  // Navigator.pop(context);
-                                  // print("Message from AddAssessmentPeriodView: $assessmentPeriod");
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: const Text("Assessment period added successfully"),
+                                        duration: const Duration(milliseconds: 1500),
+                                        action: SnackBarAction(
+                                          label: 'Close',
+                                          onPressed: () {
+                                            ScaffoldMessenger.of(context)
+                                                .hideCurrentSnackBar();
+                                          },
+                                        )
+                                      )
+                                  );
+                                  Navigator.pop(context);
                                 }
                               },
                               style: ElevatedButton.styleFrom(
@@ -239,6 +250,9 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
   }
 
   void _buildInput(int index) {
+    // print("Message from AddAssessmentPeriodView: Index of assessmentVariables list $index");
+    // print("Message from AddAssessmentPeriodView: Length of inputs list ${inputs.length}");
+
     // add new item of AssessmentVariable to AssessmentPeriod
     assessmentPeriod.assessmentVariables.add(
         AssessmentVariables());
@@ -262,7 +276,9 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          assessmentPeriod.assessmentVariables[index].name = value;
+          setState(() {
+            assessmentPeriod.assessmentVariables[index].name = value;
+          });
         },
       ),
     );
@@ -284,7 +300,12 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          assessmentPeriod.assessmentVariables[index].category = value.toString();
+          print("Bef. category value of ${assessmentPeriod.assessmentVariables[index].name}: ${assessmentPeriod.assessmentVariables[index].category}");
+          setState(() {
+            assessmentPeriod.assessmentVariables[index].category = value.toString();
+          });
+          print("Aft. category value of ${assessmentPeriod.assessmentVariables[index].name}: ${assessmentPeriod.assessmentVariables[index].category}");
+          print("--------");
         },
         items: const [
           DropdownMenuItem(
@@ -354,13 +375,18 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
         ),
         validator: (value) {
           if (value == null) {
-            return "Position is required";
+            return "Type of assessment is required";
           }
           return null;
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          assessmentPeriod.assessmentVariables[index].typeOfAssessment = value.toString();
+          print("Bef. type of assessment value of ${assessmentPeriod.assessmentVariables[index].name}: $value");
+          setState(() {
+            assessmentPeriod.assessmentVariables[index].typeOfAssessment = value.toString();
+          });
+          print("Aft. type of assessment value of ${assessmentPeriod.assessmentVariables[index].name}: ${assessmentPeriod.assessmentVariables[index].typeOfAssessment}");
+          print("--------");
         },
         items: const [
           DropdownMenuItem(
@@ -389,6 +415,7 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
               title: const Text('Applicable for Flight TS-1'),
               value: assessmentPeriod.assessmentVariables[index].applicableForFlight,
               onChanged: (value) {
+                print("Message from AddAssessmentPeriodView: ${assessmentPeriod.assessmentVariables}");
                 setState(() {
                   assessmentPeriod.assessmentVariables[index].applicableForFlight = value!;
                 });
