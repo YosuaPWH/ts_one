@@ -120,9 +120,9 @@ class _LoginViewState extends State<LoginView> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.white,
-                        surfaceTintColor: Colors.white,
+                        backgroundColor: tsOneColorScheme.secondary,
+                        foregroundColor: tsOneColorScheme.secondaryContainer,
+                        surfaceTintColor: tsOneColorScheme.secondary,
                         minimumSize: const Size.fromHeight(40),
                       ),
                       child: const Text('Login',
@@ -184,13 +184,13 @@ class _LoginViewState extends State<LoginView> {
                             );
 
                             Navigator.pushNamedAndRemoveUntil(
-                                context, NamedRoute.addUser, (route) => false);
+                                context, NamedRoute.home, (route) => false);
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.white,
-                          surfaceTintColor: Colors.white,
+                          backgroundColor: tsOneColorScheme.secondary,
+                          foregroundColor: tsOneColorScheme.secondaryContainer,
+                          surfaceTintColor: tsOneColorScheme.secondary,
                           minimumSize: const Size.fromHeight(40),
                         ),
                         child: const Row(
