@@ -7,6 +7,7 @@ class AssessmentVariables with ChangeNotifier {
     this.category = "",
     this.name = "",
     this.typeOfAssessment = "",
+    this.applicableForFlight = true,
   });
 
   String id = "";
@@ -36,7 +37,7 @@ class AssessmentVariables with ChangeNotifier {
     applicableForFlight = map[keyApplicableForFlight];
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toFirebase() {
     return {
       keyId: id,
       keyAssessmentPeriodId: assessmentPeriodId,
@@ -49,6 +50,6 @@ class AssessmentVariables with ChangeNotifier {
 
   @override
   String toString() {
-    return 'AssessmentVariablesModel{id: $id, assessmentPeriodId: $assessmentPeriodId, category: $category, name: $name, typeOfAssessment: $typeOfAssessment}, applicableForFlight: $applicableForFlight';
+    return 'AssessmentVariablesModel{id: $id, assessmentPeriodId: $assessmentPeriodId, category: $category, name: $name, typeOfAssessment: $typeOfAssessment, applicableForFlight: $applicableForFlight},';
   }
 }
