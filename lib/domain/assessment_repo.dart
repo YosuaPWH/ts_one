@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 
@@ -27,6 +30,14 @@ abstract class AssessmentRepo {
       AssessmentVariables assessmentVariablesModel);
 
   Future<void> deleteAssessmentVariable(String id);
+
+  // assessment flight details
+  Future<AssessmentFlightDetails> getAllAssessmentFlightDetails();
+  Future<AssessmentFlightDetails> addAssessmentFlightDetails(
+      AssessmentFlightDetails assessmentFlightDetailsModel);
+  Future<AssessmentFlightDetails> updateAssessmentFlightDetails(
+      AssessmentFlightDetails assessmentFlightDetailsModel);
+  Future<void> deleteAssessmentFlightDetails(String nameFlightDetails);
 }
 
 class AssessmentRepoImpl implements AssessmentRepo {
@@ -97,7 +108,6 @@ class AssessmentRepoImpl implements AssessmentRepo {
     return assessmentPeriod;
   }
 
-  @override
   Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod newAssessmentPeriod) async {
     AssessmentPeriod lastAssessmentPeriod = AssessmentPeriod();
     try {
@@ -210,6 +220,52 @@ class AssessmentRepoImpl implements AssessmentRepo {
   @override
   Future<void> deleteAssessmentVariable(String id) {
     // TODO: implement deleteAssessmentVariable
+    throw UnimplementedError();
+  }
+
+  // ==================== Assessment Flight Details ==============================================================
+
+  @override
+  Future<AssessmentFlightDetails> getAllAssessmentFlightDetails() async {
+    List<String> assessmentFlightDetails = [];
+    try {
+      await _db!
+          .collection(AssessmentFlightDetails.firebaseCollection)
+          .doc(AssessmentFlightDetails.firebaseDocument)
+          .get()
+          .then((value) {
+        log("flightdetail: ${value.data()![AssessmentFlightDetails.flightDetailsKey]}");
+        (value.data()![AssessmentFlightDetails.flightDetailsKey])
+            .forEach((element) {
+          assessmentFlightDetails.add(element.toString());
+        });
+      });
+
+      return AssessmentFlightDetails(flightDetails: assessmentFlightDetails);
+    } catch (e) {
+      log("Exception in AssessmentRepo on getAllAssessmentFlightDetails: $e");
+    }
+
+    return AssessmentFlightDetails(flightDetails: assessmentFlightDetails);
+  }
+
+  @override
+  Future<AssessmentFlightDetails> addAssessmentFlightDetails(
+      AssessmentFlightDetails assessmentFlightDetailsModel) {
+    // TODO: implement addAssessmentFlightDetails
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteAssessmentFlightDetails(String nameFlightDetails) {
+    // TODO: implement deleteAssessmentFlightDetails
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<AssessmentFlightDetails> updateAssessmentFlightDetails(
+      AssessmentFlightDetails assessmentFlightDetailsModel) {
+    // TODO: implement updateAssessmentFlightDetails
     throw UnimplementedError();
   }
 }

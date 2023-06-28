@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ts_one/presentation/shared_components/card_user.dart';
+import 'package:ts_one/presentation/shared_components/search_component.dart';
 import 'package:ts_one/presentation/theme.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -67,28 +68,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: TextField(
-                cursorColor: TsOneColor.primary,
-                decoration: InputDecoration(
-                  fillColor: TsOneColor.onPrimary,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
-                    borderSide: const BorderSide(color: TsOneColor.primary),
-                  ),
-                  hintText: 'Search...',
-                  hintStyle: const TextStyle(
-                    color: TsOneColor.onSecondary,
-                  ),
-                  prefixIcon: Container(
-                    padding: const EdgeInsets.all(10),
-                    width: 32,
-                    child: const Icon(Icons.search),
-                  ),
-                ),
-              ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 5),
+              child: SearchComponent(),
             ),
             Expanded(
               child: ListView.builder(
