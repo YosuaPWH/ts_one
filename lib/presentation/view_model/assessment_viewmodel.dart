@@ -79,4 +79,15 @@ class AssessmentViewModel extends LoadingViewModel {
     }
     return assessmentPeriod;
   }
+
+  Future<void> deleteAssessmentPeriodById(String id) async {
+    isLoading = true;
+    try {
+      await repo.deleteAssessmentPeriodById(id);
+      isLoading = false;
+    } catch (e) {
+      print("Exception on AssessmentViewModel: $e");
+      isLoading = false;
+    }
+  }
 }

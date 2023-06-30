@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
@@ -82,16 +83,59 @@ class _DetailAssessmentPeriodViewState
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(
-                context,
-                NamedRoute.updateAssessmentPeriod,
-                arguments: assessmentPeriodId
-            );
-          },
+        floatingActionButtonLocation: ExpandableFab.location,
+        floatingActionButton: ExpandableFab(
           backgroundColor: TsOneColor.primary,
-          child: const Icon(Icons.edit),
+          children: [
+            FloatingActionButton(
+              heroTag: "buttonEdit",
+              onPressed: () {
+                Navigator.pushNamed(
+                    context,
+                    NamedRoute.updateAssessmentPeriod,
+                    arguments: assessmentPeriodId
+                );
+              },
+              backgroundColor: TsOneColor.primary,
+              child: const Icon(Icons.edit),
+            ),
+            FloatingActionButton(
+              heroTag: "buttonDelete",
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Delete Form Assessment ${assessmentPeriod.id}?"),
+                      content: const Text(
+                          "You will not be able to retrieve this data anymore. "
+                              "Are you sure you want to delete this form assessment?"
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("No"),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            await viewModel.deleteAssessmentPeriodById(
+                                assessmentPeriodId);
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Yes"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              backgroundColor: TsOneColor.primary,
+              child: const Icon(Icons.delete),
+            ),
+          ],
         )
       );
     });

@@ -17,7 +17,7 @@ abstract class AssessmentRepo {
   Future<AssessmentPeriod> updateAssessmentPeriod(
       AssessmentPeriod assessmentPeriodModel);
 
-  Future<void> deleteAssessmentPeriod(String id);
+  Future<void> deleteAssessmentPeriodById(String id);
 
   // assessment variables
   Future<List<AssessmentVariables>> getAllAssessmentVariables(
@@ -253,9 +253,26 @@ class AssessmentRepoImpl implements AssessmentRepo {
   }
 
   @override
-  Future<void> deleteAssessmentPeriod(String id) {
-    // TODO: implement deleteAssessmentPeriod
-    throw UnimplementedError();
+  Future<void> deleteAssessmentPeriodById(String id) async {
+    /** delete all the assessment variables that contains the String id first */
+    await _db!
+        .collection(AssessmentVariables.firebaseCollection)
+        .where(AssessmentVariables.keyAssessmentPeriodId, isEqualTo: id)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        _db!
+            .collection(AssessmentVariables.firebaseCollection)
+            .doc(doc.id)
+            .delete();
+      }
+    });
+
+    /** delete the assessment period */
+    await _db!
+        .collection(AssessmentPeriod.firebaseCollection)
+        .doc(id)
+        .delete();
   }
 
   @override
