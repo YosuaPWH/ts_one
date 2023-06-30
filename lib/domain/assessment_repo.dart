@@ -73,6 +73,13 @@ class AssessmentRepoImpl implements AssessmentRepo {
     return assessmentPeriods;
   }
 
+  int assessmentVariableCollectionComparator(DocumentSnapshot a, DocumentSnapshot b) {
+    final idA = int.parse(a.id.split('-')[1]); // Extract the numerical part from the ID of document A
+    final idB = int.parse(b.id.split('-')[1]); // Extract the numerical part from the ID of document B
+
+    return idA.compareTo(idB);
+  }
+
   @override
   Future<AssessmentPeriod> getAssessmentPeriodById(String id) async {
     AssessmentPeriod assessmentPeriod = AssessmentPeriod();
@@ -88,18 +95,21 @@ class AssessmentRepoImpl implements AssessmentRepo {
             documentSnapshot.data() as Map<String, dynamic>);
       });
 
-      assessmentVariables = await _db!
+      final documents = await _db!
           .collection(AssessmentVariables.firebaseCollection)
           .where(AssessmentVariables.keyAssessmentPeriodId,
               isEqualTo: assessmentPeriod.id)
           .get()
           .then((QuerySnapshot querySnapshot) {
-        for (var doc in querySnapshot.docs) {
-          assessmentVariables.add(AssessmentVariables.fromFirebase(
-              doc.data() as Map<String, dynamic>));
-        }
-        return assessmentVariables;
+        return querySnapshot.docs;
       });
+
+      documents.sort(assessmentVariableCollectionComparator);
+
+      for (var doc in documents) {
+        assessmentVariables.add(AssessmentVariables.fromFirebase(
+            doc.data() as Map<String, dynamic>));
+      }
 
       assessmentPeriod.assessmentVariables = assessmentVariables;
     } catch (e) {
@@ -108,6 +118,7 @@ class AssessmentRepoImpl implements AssessmentRepo {
     return assessmentPeriod;
   }
 
+  @override
   Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod newAssessmentPeriod) async {
     AssessmentPeriod lastAssessmentPeriod = AssessmentPeriod();
     try {
@@ -187,6 +198,13 @@ class AssessmentRepoImpl implements AssessmentRepo {
   Future<AssessmentPeriod> updateAssessmentPeriod(
       AssessmentPeriod assessmentPeriod) async {
     AssessmentPeriod updatedAssessmentPeriod = AssessmentPeriod();
+
+    bool newAssessmentVariablesAdded = false;
+    AssessmentPeriod currentAssessmentPeriod = await getAssessmentPeriodById(assessmentPeriod.id);
+    if(currentAssessmentPeriod.assessmentVariables.length < assessmentPeriod.assessmentVariables.length){
+      newAssessmentVariablesAdded = true;
+    }
+
     try{
       /** update the assessment period model */
       await _db!
@@ -201,6 +219,22 @@ class AssessmentRepoImpl implements AssessmentRepo {
             .doc(assessmentVariable.id)
             .update(assessmentVariable.toFirebase());
       });
+
+      /** if new assessment variables are added, add them to firebase */
+      if(newAssessmentVariablesAdded){
+        int assessmentVariableId = currentAssessmentPeriod.assessmentVariables.length + 1;
+        for (var assessmentVariable in assessmentPeriod.assessmentVariables) {
+          if(assessmentVariable.id == ""){
+            assessmentVariable.id = "av-$assessmentVariableId-${assessmentPeriod.id}";
+            assessmentVariable.assessmentPeriodId = assessmentPeriod.id;
+            assessmentVariableId++;
+            await _db!
+                .collection(AssessmentVariables.firebaseCollection)
+                .doc(assessmentVariable.id)
+                .set(assessmentVariable.toFirebase());
+          }
+        }
+      }
 
       /** get the updated assessment period model */
       updatedAssessmentPeriod = await _db!
