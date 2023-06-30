@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
@@ -49,6 +50,8 @@ class _DetailAssessmentPeriodViewState
     assessmentPeriod =
         await viewModel.getAssessmentPeriodById(assessmentPeriodId);
 
+    assessmentCategories.clear();
+
     for (var assessmentVariable in assessmentPeriod.assessmentVariables) {
       if(!assessmentCategories.contains(assessmentVariable.category)) {
         assessmentCategories.add(assessmentVariable.category);
@@ -59,84 +62,89 @@ class _DetailAssessmentPeriodViewState
   @override
   Widget build(BuildContext context) {
     return Consumer<AssessmentViewModel>(builder: (_, model, child) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text("Form Assessment $assessmentPeriodId"),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: assessmentPeriod.id == Util.defaultStringIfNull //if
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : //else
-                    SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: _buildExpansionTileForAllAssessmentVariables(assessmentPeriod.assessmentVariables),
+      return FocusDetector(
+        onFocusGained: () {
+          getAssessmentPeriodById();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Form Assessment $assessmentPeriodId"),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: assessmentPeriod.id == Util.defaultStringIfNull //if
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : //else
+                      SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: _buildExpansionTileForAllAssessmentVariables(assessmentPeriod.assessmentVariables),
+                          ),
                         ),
-                      ),
+                ),
+              ],
+            ),
+          ),
+          floatingActionButtonLocation: ExpandableFab.location,
+          floatingActionButton: ExpandableFab(
+            backgroundColor: TsOneColor.primary,
+            children: [
+              FloatingActionButton(
+                heroTag: "buttonEdit",
+                onPressed: () {
+                  Navigator.pushNamed(
+                      context,
+                      NamedRoute.updateAssessmentPeriod,
+                      arguments: assessmentPeriodId
+                  );
+                },
+                backgroundColor: TsOneColor.primary,
+                child: const Icon(Icons.edit),
+              ),
+              FloatingActionButton(
+                heroTag: "buttonDelete",
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Delete Form Assessment ${assessmentPeriod.id}?"),
+                        content: const Text(
+                            "You will not be able to retrieve this data anymore. "
+                                "Are you sure you want to delete this form assessment?"
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("No"),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              await viewModel.deleteAssessmentPeriodById(
+                                  assessmentPeriodId);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Yes"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                backgroundColor: TsOneColor.primary,
+                child: const Icon(Icons.delete),
               ),
             ],
-          ),
+          )
         ),
-        floatingActionButtonLocation: ExpandableFab.location,
-        floatingActionButton: ExpandableFab(
-          backgroundColor: TsOneColor.primary,
-          children: [
-            FloatingActionButton(
-              heroTag: "buttonEdit",
-              onPressed: () {
-                Navigator.pushNamed(
-                    context,
-                    NamedRoute.updateAssessmentPeriod,
-                    arguments: assessmentPeriodId
-                );
-              },
-              backgroundColor: TsOneColor.primary,
-              child: const Icon(Icons.edit),
-            ),
-            FloatingActionButton(
-              heroTag: "buttonDelete",
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text("Delete Form Assessment ${assessmentPeriod.id}?"),
-                      content: const Text(
-                          "You will not be able to retrieve this data anymore. "
-                              "Are you sure you want to delete this form assessment?"
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("No"),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            await viewModel.deleteAssessmentPeriodById(
-                                assessmentPeriodId);
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Yes"),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              backgroundColor: TsOneColor.primary,
-              child: const Icon(Icons.delete),
-            ),
-          ],
-        )
       );
     });
   }
