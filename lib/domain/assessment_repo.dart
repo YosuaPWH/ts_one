@@ -17,7 +17,7 @@ abstract class AssessmentRepo {
   Future<AssessmentPeriod> updateAssessmentPeriod(
       AssessmentPeriod assessmentPeriodModel);
 
-  Future<void> deleteAssessmentPeriod(String id);
+  Future<void> deleteAssessmentPeriodById(String id);
 
   // assessment variables
   Future<List<AssessmentVariables>> getAllAssessmentVariables(
@@ -33,10 +33,13 @@ abstract class AssessmentRepo {
 
   // assessment flight details
   Future<AssessmentFlightDetails> getAllAssessmentFlightDetails();
+
   Future<AssessmentFlightDetails> addAssessmentFlightDetails(
       AssessmentFlightDetails assessmentFlightDetailsModel);
+
   Future<AssessmentFlightDetails> updateAssessmentFlightDetails(
       AssessmentFlightDetails assessmentFlightDetailsModel);
+
   Future<void> deleteAssessmentFlightDetails(String nameFlightDetails);
 }
 
@@ -67,10 +70,20 @@ class AssessmentRepoImpl implements AssessmentRepo {
         return assessmentPeriods;
       });
     } catch (e) {
-      print("Exception in AssessmentRepo on getAllAssessmentPeriod: $e");
+      log("Exception in AssessmentRepo on getAllAssessmentPeriod: $e");
     }
 
     return assessmentPeriods;
+  }
+
+  int assessmentVariableCollectionComparator(DocumentSnapshot a,
+      DocumentSnapshot b) {
+    final idA = int.parse(a.id
+        .split('-')[1]); // Extract the numerical part from the ID of document A
+    final idB = int.parse(b.id
+        .split('-')[1]); // Extract the numerical part from the ID of document B
+
+    return idA.compareTo(idB);
   }
 
   @override
@@ -88,27 +101,32 @@ class AssessmentRepoImpl implements AssessmentRepo {
             documentSnapshot.data() as Map<String, dynamic>);
       });
 
-      assessmentVariables = await _db!
+      final documents = await _db!
           .collection(AssessmentVariables.firebaseCollection)
           .where(AssessmentVariables.keyAssessmentPeriodId,
-              isEqualTo: assessmentPeriod.id)
+          isEqualTo: assessmentPeriod.id)
           .get()
           .then((QuerySnapshot querySnapshot) {
-        for (var doc in querySnapshot.docs) {
-          assessmentVariables.add(AssessmentVariables.fromFirebase(
-              doc.data() as Map<String, dynamic>));
-        }
-        return assessmentVariables;
+        return querySnapshot.docs;
       });
+
+      documents.sort(assessmentVariableCollectionComparator);
+
+      for (var doc in documents) {
+        assessmentVariables.add(AssessmentVariables.fromFirebase(
+            doc.data() as Map<String, dynamic>));
+      }
 
       assessmentPeriod.assessmentVariables = assessmentVariables;
     } catch (e) {
-      print("Exception in AssessmentRepo on getAssessmentPeriodById: $e");
+      log("Exception in AssessmentRepo on getAssessmentPeriodById: $e");
     }
     return assessmentPeriod;
   }
 
-  Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod newAssessmentPeriod) async {
+  @override
+  Future<AssessmentPeriod> addAssessmentPeriod(
+      AssessmentPeriod newAssessmentPeriod) async {
     AssessmentPeriod lastAssessmentPeriod = AssessmentPeriod();
     try {
       /** get the last id of assessment period */
@@ -152,15 +170,18 @@ class AssessmentRepoImpl implements AssessmentRepo {
       int assessmentVariableId = 1;
 
       for (var assessmentVariable in newAssessmentPeriod.assessmentVariables) {
-        assessmentVariable.id = "av-$assessmentVariableId-${newAssessmentPeriod.id}";
+        assessmentVariable.id =
+        "av-$assessmentVariableId-${newAssessmentPeriod.id}";
         assessmentVariable.assessmentPeriodId = newAssessmentPeriod.id;
         assessmentVariableId++;
       }
 
-      print("Message from AssessmentRepo on addAssessmentPeriod: $newAssessmentPeriod");
+      log(
+          "Message from AssessmentRepo on addAssessmentPeriod: $newAssessmentPeriod");
 
       /** add the assessment variables to firebase */
-      newAssessmentPeriod.assessmentVariables.forEach((assessmentVariable) async {
+      newAssessmentPeriod.assessmentVariables
+          .forEach((assessmentVariable) async {
         await _db!
             .collection(AssessmentVariables.firebaseCollection)
             .doc(assessmentVariable.id)
@@ -177,7 +198,7 @@ class AssessmentRepoImpl implements AssessmentRepo {
             documentSnapshot.data() as Map<String, dynamic>);
       });
     } catch (e) {
-      print("Exception in AssessmentRepo on addAssessmentPeriod: $e");
+      log("Exception in AssessmentRepo on addAssessmentPeriod: $e");
     }
 
     return newAssessmentPeriod;
@@ -185,15 +206,114 @@ class AssessmentRepoImpl implements AssessmentRepo {
 
   @override
   Future<AssessmentPeriod> updateAssessmentPeriod(
-      AssessmentPeriod assessmentPeriodModel) {
-    // TODO: implement updateAssessmentPeriod
-    throw UnimplementedError();
+      AssessmentPeriod assessmentPeriod) async {
+    AssessmentPeriod updatedAssessmentPeriod = AssessmentPeriod();
+
+    bool newAssessmentVariablesAdded = false;
+    bool assessmentVariablesRemoved = false;
+
+    AssessmentPeriod currentAssessmentPeriod =
+    await getAssessmentPeriodById(assessmentPeriod.id);
+    if (currentAssessmentPeriod.assessmentVariables.length <
+        assessmentPeriod.assessmentVariables.length) {
+      newAssessmentVariablesAdded = true;
+    }
+    if (currentAssessmentPeriod.assessmentVariables.length >
+        assessmentPeriod.assessmentVariables.length) {
+      assessmentVariablesRemoved = true;
+    }
+
+    try {
+      /** update the assessment period model */
+      await _db!
+          .collection(AssessmentPeriod.firebaseCollection)
+          .doc(assessmentPeriod.id)
+          .update(assessmentPeriod.toFirebase());
+
+      /** update the assessment variables */
+      assessmentPeriod.assessmentVariables.forEach((assessmentVariable) async {
+        await _db!
+            .collection(AssessmentVariables.firebaseCollection)
+            .doc(assessmentVariable.id)
+            .update(assessmentVariable.toFirebase());
+      });
+
+      /** if new assessment variables are added, add them to firebase */
+      if (newAssessmentVariablesAdded) {
+        int assessmentVariableId =
+            currentAssessmentPeriod.assessmentVariables.length + 1;
+        for (var assessmentVariable in assessmentPeriod.assessmentVariables) {
+          if (assessmentVariable.id == "") {
+            assessmentVariable.id =
+            "av-$assessmentVariableId-${assessmentPeriod.id}";
+            assessmentVariable.assessmentPeriodId = assessmentPeriod.id;
+            assessmentVariableId++;
+            await _db!
+                .collection(AssessmentVariables.firebaseCollection)
+                .doc(assessmentVariable.id)
+                .set(assessmentVariable.toFirebase());
+          }
+        }
+      }
+
+      /** if assessment variables are removed, remove them from firebase */
+      if (assessmentVariablesRemoved) {
+        List<AssessmentVariables> assessmentVariablesToRemove = [];
+        Set<String> assessmentVariablesId = assessmentPeriod
+            .assessmentVariables
+            .map((assessmentVariable) => assessmentVariable.id)
+            .toSet();
+
+        // find the variable to remove using set operations
+        for (var assessmentVariable in currentAssessmentPeriod.assessmentVariables) {
+          if(!assessmentVariablesId.contains(assessmentVariable.id)) {
+            assessmentVariablesToRemove.add(assessmentVariable);
+          }
+        }
+
+        // delete the assessment variables removed from the currentAssessmentPeriod
+        for (var assessmentVariable in assessmentVariablesToRemove) {
+          await _db!
+              .collection(AssessmentVariables.firebaseCollection)
+              .doc(assessmentVariable.id)
+              .delete();
+        }
+      }
+
+      /** get the updated assessment period model */
+      updatedAssessmentPeriod = await _db!
+          .collection(AssessmentPeriod.firebaseCollection)
+          .doc(assessmentPeriod.id)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        return AssessmentPeriod.fromFirebase(
+            documentSnapshot.data() as Map<String, dynamic>);
+      });
+    } catch (e) {
+      log("Exception in AssessmentRepo on updateAssessmentPeriod: $e");
+    }
+
+    return updatedAssessmentPeriod;
   }
 
   @override
-  Future<void> deleteAssessmentPeriod(String id) {
-    // TODO: implement deleteAssessmentPeriod
-    throw UnimplementedError();
+  Future<void> deleteAssessmentPeriodById(String id) async {
+    /** delete all the assessment variables that contains the String id first */
+    await _db!
+        .collection(AssessmentVariables.firebaseCollection)
+        .where(AssessmentVariables.keyAssessmentPeriodId, isEqualTo: id)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        _db!
+            .collection(AssessmentVariables.firebaseCollection)
+            .doc(doc.id)
+            .delete();
+      }
+    });
+
+    /** delete the assessment period */
+    await _db!.collection(AssessmentPeriod.firebaseCollection).doc(id).delete();
   }
 
   @override
@@ -234,7 +354,8 @@ class AssessmentRepoImpl implements AssessmentRepo {
           .doc(AssessmentFlightDetails.firebaseDocument)
           .get()
           .then((value) {
-        log("flightdetail: ${value.data()![AssessmentFlightDetails.flightDetailsKey]}");
+        log("flightdetail: ${value.data()![AssessmentFlightDetails
+            .flightDetailsKey]}");
         (value.data()![AssessmentFlightDetails.flightDetailsKey])
             .forEach((element) {
           assessmentFlightDetails.add(element.toString());

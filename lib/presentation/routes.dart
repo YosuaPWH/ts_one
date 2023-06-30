@@ -8,6 +8,7 @@ import 'package:ts_one/presentation/view/assessment/all_assessment_periods.dart'
 import 'package:ts_one/presentation/view/assessment/detail_assessment_period.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_candidate.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_flight_details.dart';
+import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
 import 'package:ts_one/presentation/view/users/add_user.dart';
 import 'package:ts_one/presentation/view/users/login.dart';
 
@@ -66,6 +67,13 @@ class AppRoutes {
           settings: settings,
         );
 
+      case NamedRoute.updateAssessmentPeriod:
+        return MaterialPageRoute<void>(
+          builder: (context) => UpdateAssessmentPeriodView(
+              assessmentPeriodId: settings.arguments as String),
+          settings: settings,
+        );
+
       default:
         return MaterialPageRoute<void>(
           builder: (_) => _UndefinedView(name: settings.name),
@@ -103,4 +111,5 @@ class NamedRoute {
   static const String allAssessmentPeriods = '/allAssessmentPeriods';
   static const String detailAssessmentPeriod = '/detailAssessmentPeriod';
   static const String addAssessmentPeriod = '/addAssessmentPeriod';
+  static const String updateAssessmentPeriod = '/updateAssessmentPeriod';
 }

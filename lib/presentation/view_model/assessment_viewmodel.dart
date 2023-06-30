@@ -53,7 +53,6 @@ class AssessmentViewModel extends LoadingViewModel {
     }
     return listFlightDetails;
   }
-}
 
   Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod assessmentPeriodModel) async {
     isLoading = true;
@@ -66,5 +65,29 @@ class AssessmentViewModel extends LoadingViewModel {
       isLoading = false;
     }
     return assessmentPeriod;
+  }
+
+  Future<AssessmentPeriod> updateAssessmentPeriod(AssessmentPeriod assessmentPeriodModel) async {
+    isLoading = true;
+    AssessmentPeriod assessmentPeriod = AssessmentPeriod();
+    try {
+      assessmentPeriod = await repo.updateAssessmentPeriod(assessmentPeriodModel);
+      isLoading = false;
+    } catch (e) {
+      print("Exception on AssessmentViewModel: $e");
+      isLoading = false;
+    }
+    return assessmentPeriod;
+  }
+
+  Future<void> deleteAssessmentPeriodById(String id) async {
+    isLoading = true;
+    try {
+      await repo.deleteAssessmentPeriodById(id);
+      isLoading = false;
+    } catch (e) {
+      print("Exception on AssessmentViewModel: $e");
+      isLoading = false;
+    }
   }
 }
