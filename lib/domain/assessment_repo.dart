@@ -67,7 +67,7 @@ class AssessmentRepoImpl implements AssessmentRepo {
         return assessmentPeriods;
       });
     } catch (e) {
-      print("Exception in AssessmentRepo on getAllAssessmentPeriod: $e");
+      log("Exception in AssessmentRepo on getAllAssessmentPeriod: $e");
     }
 
     return assessmentPeriods;
@@ -103,7 +103,7 @@ class AssessmentRepoImpl implements AssessmentRepo {
 
       assessmentPeriod.assessmentVariables = assessmentVariables;
     } catch (e) {
-      print("Exception in AssessmentRepo on getAssessmentPeriodById: $e");
+      log("Exception in AssessmentRepo on getAssessmentPeriodById: $e");
     }
     return assessmentPeriod;
   }
@@ -157,7 +157,7 @@ class AssessmentRepoImpl implements AssessmentRepo {
         assessmentVariableId++;
       }
 
-      print("Message from AssessmentRepo on addAssessmentPeriod: $newAssessmentPeriod");
+      log("Message from AssessmentRepo on addAssessmentPeriod: $newAssessmentPeriod");
 
       /** add the assessment variables to firebase */
       newAssessmentPeriod.assessmentVariables.forEach((assessmentVariable) async {
@@ -177,7 +177,7 @@ class AssessmentRepoImpl implements AssessmentRepo {
             documentSnapshot.data() as Map<String, dynamic>);
       });
     } catch (e) {
-      print("Exception in AssessmentRepo on addAssessmentPeriod: $e");
+      log("Exception in AssessmentRepo on addAssessmentPeriod: $e");
     }
 
     return newAssessmentPeriod;
@@ -185,9 +185,37 @@ class AssessmentRepoImpl implements AssessmentRepo {
 
   @override
   Future<AssessmentPeriod> updateAssessmentPeriod(
-      AssessmentPeriod assessmentPeriodModel) {
-    // TODO: implement updateAssessmentPeriod
-    throw UnimplementedError();
+      AssessmentPeriod assessmentPeriod) async {
+    AssessmentPeriod updatedAssessmentPeriod = AssessmentPeriod();
+    try{
+      /** update the assessment period model */
+      await _db!
+          .collection(AssessmentPeriod.firebaseCollection)
+          .doc(assessmentPeriod.id)
+          .update(assessmentPeriod.toFirebase());
+
+      /** update the assessment variables */
+      assessmentPeriod.assessmentVariables.forEach((assessmentVariable) async {
+        await _db!
+            .collection(AssessmentVariables.firebaseCollection)
+            .doc(assessmentVariable.id)
+            .update(assessmentVariable.toFirebase());
+      });
+
+      /** get the updated assessment period model */
+      updatedAssessmentPeriod = await _db!
+          .collection(AssessmentPeriod.firebaseCollection)
+          .doc(assessmentPeriod.id)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        return AssessmentPeriod.fromFirebase(
+            documentSnapshot.data() as Map<String, dynamic>);
+      });
+    } catch (e) {
+      log("Exception in AssessmentRepo on updateAssessmentPeriod: $e");
+    }
+
+    return updatedAssessmentPeriod;
   }
 
   @override

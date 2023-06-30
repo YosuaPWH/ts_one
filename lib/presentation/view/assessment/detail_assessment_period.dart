@@ -5,6 +5,7 @@ import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/di/locator.dart';
+import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
 import 'package:ts_one/util/util.dart';
@@ -81,6 +82,17 @@ class _DetailAssessmentPeriodViewState
             ],
           ),
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pushNamed(
+                context,
+                NamedRoute.updateAssessmentPeriod,
+                arguments: assessmentPeriodId
+            );
+          },
+          backgroundColor: TsOneColor.primary,
+          child: const Icon(Icons.edit),
+        )
       );
     });
   }

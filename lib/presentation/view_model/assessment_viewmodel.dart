@@ -66,4 +66,17 @@ class AssessmentViewModel extends LoadingViewModel {
     }
     return assessmentPeriod;
   }
+
+  Future<AssessmentPeriod> updateAssessmentPeriod(AssessmentPeriod assessmentPeriodModel) async {
+    isLoading = true;
+    AssessmentPeriod assessmentPeriod = AssessmentPeriod();
+    try {
+      assessmentPeriod = await repo.updateAssessmentPeriod(assessmentPeriodModel);
+      isLoading = false;
+    } catch (e) {
+      print("Exception on AssessmentViewModel: $e");
+      isLoading = false;
+    }
+    return assessmentPeriod;
+  }
 }
