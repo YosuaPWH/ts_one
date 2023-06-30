@@ -33,10 +33,13 @@ abstract class AssessmentRepo {
 
   // assessment flight details
   Future<AssessmentFlightDetails> getAllAssessmentFlightDetails();
+
   Future<AssessmentFlightDetails> addAssessmentFlightDetails(
       AssessmentFlightDetails assessmentFlightDetailsModel);
+
   Future<AssessmentFlightDetails> updateAssessmentFlightDetails(
       AssessmentFlightDetails assessmentFlightDetailsModel);
+
   Future<void> deleteAssessmentFlightDetails(String nameFlightDetails);
 }
 
@@ -73,9 +76,12 @@ class AssessmentRepoImpl implements AssessmentRepo {
     return assessmentPeriods;
   }
 
-  int assessmentVariableCollectionComparator(DocumentSnapshot a, DocumentSnapshot b) {
-    final idA = int.parse(a.id.split('-')[1]); // Extract the numerical part from the ID of document A
-    final idB = int.parse(b.id.split('-')[1]); // Extract the numerical part from the ID of document B
+  int assessmentVariableCollectionComparator(DocumentSnapshot a,
+      DocumentSnapshot b) {
+    final idA = int.parse(a.id
+        .split('-')[1]); // Extract the numerical part from the ID of document A
+    final idB = int.parse(b.id
+        .split('-')[1]); // Extract the numerical part from the ID of document B
 
     return idA.compareTo(idB);
   }
@@ -98,7 +104,7 @@ class AssessmentRepoImpl implements AssessmentRepo {
       final documents = await _db!
           .collection(AssessmentVariables.firebaseCollection)
           .where(AssessmentVariables.keyAssessmentPeriodId,
-              isEqualTo: assessmentPeriod.id)
+          isEqualTo: assessmentPeriod.id)
           .get()
           .then((QuerySnapshot querySnapshot) {
         return querySnapshot.docs;
@@ -119,7 +125,8 @@ class AssessmentRepoImpl implements AssessmentRepo {
   }
 
   @override
-  Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod newAssessmentPeriod) async {
+  Future<AssessmentPeriod> addAssessmentPeriod(
+      AssessmentPeriod newAssessmentPeriod) async {
     AssessmentPeriod lastAssessmentPeriod = AssessmentPeriod();
     try {
       /** get the last id of assessment period */
@@ -163,15 +170,18 @@ class AssessmentRepoImpl implements AssessmentRepo {
       int assessmentVariableId = 1;
 
       for (var assessmentVariable in newAssessmentPeriod.assessmentVariables) {
-        assessmentVariable.id = "av-$assessmentVariableId-${newAssessmentPeriod.id}";
+        assessmentVariable.id =
+        "av-$assessmentVariableId-${newAssessmentPeriod.id}";
         assessmentVariable.assessmentPeriodId = newAssessmentPeriod.id;
         assessmentVariableId++;
       }
 
-      log("Message from AssessmentRepo on addAssessmentPeriod: $newAssessmentPeriod");
+      log(
+          "Message from AssessmentRepo on addAssessmentPeriod: $newAssessmentPeriod");
 
       /** add the assessment variables to firebase */
-      newAssessmentPeriod.assessmentVariables.forEach((assessmentVariable) async {
+      newAssessmentPeriod.assessmentVariables
+          .forEach((assessmentVariable) async {
         await _db!
             .collection(AssessmentVariables.firebaseCollection)
             .doc(assessmentVariable.id)
@@ -200,12 +210,20 @@ class AssessmentRepoImpl implements AssessmentRepo {
     AssessmentPeriod updatedAssessmentPeriod = AssessmentPeriod();
 
     bool newAssessmentVariablesAdded = false;
-    AssessmentPeriod currentAssessmentPeriod = await getAssessmentPeriodById(assessmentPeriod.id);
-    if(currentAssessmentPeriod.assessmentVariables.length < assessmentPeriod.assessmentVariables.length){
+    bool assessmentVariablesRemoved = false;
+
+    AssessmentPeriod currentAssessmentPeriod =
+    await getAssessmentPeriodById(assessmentPeriod.id);
+    if (currentAssessmentPeriod.assessmentVariables.length <
+        assessmentPeriod.assessmentVariables.length) {
       newAssessmentVariablesAdded = true;
     }
+    if (currentAssessmentPeriod.assessmentVariables.length >
+        assessmentPeriod.assessmentVariables.length) {
+      assessmentVariablesRemoved = true;
+    }
 
-    try{
+    try {
       /** update the assessment period model */
       await _db!
           .collection(AssessmentPeriod.firebaseCollection)
@@ -221,11 +239,13 @@ class AssessmentRepoImpl implements AssessmentRepo {
       });
 
       /** if new assessment variables are added, add them to firebase */
-      if(newAssessmentVariablesAdded){
-        int assessmentVariableId = currentAssessmentPeriod.assessmentVariables.length + 1;
+      if (newAssessmentVariablesAdded) {
+        int assessmentVariableId =
+            currentAssessmentPeriod.assessmentVariables.length + 1;
         for (var assessmentVariable in assessmentPeriod.assessmentVariables) {
-          if(assessmentVariable.id == ""){
-            assessmentVariable.id = "av-$assessmentVariableId-${assessmentPeriod.id}";
+          if (assessmentVariable.id == "") {
+            assessmentVariable.id =
+            "av-$assessmentVariableId-${assessmentPeriod.id}";
             assessmentVariable.assessmentPeriodId = assessmentPeriod.id;
             assessmentVariableId++;
             await _db!
@@ -233,6 +253,30 @@ class AssessmentRepoImpl implements AssessmentRepo {
                 .doc(assessmentVariable.id)
                 .set(assessmentVariable.toFirebase());
           }
+        }
+      }
+
+      /** if assessment variables are removed, remove them from firebase */
+      if (assessmentVariablesRemoved) {
+        List<AssessmentVariables> assessmentVariablesToRemove = [];
+        Set<String> assessmentVariablesId = assessmentPeriod
+            .assessmentVariables
+            .map((assessmentVariable) => assessmentVariable.id)
+            .toSet();
+
+        // find the variable to remove using set operations
+        for (var assessmentVariable in currentAssessmentPeriod.assessmentVariables) {
+          if(!assessmentVariablesId.contains(assessmentVariable.id)) {
+            assessmentVariablesToRemove.add(assessmentVariable);
+          }
+        }
+
+        // delete the assessment variables removed from the currentAssessmentPeriod
+        for (var assessmentVariable in assessmentVariablesToRemove) {
+          await _db!
+              .collection(AssessmentVariables.firebaseCollection)
+              .doc(assessmentVariable.id)
+              .delete();
         }
       }
 
@@ -269,10 +313,7 @@ class AssessmentRepoImpl implements AssessmentRepo {
     });
 
     /** delete the assessment period */
-    await _db!
-        .collection(AssessmentPeriod.firebaseCollection)
-        .doc(id)
-        .delete();
+    await _db!.collection(AssessmentPeriod.firebaseCollection).doc(id).delete();
   }
 
   @override
@@ -313,7 +354,8 @@ class AssessmentRepoImpl implements AssessmentRepo {
           .doc(AssessmentFlightDetails.firebaseDocument)
           .get()
           .then((value) {
-        log("flightdetail: ${value.data()![AssessmentFlightDetails.flightDetailsKey]}");
+        log("flightdetail: ${value.data()![AssessmentFlightDetails
+            .flightDetailsKey]}");
         (value.data()![AssessmentFlightDetails.flightDetailsKey])
             .forEach((element) {
           assessmentFlightDetails.add(element.toString());
