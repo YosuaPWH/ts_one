@@ -114,23 +114,25 @@ class _NewAssessmentFlightDetailsState
                   if (!model.isLoading)
                     Column(
                       children: assessmentFlightDetails.keys
-                          .map<Widget>((item) => ListTileTheme(
-                                contentPadding: const EdgeInsets.all(0),
-                                child: CheckboxListTile(
-                                  value: assessmentFlightDetails[item],
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      assessmentFlightDetails[item] = newValue!;
-                                    });
-                                  },
-                                  title: Text(
-                                    item,
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading,
+                          .map<Widget>(
+                            (item) => ListTileTheme(
+                              contentPadding: const EdgeInsets.all(0),
+                              child: CheckboxListTile(
+                                value: assessmentFlightDetails[item],
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    assessmentFlightDetails[item] = newValue!;
+                                  });
+                                },
+                                title: Text(
+                                  item,
+                                  style: const TextStyle(fontSize: 14),
                                 ),
-                              ))
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                              ),
+                            ),
+                          )
                           .toList(),
                     )
                   else
