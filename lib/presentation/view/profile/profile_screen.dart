@@ -89,6 +89,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: const Text("Logout"),
                 ),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, NamedRoute.allAssessmentPeriods);
+                    },
+                    child: const Text("All Assessment Periods")
+                )
               ],
             ),
           ),

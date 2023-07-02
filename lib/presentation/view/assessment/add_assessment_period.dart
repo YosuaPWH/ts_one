@@ -18,6 +18,7 @@ class AddAssessmentPeriodView extends StatefulWidget {
 class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
   late AssessmentViewModel viewModel;
   late AssessmentPeriod assessmentPeriod;
+  late ScrollController scrollController;
   final _formKey = GlobalKey<FormState>();
   late List<Map<String, TextEditingController>> controllers;
   late List<Map<String, Widget>> inputs;
@@ -26,6 +27,7 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
   void initState() {
     viewModel = Provider.of<AssessmentViewModel>(context, listen: false);
     assessmentPeriod = AssessmentPeriod();
+    scrollController = ScrollController();
     controllers = [];
     inputs = [];
 
@@ -123,6 +125,7 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
                       child: SizedBox(
                         height: 200.0,
                         child: SingleChildScrollView(
+                          controller: scrollController,
                           child: Column(
                             children: [
                               for (var i = 0; i < inputs.length; i++)
@@ -168,6 +171,12 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
                                                 inputs.removeLast();
                                               }
                                             });
+
+                                            scrollController.animateTo(
+                                              scrollController.position.maxScrollExtent,
+                                              duration: const Duration(milliseconds: 500),
+                                              curve: Curves.easeOut,
+                                            );
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: tsOneColorScheme.secondary,
@@ -186,6 +195,14 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
                                           onPressed: () {
                                             setState(() {
                                               _buildInput(inputs.length);
+                                            });
+
+                                            Future.delayed(const Duration(milliseconds: 200)).then((value) => {
+                                              scrollController.animateTo(
+                                                scrollController.position.maxScrollExtent,
+                                                duration: const Duration(milliseconds: 500),
+                                                curve: Curves.easeOut,
+                                              )
                                             });
                                           },
                                           style: ElevatedButton.styleFrom(
