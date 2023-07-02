@@ -13,6 +13,7 @@ class UserPreferences extends ChangeNotifier {
   static String keyUserID = "USER_ID";
   static String keyEmail = "EMAIL";
   static String keyName = "NAME";
+  static String keyPhotoURL = "PHOTO_URL";
   static String keyStaffNo = "STAFF_NO";
   static String keyPosition = "POSITION";
   static String keySubPosition = "SUB_POSITION";
@@ -26,6 +27,7 @@ class UserPreferences extends ChangeNotifier {
     preferences.setString(UserPreferences.keyUserID, userAuth.userCredential!.user!.uid);
     preferences.setString(UserPreferences.keyEmail, userAuth.userCredential!.user!.email!);
     preferences.setString(UserPreferences.keyName, userAuth.userModel!.name);
+    preferences.setString(UserPreferences.keyPhotoURL, userAuth.userCredential!.user!.photoURL.toString() ?? "");
     preferences.setString(UserPreferences.keyStaffNo, userAuth.userModel!.staffNo);
     preferences.setString(UserPreferences.keyPosition, userAuth.userModel!.position);
     preferences.setString(UserPreferences.keySubPosition, userAuth.userModel!.subPosition);
@@ -41,6 +43,7 @@ class UserPreferences extends ChangeNotifier {
     preferences.setString(UserPreferences.keyUserID, "");
     preferences.setString(UserPreferences.keyEmail, "");
     preferences.setString(UserPreferences.keyName, "");
+    preferences.setString(UserPreferences.keyPhotoURL, "");
     preferences.setString(UserPreferences.keyStaffNo, "");
     preferences.setString(UserPreferences.keyPosition, "");
     preferences.setString(UserPreferences.keySubPosition, "");
@@ -89,6 +92,15 @@ class UserPreferences extends ChangeNotifier {
 
   String getName() {
     return preferences.getString(UserPreferences.keyName) ?? "";
+  }
+
+  void savePhotoURL(String photoURL) {
+    preferences.setString(UserPreferences.keyPhotoURL, photoURL);
+    notifyListeners();
+  }
+
+  String getPhotoURL() {
+    return preferences.getString(UserPreferences.keyPhotoURL) ?? "";
   }
 
   void savePosition(String position) {
