@@ -43,8 +43,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: TsOneColor.primary,
+                          color: TsOneColor.surface,
                           borderRadius: BorderRadius.circular(16),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: TsOneColor.secondaryContainer,
+                              blurRadius: 10,
+                              spreadRadius: -5,
+                              offset: Offset(1, 1),
+                              blurStyle: BlurStyle.normal,
+                            ),
+                          ],
                         ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -68,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
-                                  color: TsOneColor.onPrimary,
+                                  color: TsOneColor.onSurface,
                                   fontFamily: 'Poppins',
                                   decorationColor: TsOneColor.primary,
                                 ),
@@ -78,14 +87,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: TsOneColor.onPrimary,
+                                  color: TsOneColor.onSurface,
                                   fontFamily: 'Poppins',
                                 ),
                               ),
                               Text(
                                 userPreferences.getStaffNo(),
                                 style: const TextStyle(
-                                  color: TsOneColor.onPrimary,
+                                  color: TsOneColor.onSurface,
                                 ),
                               ),
                             ],
@@ -101,12 +110,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: const EdgeInsets.only(bottom: 32.0),
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: TsOneColor.secondary,
+                        color: TsOneColor.primary,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: TsOneColor.secondaryContainer,
+                          color: TsOneColor.primary,
                           width: 1,
                         ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: TsOneColor.secondaryContainer,
+                            blurRadius: 15,
+                            spreadRadius: -5,
+                            offset: Offset(-2, 1),
+                            blurStyle: BlurStyle.normal,
+                          ),
+                        ],
                       ),
                       child: Column(
                          children: [
@@ -115,13 +133,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                              children: [
                                 const Padding(
                                   padding: EdgeInsets.only(top: 16.0, left: 16.0),
-                                  child: Text("License No.")
+                                  child: Text(
+                                      "License No.",
+                                      style: TextStyle(
+                                        color: TsOneColor.onPrimary,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Poppins',
+                                      )
+                                  )
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16.0, right: 16.0),
                                   child: Text(
                                     userPreferences.getLicenseNo(),
-                                    style: tsOneTextTheme.displaySmall
+                                    style: const TextStyle(
+                                      color: TsOneColor.onPrimary,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: 'Poppins',
+                                    )
                                   ),
                                 ),
                               ],
@@ -131,13 +162,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               children: [
                                   const Padding(
                                     padding: EdgeInsets.only(top: 16.0, bottom: 16.0, left: 16.0),
-                                    child: Text("License Expiry")
+                                    child: Text(
+                                        "License Expiry",
+                                        style: TextStyle(
+                                          color: TsOneColor.onPrimary,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Poppins',
+                                        )
+                                    )
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 16.0),
                                     child: Text(
                                       Util.convertDateTimeDisplay(userPreferences.getLicenseExpiry().toString(), "dd MMMM yyyy"),
-                                      style: tsOneTextTheme.displaySmall
+                                      style: const TextStyle(
+                                        color: TsOneColor.onPrimary,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Poppins',
+                                      )
                                     ),
                                   ),
                                 ],
