@@ -147,7 +147,6 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    surfaceTintColor: tsOneColorScheme.primary,
                     backgroundColor: tsOneColorScheme.primary),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
@@ -156,7 +155,6 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                     alignment: Alignment.center,
                     child: Text(
                       "Next",
-                      textAlign: TextAlign.center,
                       style: TextStyle(color: TsOneColor.secondary),
                     ),
                   ),
