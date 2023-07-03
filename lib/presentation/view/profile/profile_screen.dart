@@ -198,6 +198,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     )
                 ),
                 ElevatedButton(
+                    onPressed: () {
+
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: tsOneColorScheme.secondary,
+                      foregroundColor: tsOneColorScheme.secondaryContainer,
+                      surfaceTintColor: tsOneColorScheme.secondary,
+                      minimumSize: const Size.fromHeight(40),
+                    ),
+                    child: const Text("Manage User"),
+                ),
+                ElevatedButton(
                   onPressed: () {
                     viewModel.logout();
                     Navigator.pushNamedAndRemoveUntil(

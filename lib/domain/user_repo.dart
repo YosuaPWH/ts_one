@@ -6,8 +6,12 @@ import 'package:ts_one/data/users/users.dart';
 abstract class UserRepo {
   Future<UserAuth> login(String email, String password);
   Future<UserAuth> loginWithGoogle();
-  Future<UserModel> addUser(UserModel userModel);
   Future<void> logout();
+  Future<List<UserModel>> getAllUsers();
+  Future<UserModel> getUserByEmail(String email);
+  Future<UserModel> addUser(UserModel userModel);
+  Future<UserModel> updateUser(UserModel userModel);
+  Future<void> deleteUserByEmail(String email);
 }
 
 class UserRepoImpl implements UserRepo {
@@ -114,6 +118,52 @@ class UserRepoImpl implements UserRepo {
   }
 
   @override
+  Future<void> logout() async {
+    try {
+      return await _auth!.signOut();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  @override
+  Future<List<UserModel>> getAllUsers() async {
+    List<UserModel> users = [];
+
+    try {
+      // get all users from firestore database
+      final usersData = await _db!.collection(UserModel.firebaseCollection).get();
+
+      // create user model from firebase user and user data from firestore
+      users = usersData.docs.map((e) => UserModel.fromFirebaseUser(e.data())).toList();
+    } catch (e) {
+      print(e.toString());
+    }
+
+    return users;
+  }
+
+  @override
+  Future<UserModel> getUserByEmail(String email) async {
+    UserModel user = UserModel();
+
+    try {
+      // get user data from firestore database by finding the email of the current user
+      final userData = await _db!
+          .collection(UserModel.firebaseCollection)
+          .doc(email)
+          .get();
+
+      // create user model from firebase user and user data from firestore
+      user = UserModel.fromFirebaseUser(userData.data()!);
+    } catch (e) {
+      print(e.toString());
+    }
+
+    return user;
+  }
+
+  @override
   Future<UserModel> addUser(UserModel userModel) async {
     UserModel newUserModel = UserModel();
 
@@ -122,7 +172,7 @@ class UserRepoImpl implements UserRepo {
       await _db!
           .collection(UserModel.firebaseCollection)
           .doc(userModel.email)
-          .set(userModel.toMap());
+          .set(userModel.toFirebase());
 
       // get user data from firestore database by finding the email of the current user
       final userData = await _db!
@@ -140,11 +190,13 @@ class UserRepoImpl implements UserRepo {
   }
 
   @override
-  Future<void> logout() async {
-    try {
-      return await _auth!.signOut();
-    } catch (e) {
-      print(e.toString());
-    }
+  Future<UserModel> updateUser(UserModel userModel) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteUserByEmail(String email) {
+    // TODO: implement deleteUserByEmail
+    throw UnimplementedError();
   }
 }

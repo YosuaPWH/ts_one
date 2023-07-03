@@ -60,7 +60,7 @@ class UserModel with ChangeNotifier {
     privileges = (map[keyPrivileges] as List<dynamic>).map((item) => item.toString()).toList();
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toFirebase() {
     return {
       keyEmail: email,
       keyStaffNo: staffNo,
