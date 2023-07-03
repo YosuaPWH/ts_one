@@ -27,7 +27,14 @@ class UserPreferences extends ChangeNotifier {
     preferences.setString(UserPreferences.keyUserID, userAuth.userCredential!.user!.uid);
     preferences.setString(UserPreferences.keyEmail, userAuth.userCredential!.user!.email!);
     preferences.setString(UserPreferences.keyName, userAuth.userModel!.name);
+
     preferences.setString(UserPreferences.keyPhotoURL, userAuth.userCredential!.user!.photoURL.toString() ?? "");
+    String? photoUrl = preferences.getString(keyPhotoURL);
+    if(photoUrl != null) {
+      photoUrl = photoUrl.replaceAll("s96-c", "s384-c");
+    }
+    preferences.setString(UserPreferences.keyPhotoURL, photoUrl ?? "");
+
     preferences.setString(UserPreferences.keyStaffNo, userAuth.userModel!.staffNo);
     preferences.setString(UserPreferences.keyPosition, userAuth.userModel!.position);
     preferences.setString(UserPreferences.keySubPosition, userAuth.userModel!.subPosition);

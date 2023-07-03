@@ -5,6 +5,7 @@ import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
+import 'package:ts_one/util/util.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,49 +32,126 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return SafeArea(
         child: Scaffold(
           body: Padding(
-            padding: const EdgeInsets.all(
-              16.0
-            ),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(children: [
-                  Expanded(
-                      flex: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          // Image border
-                          child: SizedBox.fromSize(
-                            size: const Size.fromRadius(48), // Image radius
-                            child:
-                            Image.network(userPreferences.getPhotoURL()),
-                          ),
+                Expanded(
+                  flex: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: TsOneColor.primary,
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                      )),
-                  Expanded(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
-                            userPreferences.getName(),
-                            style: tsOneTextTheme.headlineLarge,
+                          Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              // Image border
+                              child: SizedBox(
+                                height: 200.0,
+                                child: Image.network(userPreferences.getPhotoURL()),
+                              ),
+                            ),
                           ),
-                          Text(
-                            userPreferences.getPosition(),
-                            style: tsOneTextTheme.labelMedium,
-                          ),
-                          Text(userPreferences.getStaffNo()),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                userPreferences.getName(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: TsOneColor.onPrimary,
+                                  fontFamily: 'Poppins',
+                                  decorationColor: TsOneColor.primary,
+                                ),
+                              ),
+                              Text(
+                                userPreferences.getPosition(),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: TsOneColor.onPrimary,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                              Text(
+                                userPreferences.getStaffNo(),
+                                style: const TextStyle(
+                                  color: TsOneColor.onPrimary,
+                                ),
+                              ),
+                            ],
+                          )
                         ],
-                      ))
-                ]),
-                const Expanded(
-                  child: SizedBox(
-                    height: 16,
+                      ),
+                    ),
                   ),
+                ),
+                Expanded(
+                  flex: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 32.0),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: TsOneColor.secondary,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: TsOneColor.secondaryContainer,
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                         children: [
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 16.0, left: 16.0),
+                                  child: Text("License No.")
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16.0, right: 16.0),
+                                  child: Text(
+                                    userPreferences.getLicenseNo(),
+                                    style: tsOneTextTheme.displaySmall
+                                  ),
+                                ),
+                              ],
+                           ),
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 16.0, bottom: 16.0, left: 16.0),
+                                    child: Text("License Expiry")
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 16.0),
+                                    child: Text(
+                                      Util.convertDateTimeDisplay(userPreferences.getLicenseExpiry().toString(), "dd MMMM yyyy"),
+                                      style: tsOneTextTheme.displaySmall
+                                    ),
+                                  ),
+                                ],
+                           ),
+                         ],
+                      ),
+                    ),
+                  ),
+                ),
+                const Expanded(
+                  // flex: 0,
+                    child: SizedBox(
+                      height: 16,
+                    )
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -89,12 +167,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: const Text("Logout"),
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, NamedRoute.allAssessmentPeriods);
-                    },
-                    child: const Text("All Assessment Periods")
-                )
               ],
             ),
           ),
