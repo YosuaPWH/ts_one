@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:ts_one/data/assessments/assessment_period.dart';
+import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/domain/assessment_repo.dart';
 import 'package:ts_one/presentation/view_model/loading_viewmodel.dart';
 
@@ -52,6 +53,23 @@ class AssessmentViewModel extends LoadingViewModel {
       isLoading = false;
     }
     return listFlightDetails;
+  }
+
+  Future<AssessmentPeriod> getAllAssessmentVariablesFromLastPeriod() async {
+    isLoading = true;
+    AssessmentPeriod lastAssessmentPeriodData = AssessmentPeriod();
+    try {
+      List<AssessmentPeriod> assessmentPeriod = await repo.getAllAssessmentPeriods();
+      String lastAssessmentPeriodId = assessmentPeriod.first.id;
+
+      lastAssessmentPeriodData = await repo.getAssessmentPeriodById(lastAssessmentPeriodId);
+      isLoading = false;
+    } catch (e) {
+      log("Exception on getAllAssessmentVariablesFromLastPeriod function on Assessment View Model: $e");
+      isLoading = false;
+    }
+
+    return lastAssessmentPeriodData;
   }
 
   Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod assessmentPeriodModel) async {

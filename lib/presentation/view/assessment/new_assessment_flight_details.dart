@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
+import 'package:ts_one/presentation/routes.dart';
+import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
 import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
 
 import '../../theme.dart';
@@ -40,6 +42,7 @@ class _NewAssessmentFlightDetailsState
     assessmentFlightDetails = await viewModel.getAllAssessmentFlightDetails();
   }
 
+  List<String> flightDetailsValue = ["Training"];
   String trainingOrCheckingValue = "";
 
   @override
@@ -91,6 +94,7 @@ class _NewAssessmentFlightDetailsState
                       onChanged: (value) {
                         setState(() {
                           trainingOrCheckingValue = value.toString();
+                          flightDetailsValue.first = value.toString();
                         });
                       },
                       items: const [
@@ -122,6 +126,11 @@ class _NewAssessmentFlightDetailsState
                                 onChanged: (newValue) {
                                   setState(() {
                                     assessmentFlightDetails[item] = newValue!;
+                                    if (!flightDetailsValue.contains(item)) {
+                                      flightDetailsValue.add(item);
+                                    } else {
+                                      flightDetailsValue.remove(item);
+                                    }
                                   });
                                 },
                                 title: Text(
@@ -139,7 +148,35 @@ class _NewAssessmentFlightDetailsState
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 30),
                       child: CircularProgressIndicator(),
-                    )
+                    ),
+                  const SizedBox(height: 50),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        NamedRoute.newAssessmentVariables,
+                        arguments: {
+                          'assessmentFlightDetails' : AssessmentFlightDetails(flightDetails: flightDetailsValue),
+                          'dataCandidate' : widget.dataCandidate
+                        }
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        backgroundColor: TsOneColor.primary),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: 48,
+                      child: const Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Next",
+                          style: TextStyle(color: TsOneColor.secondary),
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
