@@ -35,6 +35,19 @@ class UserModel with ChangeNotifier {
   static String keyStaffNo = "Staff No";
   static String keyPrivileges = "Privileges";
 
+  static String keyPrivilegeCreateAssessment = "create-assessment"; // for instructor to make a new assessment
+  static String keyPrivilegeUpdateAssessment = "update-assessment"; // for instructor to update an unconfirmed assessment
+
+  // for instructor, examinee, CPTS, and admin to confirm an assessment.
+  // for instructor, examinee, and CPTS to any assessments related to them.
+  static String keyPrivilegeConfirmAssessment = "confirm-assessment";
+
+  static String keyPrivilegeViewAllAssessments = "view-all-assessments"; // for CPTS and admin to view all assessments
+  static String keyPrivilegeManageFormAssessment = "manage-form-assessment"; // for CPTS and admin to manage form assessment
+  static String keyPrivilegeCreateUser = "create-user"; // for admin to create a new user
+  static String keyPrivilegeUpdateUser = "update-user"; // for admin to update a user
+  static String keyPrivilegeDeleteUser = "delete-user"; // for admin to delete a user
+
   UserModel.fromFirebaseUser(Map<String, dynamic> map) {
     email = map[keyEmail]; // if null, return empty string
     staffNo = map[keyStaffNo];
