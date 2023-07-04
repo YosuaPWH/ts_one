@@ -37,7 +37,7 @@ class UserPreferences extends ChangeNotifier {
 
     preferences.setString(UserPreferences.keyStaffNo, userAuth.userModel!.staffNo);
     preferences.setString(UserPreferences.keyPosition, userAuth.userModel!.position);
-    preferences.setString(UserPreferences.keySubPosition, userAuth.userModel!.subPosition);
+    preferences.setStringList(UserPreferences.keySubPosition, userAuth.userModel!.subPosition);
     preferences.setString(UserPreferences.keyLicenseNo, userAuth.userModel!.licenseNo);
     preferences.setString(UserPreferences.keyLicenseLastPassed, userAuth.userModel!.licenseLastPassed.toString());
     preferences.setString(UserPreferences.keyLicenseExpiry, userAuth.userModel!.licenseExpiry.toString());
@@ -53,7 +53,7 @@ class UserPreferences extends ChangeNotifier {
     preferences.setString(UserPreferences.keyPhotoURL, "");
     preferences.setString(UserPreferences.keyStaffNo, "");
     preferences.setString(UserPreferences.keyPosition, "");
-    preferences.setString(UserPreferences.keySubPosition, "");
+    preferences.setStringList(UserPreferences.keySubPosition, []);
     preferences.setString(UserPreferences.keyLicenseNo, "");
     preferences.setString(UserPreferences.keyLicenseLastPassed, "");
     preferences.setString(UserPreferences.keyLicenseExpiry, "");
@@ -119,13 +119,13 @@ class UserPreferences extends ChangeNotifier {
     return preferences.getString(UserPreferences.keyPosition) ?? "";
   }
 
-  void saveSubPosition(String subPosition) {
-    preferences.setString(UserPreferences.keySubPosition, subPosition);
+  void saveSubPosition(List<String> subPosition) {
+    preferences.setStringList(UserPreferences.keySubPosition, subPosition);
     notifyListeners();
   }
 
-  String getSubPosition() {
-    return preferences.getString(UserPreferences.keySubPosition) ?? "";
+  List<String> getSubPosition() {
+    return preferences.getStringList(UserPreferences.keySubPosition) ?? [];
   }
 
   void saveLicenseNo(String licenseNo) {

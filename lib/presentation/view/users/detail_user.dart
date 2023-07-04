@@ -211,7 +211,7 @@ class _DetailUserViewState extends State<DetailUserView> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16.0, right: 16.0),
                                   child: Text(
-                                      user.subPosition,
+                                      user.getSubPositionString(),
                                       style: const TextStyle(
                                         color: TsOneColor.onPrimary,
                                         fontSize: 13,

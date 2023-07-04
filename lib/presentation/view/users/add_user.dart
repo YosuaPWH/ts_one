@@ -18,6 +18,15 @@ class _AddUserViewState extends State<AddUserView> {
   late UserModel userModel;
   final _formKey = GlobalKey<FormState>();
 
+  bool _cptsChecked = false;
+  bool _ccpChecked = false;
+  bool _pgiChecked = false;
+  bool _fiaChecked = false;
+  bool _fisChecked = false;
+  bool _regChecked = false;
+  bool _trgChecked = false;
+  bool _utChecked = false;
+
   @override
   void initState() {
     viewModel = Provider.of<UserViewModel>(context, listen: false);
@@ -150,57 +159,124 @@ class _AddUserViewState extends State<AddUserView> {
                 Padding(
                   padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
                   // TODO change this to checkbox
-                  child: DropdownButtonFormField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Sub Position',
-                    ),
-                    validator: (value) {
-                      if (value == null) {
-                        return "Sub position is required";
-                      }
-                      return null;
-                    },
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    value: userModel.subPosition,
-                    onChanged: (value) {
-                      userModel.subPosition = value!;
-                    },
-                    items: [
-                      DropdownMenuItem(
-                        value: UserModel.keySubPositionCPTS,
-                        child: Text(UserModel.keySubPositionCPTS),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Sub Position"),
+                      CheckboxListTile(
+                        title: Text(UserModel.keySubPositionCPTS),
+                        value: _cptsChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            _cptsChecked = value!;
+                            if (_cptsChecked) {
+                              userModel.subPosition.add(UserModel.keySubPositionCPTS);
+                            } else {
+                              userModel.subPosition.remove(UserModel.keySubPositionCPTS);
+                            }
+                          });
+                        },
                       ),
-                      DropdownMenuItem(
-                        value: UserModel.keySubPositionCCP,
-                        child: Text(UserModel.keySubPositionCCP),
+                      CheckboxListTile(
+                        title: Text(UserModel.keySubPositionCCP),
+                        value: _ccpChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            _ccpChecked = value!;
+                            if (_ccpChecked) {
+                              userModel.subPosition.add(UserModel.keySubPositionCCP);
+                            } else {
+                              userModel.subPosition.remove(UserModel.keySubPositionCCP);
+                            }
+                          });
+                        },
                       ),
-                      DropdownMenuItem(
-                        value: UserModel.keySubPositionPGI,
-                        child: Text(UserModel.keySubPositionPGI),
+                      CheckboxListTile(
+                        title: Text(UserModel.keySubPositionPGI),
+                        value: _pgiChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            _pgiChecked = value!;
+                            if (_pgiChecked) {
+                              userModel.subPosition.add(UserModel.keySubPositionPGI);
+                            } else {
+                              userModel.subPosition.remove(UserModel.keySubPositionPGI);
+                            }
+                          });
+                        },
                       ),
-                      DropdownMenuItem(
-                        value: UserModel.keySubPositionFIA,
-                        child: Text(UserModel.keySubPositionFIA),
+                      CheckboxListTile(
+                        title: Text(UserModel.keySubPositionFIA),
+                        value: _fiaChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            _fiaChecked = value!;
+                            if (_fiaChecked) {
+                              userModel.subPosition.add(UserModel.keySubPositionFIA);
+                            } else {
+                              userModel.subPosition.remove(UserModel.keySubPositionFIA);
+                            }
+                          });
+                        },
                       ),
-                      DropdownMenuItem(
-                        value: UserModel.keySubPositionFIS,
-                        child: Text(UserModel.keySubPositionFIS),
+                      CheckboxListTile(
+                        title: Text(UserModel.keySubPositionFIS),
+                        value: _fisChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            _fisChecked = value!;
+                            if (_fisChecked) {
+                              userModel.subPosition.add(UserModel.keySubPositionFIS);
+                            } else {
+                              userModel.subPosition.remove(UserModel.keySubPositionFIS);
+                            }
+                          });
+                        },
                       ),
-                      DropdownMenuItem(
-                        value: UserModel.keySubPositionREG,
-                        child: Text(UserModel.keySubPositionREG),
+                      CheckboxListTile(
+                        title: Text(UserModel.keySubPositionREG),
+                        value: _regChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            _regChecked = value!;
+                            if (_regChecked) {
+                              userModel.subPosition.add(UserModel.keySubPositionREG);
+                            } else {
+                              userModel.subPosition.remove(UserModel.keySubPositionREG);
+                            }
+                          });
+                        },
                       ),
-                      DropdownMenuItem(
-                        value: UserModel.keySubPositionTRG,
-                        child: Text(UserModel.keySubPositionTRG),
+                      CheckboxListTile(
+                        title: Text(UserModel.keySubPositionTRG),
+                        value: _trgChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            _trgChecked = value!;
+                            if (_trgChecked) {
+                              userModel.subPosition.add(UserModel.keySubPositionTRG);
+                            } else {
+                              userModel.subPosition.remove(UserModel.keySubPositionTRG);
+                            }
+                          });
+                        },
                       ),
-                      DropdownMenuItem(
-                        value: UserModel.keySubPositionUT,
-                        child: Text(UserModel.keySubPositionUT),
+                      CheckboxListTile(
+                        title: Text(UserModel.keySubPositionUT),
+                        value: _utChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            _utChecked = value!;
+                            if (_utChecked) {
+                              userModel.subPosition.add(UserModel.keySubPositionUT);
+                            } else {
+                              userModel.subPosition.remove(UserModel.keySubPositionUT);
+                            }
+                          });
+                        },
                       ),
                     ],
-                  ),
+                  )
                 ),
                 Padding(
                   padding:

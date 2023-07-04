@@ -14,7 +14,7 @@ class UserModel with ChangeNotifier {
   String staffNo = "";
   String name = "";
   String position = "";
-  String subPosition = UserModel.keySubPositionREG;
+  List<String> subPosition = [];
   String licenseNo = "";
   DateTime licenseLastPassed = DateTime.now();
   DateTime licenseExpiry = DateTime.now();
@@ -67,7 +67,7 @@ class UserModel with ChangeNotifier {
     staffNo = map[keyStaffNo];
     name = map[keyName];
     position = map[keyPosition];
-    subPosition = map[keySubPosition];
+    subPosition = (map[keySubPosition] as List<dynamic>).map((item) => item.toString()).toList();
     licenseNo = map[keyLicenseNo];
     licenseLastPassed = DateTime.fromMillisecondsSinceEpoch(map[keyLicenceLastPassed].seconds * 1000);
     licenseExpiry = DateTime.fromMillisecondsSinceEpoch(map[keyLicenseExpiry].seconds * 1000);
@@ -88,30 +88,15 @@ class UserModel with ChangeNotifier {
     };
   }
 
-  void updateFromMap(Map<String, dynamic> map) {
-    email = map[keyEmail];
-    staffNo = map[keyStaffNo];
-    name = map[keyName];
-    position = map[keyPosition];
-    subPosition = map[keySubPosition];
-    licenseNo = map[keyLicenseNo];
-    licenseLastPassed = DateTime.fromMillisecondsSinceEpoch(map[keyLicenceLastPassed].seconds * 1000);
-    licenseExpiry = DateTime.fromMillisecondsSinceEpoch(map[keyLicenseExpiry].seconds * 1000);
-    privileges = map[keyPrivileges];
-    notifyListeners();
-  }
-
-  void updateUser(UserModel userModel) {
-    email = userModel.email;
-    staffNo = userModel.staffNo;
-    name = userModel.name;
-    position = userModel.position;
-    subPosition = userModel.subPosition;
-    licenseNo = userModel.licenseNo;
-    licenseLastPassed = userModel.licenseLastPassed;
-    licenseExpiry = userModel.licenseExpiry;
-    privileges = userModel.privileges;
-    notifyListeners();
+  String getSubPositionString() {
+    String subPositionString = "";
+    for (int i = 0; i < subPosition.length; i++) {
+      subPositionString += subPosition[i];
+      if (i != subPosition.length - 1) {
+        subPositionString += ", ";
+      }
+    }
+    return subPositionString;
   }
 
   @override
