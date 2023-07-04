@@ -9,7 +9,8 @@ abstract class UserRepo {
   Future<UserAuth> login(String email, String password);
   Future<UserAuth> loginWithGoogle();
   Future<void> logout();
-  Future<List<UserModel>> getAllUsers();
+  Future<List<UserModel>> getAllUsers(int limit, UserModel? lastUser);
+  Future<int> getLengthOfAllUsers();
   Future<UserModel> getUserByEmail(String email);
   Future<UserModel> addUser(UserModel userModel);
   Future<UserModel> updateUser(UserModel userModel);
@@ -129,15 +130,35 @@ class UserRepoImpl implements UserRepo {
   }
 
   @override
-  Future<List<UserModel>> getAllUsers() async {
+  Future<int> getLengthOfAllUsers() async {
+    return await _db!.collection(UserModel.firebaseCollection).snapshots().length;
+  }
+
+  @override
+  Future<List<UserModel>> getAllUsers(int limit, UserModel? lastUser) async {
     List<UserModel> users = [];
 
     try {
       // get all users from firestore database
-      final usersData = await _db!.collection(UserModel.firebaseCollection).get();
+      Query query = _db!
+          .collection(UserModel.firebaseCollection)
+          .limit(limit);
+
+      if (lastUser != null) {
+        final lastDocument = await _db!
+            .collection(UserModel.firebaseCollection)
+            .doc(lastUser.email)
+            .get();
+
+        query = query.startAfterDocument(lastDocument);
+      }
+
+      final usersData = await query.get();
 
       // create user model from firebase user and user data from firestore
-      users = usersData.docs.map((e) => UserModel.fromFirebaseUser(e.data())).toList();
+      users = usersData.docs.map((e) => UserModel.fromFirebaseUser(
+          e.data() as Map<String, dynamic>
+      )).toList();
     } catch (e) {
       print(e.toString());
     }

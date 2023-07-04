@@ -14,4 +14,7 @@ class Util{
 
   // this is used to set the default string if the string is null
   static String defaultStringIfNull = "";
+
+  // this is used to set the default int if the int is null
+  static int defaultIntIfNull = 0;
 }

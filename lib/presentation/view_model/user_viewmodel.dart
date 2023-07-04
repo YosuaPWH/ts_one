@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/domain/user_repo.dart';
@@ -8,6 +9,9 @@ class UserViewModel extends LoadingViewModel {
 
   final UserRepo repo;
   final UserPreferences userPreferences;
+
+  List<UserModel> users = [];
+  UserModel? lastUser;
 
   Future<UserAuth> login(String email, String password) async {
     isLoading = true;
@@ -50,16 +54,25 @@ class UserViewModel extends LoadingViewModel {
     }
   }
 
-  Future<List<UserModel>> getAllUsers() async {
+  Future<List<UserModel>> getAllUsers(int limit) async {
     isLoading = true;
-    List<UserModel> users = [];
+
     try {
-      users = await repo.getAllUsers();
+      final List<UserModel> newUsers = await repo.getAllUsers(limit, lastUser);
+      users.addAll(newUsers);
+
+      if (newUsers.isNotEmpty) {
+        lastUser = newUsers[newUsers.length - 1];
+      } else {
+        lastUser = null;
+      }
+
       isLoading = false;
     } catch (e) {
       print(e.toString());
       isLoading = false;
     }
+
     return users;
   }
 

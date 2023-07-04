@@ -16,17 +16,35 @@ class AllUsersView extends StatefulWidget {
 class _AllUsersViewState extends State<AllUsersView> {
   late UserViewModel viewModel;
   late List<UserModel> users;
+  late ScrollController _scrollController;
+  int limit = 10;
 
   @override
   void initState() {
     viewModel = Provider.of<UserViewModel>(context, listen: false);
     users = [];
+    getUsers();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
 
     super.initState();
   }
 
-  Stream<List<UserModel>> _getUsers() async* {
-    yield await viewModel.getAllUsers();
+  void getUsers () async {
+    users = await viewModel.getAllUsers(limit);
+  }
+
+  void _scrollListener() {
+    if(_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      viewModel.getAllUsers(limit);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -42,28 +60,27 @@ class _AllUsersViewState extends State<AllUsersView> {
               child: Column(
                 children: [
                   Expanded(
-                    child: StreamBuilder<List<UserModel>>(
-                        stream: _getUsers(),
-                        builder: (context, snapshot) {
-                          if(snapshot.hasData) {
-                            return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: snapshot.data!.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    surfaceTintColor: TsOneColor.surface,
-                                    child: ListTile(
-                                      title: Text(snapshot.data![index].name),
-                                      subtitle: Text(snapshot.data![index].email),
-                                    ),
-                                  );
-                                }
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        controller: _scrollController,
+                        itemCount: users.length,
+                        itemBuilder: (context, index) {
+                          if (index < users.length) {
+                            return Card(
+                              surfaceTintColor: TsOneColor.surface,
+                              child: ListTile(
+                                title: Text(users[index].name),
+                                subtitle: Text(users[index].email),
+                              ),
                             );
-                          } else {
-                            return const Center(child: CircularProgressIndicator());
+                          }
+                          else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                           }
                         }
-                    ),
+                    )
                   ),
                 ],
               )
