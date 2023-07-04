@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
+import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/main.dart';
 import 'package:ts_one/presentation/main_view.dart';
@@ -12,6 +13,7 @@ import 'package:ts_one/presentation/view/assessment/detail_assessment_period.dar
 import 'package:ts_one/presentation/view/assessment/new_assessment_candidate.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_flight_details.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
+import 'package:ts_one/presentation/view/assessment/new_assessment_variables_second.dart';
 import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
 import 'package:ts_one/presentation/view/users/add_user.dart';
 import 'package:ts_one/presentation/view/users/login.dart';
@@ -54,13 +56,31 @@ class AppRoutes {
 
       case NamedRoute.newAssessmentVariables:
         final arguments = settings.arguments as Map<String, dynamic>;
-        final assessmentFlightDetails = arguments['assessmentFlightDetails'] as AssessmentFlightDetails;
+        final assessmentFlightDetails =
+            arguments['assessmentFlightDetails'] as AssessmentFlightDetails;
         final dataCandidate = arguments['dataCandidate'] as NewAssessment;
 
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentVariables(
             assessmentFlightDetails: assessmentFlightDetails,
             dataCandidate: dataCandidate,
+          ),
+          settings: settings,
+        );
+
+      case NamedRoute.newAssessmentVariablesSecond:
+        final arguments = settings.arguments as Map<String, dynamic>;
+        final dataCandidate = arguments['dataCandidate'] as NewAssessment;
+        final dataFlightDetails =
+            arguments['dataFlightDetails'] as AssessmentFlightDetails;
+        final dataVariablesFirst = arguments['dataVariablesFirst']
+            as Map<AssessmentVariables, Map<String, String>>;
+
+        return MaterialPageRoute<void>(
+          builder: (context) => NewAssessmentVariablesSecond(
+            dataAssessmentFlightDetails: dataFlightDetails,
+            dataCandidate: dataCandidate,
+            dataAssessmentVariables: dataVariablesFirst,
           ),
           settings: settings,
         );
@@ -126,6 +146,8 @@ class NamedRoute {
   static const String newAssessmentFlightDetails =
       '/newAssessmentFlightDetails';
   static const String newAssessmentVariables = '/newAssessmentVariables';
+  static const String newAssessmentVariablesSecond =
+      '/newAssessmentVariablesSecond';
   static const String allAssessmentPeriods = '/allAssessmentPeriods';
   static const String detailAssessmentPeriod = '/detailAssessmentPeriod';
   static const String addAssessmentPeriod = '/addAssessmentPeriod';
