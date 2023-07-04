@@ -7,7 +7,6 @@ class UserModel with ChangeNotifier {
     this.staffNo = "",
     this.name = "",
     this.position = "",
-    this.subPosition = "",
     this.licenseNo = "",
   });
 
@@ -15,7 +14,7 @@ class UserModel with ChangeNotifier {
   String staffNo = "";
   String name = "";
   String position = "";
-  String subPosition = "";
+  String subPosition = UserModel.keySubPositionREG;
   String licenseNo = "";
   DateTime licenseLastPassed = DateTime.now();
   DateTime licenseExpiry = DateTime.now();
@@ -35,6 +34,7 @@ class UserModel with ChangeNotifier {
   static String keyStaffNo = "Staff No";
   static String keyPrivileges = "Privileges";
 
+  /** ALL PRIVILEGES */
   static String keyPrivilegeCreateAssessment = "create-assessment"; // for instructor to make a new assessment
   static String keyPrivilegeUpdateAssessment = "update-assessment"; // for instructor to update an unconfirmed assessment
 
@@ -47,6 +47,20 @@ class UserModel with ChangeNotifier {
   static String keyPrivilegeCreateUser = "create-user"; // for admin to create a new user
   static String keyPrivilegeUpdateUser = "update-user"; // for admin to update a user
   static String keyPrivilegeDeleteUser = "delete-user"; // for admin to delete a user
+
+  /** ALL POSITIONS */
+  static String keyPositionCaptain = "CAPT";
+  static String keyPositionFirstOfficer = "FO";
+
+  /** ALL SUBPOSITIONS */
+  static String keySubPositionCCP = "CCP"; // chief check pilot
+  static String keySubPositionCPTS = "CPTS"; // chief pilot training standards
+  static String keySubPositionFIA = "FIA"; // flight instructor assistant
+  static String keySubPositionFIS = "FIS"; // flight instructor
+  static String keySubPositionPGI = "PGI"; // pilot ground instructor
+  static String keySubPositionREG = "REG"; // regular pilot
+  static String keySubPositionTRG = "TRG"; // trainee pilot
+  static String keySubPositionUT = "UT"; // under training pilot
 
   UserModel.fromFirebaseUser(Map<String, dynamic> map) {
     email = map[keyEmail]; // if null, return empty string

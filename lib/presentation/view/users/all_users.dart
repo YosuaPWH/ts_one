@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/data/users/users.dart';
+import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 
@@ -125,6 +126,13 @@ class _AllUsersViewState extends State<AllUsersView> {
                   ),
                 ],
               )
+          ),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: TsOneColor.primary,
+            onPressed: () {
+              Navigator.pushNamed(context, NamedRoute.addUser);
+            },
+            child: const Icon(Icons.add),
           ),
         );
       },

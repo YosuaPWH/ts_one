@@ -135,14 +135,69 @@ class _AddUserViewState extends State<AddUserView> {
                     onChanged: (value) {
                         userModel.position = value!;
                     },
-                    items: const [
+                    items: [
                       DropdownMenuItem(
-                        value: "CAPT",
-                        child: Text("CAPT"),
+                        value: UserModel.keyPositionCaptain,
+                        child: Text(UserModel.keyPositionCaptain),
                       ),
                       DropdownMenuItem(
-                        value: "FO",
-                        child: Text("FO"),
+                        value: UserModel.keyPositionFirstOfficer,
+                        child: Text(UserModel.keyPositionFirstOfficer),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+                  // TODO change this to checkbox
+                  child: DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Sub Position',
+                    ),
+                    validator: (value) {
+                      if (value == null) {
+                        return "Sub position is required";
+                      }
+                      return null;
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    value: userModel.subPosition,
+                    onChanged: (value) {
+                      userModel.subPosition = value!;
+                    },
+                    items: [
+                      DropdownMenuItem(
+                        value: UserModel.keySubPositionCPTS,
+                        child: Text(UserModel.keySubPositionCPTS),
+                      ),
+                      DropdownMenuItem(
+                        value: UserModel.keySubPositionCCP,
+                        child: Text(UserModel.keySubPositionCCP),
+                      ),
+                      DropdownMenuItem(
+                        value: UserModel.keySubPositionPGI,
+                        child: Text(UserModel.keySubPositionPGI),
+                      ),
+                      DropdownMenuItem(
+                        value: UserModel.keySubPositionFIA,
+                        child: Text(UserModel.keySubPositionFIA),
+                      ),
+                      DropdownMenuItem(
+                        value: UserModel.keySubPositionFIS,
+                        child: Text(UserModel.keySubPositionFIS),
+                      ),
+                      DropdownMenuItem(
+                        value: UserModel.keySubPositionREG,
+                        child: Text(UserModel.keySubPositionREG),
+                      ),
+                      DropdownMenuItem(
+                        value: UserModel.keySubPositionTRG,
+                        child: Text(UserModel.keySubPositionTRG),
+                      ),
+                      DropdownMenuItem(
+                        value: UserModel.keySubPositionUT,
+                        child: Text(UserModel.keySubPositionUT),
                       ),
                     ],
                   ),
