@@ -103,6 +103,7 @@ class UserViewModel extends LoadingViewModel {
     UserModel newUserModel = UserModel();
     try {
       newUserModel = await repo.addUser(userModel);
+      reset();
       isLoading = false;
     } catch (e) {
       print(e.toString());
@@ -116,6 +117,7 @@ class UserViewModel extends LoadingViewModel {
     UserModel newUserModel = UserModel();
     try {
       newUserModel = await repo.updateUser(userModel);
+      reset();
       isLoading = false;
     } catch (e) {
       print(e.toString());
@@ -128,10 +130,17 @@ class UserViewModel extends LoadingViewModel {
     isLoading = true;
     try {
       await repo.deleteUserByEmail(email);
+      reset();
       isLoading = false;
     } catch (e) {
       print(e.toString());
       isLoading = false;
     }
+  }
+
+  void reset() {
+    users.clear();
+    lastUser = null;
+    isAllUsersLoaded = false;
   }
 }
