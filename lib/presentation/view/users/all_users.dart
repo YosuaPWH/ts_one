@@ -64,63 +64,64 @@ class _AllUsersViewState extends State<AllUsersView> {
               child: Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
+                    child: users.isNotEmpty
+                        ? ListView.builder(
                         shrinkWrap: true,
                         controller: _scrollController,
                         itemCount: users.length,
                         itemBuilder: (context, index) {
-                          if (index < users.length) {
-                            return Card(
-                              surfaceTintColor: TsOneColor.surface,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    CircleAvatar(
-                                      radius: 30,
-                                      backgroundColor: Colors.white,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(50),
-                                        child: Image.asset("assets/images/placeholder_person.png"),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              users[index].name,
-                                              style: tsOneTextTheme.titleMedium,
-                                            ),
-                                            Text(
-                                              users[index].position,
-                                              style: tsOneTextTheme.bodySmall,
-                                            ),
-                                            Text(
-                                              users[index].staffNo,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                          if (index == users.length - 1 && !viewModel.isAllUsersLoaded) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(child: CircularProgressIndicator()),
                             );
                           }
-                          else {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
+                          return Card(
+                            surfaceTintColor: TsOneColor.surface,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor: Colors.white,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: Image.asset("assets/images/placeholder_person.png"),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            users[index].name,
+                                            style: tsOneTextTheme.titleMedium,
+                                          ),
+                                          Text(
+                                            users[index].position,
+                                            style: tsOneTextTheme.bodySmall,
+                                          ),
+                                          Text(
+                                            users[index].staffNo,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
                         }
                     )
+                        : const Center(child: CircularProgressIndicator())
                   ),
                 ],
               )
