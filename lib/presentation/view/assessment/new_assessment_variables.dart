@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
+import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 
 import '../../../data/assessments/assessment_variables.dart';
@@ -29,6 +29,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
   late AssessmentPeriod dataAssessmentPeriod;
   late List<String> assessmentCategories;
   late Map<AssessmentVariables, bool> allAssessmentVariables;
+  Map<AssessmentVariables, Map<String, String>> result = {};
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
       }
       allAssessmentVariables.addAll({assessmentVariable: false});
     }
+    print("object");
     print("jlh: ${allAssessmentVariables.length}");
   }
 
@@ -69,9 +71,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
               "New Assessment",
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
+          body: Column(
               children: [
                 Expanded(
                   child: model.isLoading
@@ -80,34 +80,48 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                         )
                       : SingleChildScrollView(
                           scrollDirection: Axis.vertical,
-                          child: Column(
-                            children:
-                                _expansionTilesForNewAssessmentVariables(),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              children:
+                                  _expansionTilesForNewAssessmentVariables(),
+                            ),
                           ),
                         ),
                 ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    backgroundColor: TsOneColor.primary,
-                  ),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: 48,
-                    child: const Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Next",
-                        style: TextStyle(color: TsOneColor.secondary),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                          context, NamedRoute.newAssessmentVariablesSecond,
+                          arguments: {
+                            'dataCandidate' : widget.dataCandidate,
+                            'dataFlightDetails' : widget.assessmentFlightDetails,
+                            'dataVariablesFirst' : result
+                          }
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      backgroundColor: TsOneColor.primary,
+                    ),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: 48,
+                      child: const Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Next",
+                          style: TextStyle(color: TsOneColor.secondary),
+                        ),
                       ),
                     ),
                   ),
                 )
               ],
             ),
-          ),
         );
       },
     );
@@ -119,11 +133,6 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
     // print("dadas: $assessmentVariables");
     print("JUMLAH: ${allAssessmentVariables.length}");
     for (var assessmentCategory in assessmentCategories) {
-      // for (var data in allAssessmentVariables.keys) {
-      //   if (data.category == assessmentCategory) {
-      //     assessmentVariablesByCategory.addAll({assessmentVariable: false});
-      //   }
-      // }
       expansionTilesVariables.add(
         ExpansionTile(
           title: Text(assessmentCategory),
@@ -182,6 +191,20 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                                         setState(() {
                                           allAssessmentVariables[data] =
                                               newValue!;
+
+                                          if (newValue) {
+                                            if (!result.containsKey(data)) {
+                                              if (data.typeOfAssessment == "Satisfactory") {
+                                                result.addAll({data: {"Assessment": "N/A", "Markers": "N/A", "Empty": "true"}});
+                                              } else {
+                                                result.addAll({data: {"PF": "N/A", "PM": "N/A", "Empty": "true"}});
+                                              }
+                                            } else {
+                                                result[data]?["Empty"] = "true";
+                                            }
+                                          } else {
+                                            result[data]?["Empty"] = "false";
+                                          }
                                         });
                                       },
                                       title: const Text("N/A"),
@@ -201,16 +224,27 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                                             padding: const EdgeInsets.only(
                                                 top: 5, bottom: 15),
                                             child: DropdownButtonFormField(
+                                              value: result[data]?["Assessment"] == "N/A" ? null : result[data]?["Assessment"],
                                               padding: const EdgeInsets.all(0),
                                               isExpanded: false,
                                               isDense: true,
-                                              onChanged: (value) {},
+                                              onChanged: allAssessmentVariables[data]! ? null : (newValue) {
+                                                setState(() {
+                                                  if (!result.containsKey(data)) {
+                                                    result.addAll({data: {"Assessment": newValue as String, "Markers": "N/A", "Empty": "false"}});
+                                                  } else {
+                                                    result[data]?["Assessment"] = newValue as String;
+                                                  }
+                                                });
+                                              },
                                               decoration: const InputDecoration(
                                                 border: OutlineInputBorder(),
                                                 label: Text(
                                                   "Assessment",
-                                                  style: TextStyle(fontSize: 12),
-                                                  overflow: TextOverflow.ellipsis,
+                                                  style:
+                                                      TextStyle(fontSize: 12),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                               items: const [
@@ -242,59 +276,17 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                                           child: Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 5, bottom: 15),
-                                            child: DropdownButtonFormField(
-                                              onChanged: (value) {},
-                                              decoration: const InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  hintMaxLines: 1,
-                                                  label: Text(
-                                                    "Markers",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                  )),
-                                              items: const [
-                                                DropdownMenuItem(
-                                                  value: "1",
-                                                  child: Text(
-                                                    "1",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "2",
-                                                  child: Text(
-                                                    "2",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "3",
-                                                  child: Text(
-                                                    "3",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "4",
-                                                  child: Text(
-                                                    "4",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "5",
-                                                  child: Text(
-                                                    "5",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
-                                                  ),
-                                                )
-                                              ],
+                                            child: dropdownMarkers(
+                                              result[data]?["Markers"] == "N/A" ? null : result[data]?["Markers"],
+                                              "Markers",
+                                              allAssessmentVariables[data]!,
+                                              (newValue) {
+                                                if (!result.containsKey(data)) {
+                                                  result.addAll({data: {"Assessment": "N/A", "Markers": newValue, "Empty": "false"}});
+                                                } else {
+                                                  result[data]?["Markers"] = newValue;
+                                                }
+                                              },
                                             ),
                                           ),
                                         )
@@ -311,121 +303,43 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                                           child: Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 5, bottom: 15),
-                                            child: DropdownButtonFormField(
-                                              onChanged: (value) {},
-                                              decoration: const InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  hintMaxLines: 1,
-                                                  label: Text(
-                                                    "PF",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                  )),
-                                              items: const [
-                                                DropdownMenuItem(
-                                                  value: "1",
-                                                  child: Text(
-                                                    "1",
-                                                    style:
-                                                    TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "2",
-                                                  child: Text(
-                                                    "2",
-                                                    style:
-                                                    TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "3",
-                                                  child: Text(
-                                                    "3",
-                                                    style:
-                                                    TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "4",
-                                                  child: Text(
-                                                    "4",
-                                                    style:
-                                                    TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "5",
-                                                  child: Text(
-                                                    "5",
-                                                    style:
-                                                    TextStyle(fontSize: 12),
-                                                  ),
-                                                )
-                                              ],
+                                            child: dropdownMarkers(
+                                              result[data]?["PF"] == "N/A" ? null : result[data]?["PF"],
+                                              "PF",
+                                              allAssessmentVariables[data]!,
+                                              (newValue) {
+                                                setState(() {
+                                                  if (!result.containsKey(data)) {
+                                                    result.addAll({data: {"PF": newValue, "PM": "N/A", "Empty" : "false"}});
+                                                  } else {
+                                                    result[data]?["PF"] = newValue;
+                                                  }
+                                                });
+                                              },
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 5,),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
                                         Flexible(
                                           flex: 3,
                                           child: Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 5, bottom: 15),
-                                            child: DropdownButtonFormField(
-                                              onChanged: (value) {},
-                                              decoration: const InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  hintMaxLines: 1,
-                                                  label: Text(
-                                                    "PM",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                  )),
-                                              items: const [
-                                                DropdownMenuItem(
-                                                  value: "1",
-                                                  child: Text(
-                                                    "1",
-                                                    style:
-                                                    TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "2",
-                                                  child: Text(
-                                                    "2",
-                                                    style:
-                                                    TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "3",
-                                                  child: Text(
-                                                    "3",
-                                                    style:
-                                                    TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "4",
-                                                  child: Text(
-                                                    "4",
-                                                    style:
-                                                    TextStyle(fontSize: 12),
-                                                  ),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "5",
-                                                  child: Text(
-                                                    "5",
-                                                    style:
-                                                    TextStyle(fontSize: 12),
-                                                  ),
-                                                )
-                                              ],
+                                            child: dropdownMarkers(
+                                              result[data]?["PM"] == "N/A" ? null : result[data]?["PM"],
+                                              "PM",
+                                              allAssessmentVariables[data]!,
+                                              (newValue) {
+                                                setState(() {
+                                                  if (!result.containsKey(data)) {
+                                                    result.addAll({data: {"PF": "N/A", "PM": newValue, "Empty": "false"}});
+                                                  } else {
+                                                    result[data]?["PM"] = newValue;
+                                                  }
+                                                });
+                                              },
                                             ),
                                           ),
                                         )
@@ -435,7 +349,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                               ],
                             ),
                           ],
-                        )
+                        ),
                   ],
                 ),
               ),
@@ -449,5 +363,58 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
     }
 
     return expansionTilesVariables;
+  }
+
+  Widget dropdownMarkers(String? value, String label, bool isDisabled, Function(String newValue) onValueChanged) {
+    return DropdownButtonFormField(
+      value: value,
+      onChanged: isDisabled ? null : (value) => onValueChanged(value as String),
+      decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          hintMaxLines: 1,
+          label: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+            ),
+          )),
+      items: const [
+        DropdownMenuItem(
+          value: "1",
+          child: Text(
+            "1",
+            style: TextStyle(fontSize: 12),
+          ),
+        ),
+        DropdownMenuItem(
+          value: "2",
+          child: Text(
+            "2",
+            style: TextStyle(fontSize: 12),
+          ),
+        ),
+        DropdownMenuItem(
+          value: "3",
+          child: Text(
+            "3",
+            style: TextStyle(fontSize: 12),
+          ),
+        ),
+        DropdownMenuItem(
+          value: "4",
+          child: Text(
+            "4",
+            style: TextStyle(fontSize: 12),
+          ),
+        ),
+        DropdownMenuItem(
+          value: "5",
+          child: Text(
+            "5",
+            style: TextStyle(fontSize: 12),
+          ),
+        )
+      ],
+    );
   }
 }
