@@ -12,7 +12,7 @@ class _CardUserState extends State<CardUser> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      surfaceTintColor: TsOneColor.secondaryContainer,
+      surfaceTintColor: TsOneColor.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),

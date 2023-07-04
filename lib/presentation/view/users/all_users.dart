@@ -17,15 +17,18 @@ class _AllUsersViewState extends State<AllUsersView> {
   late UserViewModel viewModel;
   late List<UserModel> users;
   late ScrollController _scrollController;
-  int limit = 10;
+  int limit = 30;
 
   @override
   void initState() {
     viewModel = Provider.of<UserViewModel>(context, listen: false);
     users = [];
-    getUsers();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getUsers();
+    });
 
     super.initState();
   }
@@ -36,7 +39,8 @@ class _AllUsersViewState extends State<AllUsersView> {
 
   void _scrollListener() {
     if(_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      viewModel.getAllUsers(limit);
+      // viewModel.getAllUsers(limit);
+      getUsers();
     }
   }
 
@@ -68,9 +72,45 @@ class _AllUsersViewState extends State<AllUsersView> {
                           if (index < users.length) {
                             return Card(
                               surfaceTintColor: TsOneColor.surface,
-                              child: ListTile(
-                                title: Text(users[index].name),
-                                subtitle: Text(users[index].email),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    CircleAvatar(
+                                      radius: 30,
+                                      backgroundColor: Colors.white,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: Image.asset("assets/images/placeholder_person.png"),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              users[index].name,
+                                              style: tsOneTextTheme.titleMedium,
+                                            ),
+                                            Text(
+                                              users[index].position,
+                                              style: tsOneTextTheme.bodySmall,
+                                            ),
+                                            Text(
+                                              users[index].staffNo,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           }

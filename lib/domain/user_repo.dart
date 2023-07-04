@@ -9,7 +9,7 @@ abstract class UserRepo {
   Future<UserAuth> login(String email, String password);
   Future<UserAuth> loginWithGoogle();
   Future<void> logout();
-  Future<List<UserModel>> getAllUsers(int limit, UserModel? lastUser);
+  Future<List<UserModel>> getUsersPaginated(int limit, UserModel? lastUser);
   Future<int> getLengthOfAllUsers();
   Future<UserModel> getUserByEmail(String email);
   Future<UserModel> addUser(UserModel userModel);
@@ -135,13 +135,14 @@ class UserRepoImpl implements UserRepo {
   }
 
   @override
-  Future<List<UserModel>> getAllUsers(int limit, UserModel? lastUser) async {
+  Future<List<UserModel>> getUsersPaginated(int limit, UserModel? lastUser) async {
     List<UserModel> users = [];
 
     try {
       // get all users from firestore database
       Query query = _db!
           .collection(UserModel.firebaseCollection)
+          .orderBy(UserModel.keyName)
           .limit(limit);
 
       if (lastUser != null) {

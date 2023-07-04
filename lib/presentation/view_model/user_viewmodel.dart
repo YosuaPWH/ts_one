@@ -3,6 +3,7 @@ import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/domain/user_repo.dart';
 import 'package:ts_one/presentation/view_model/loading_viewmodel.dart';
+import 'package:ts_one/util/util.dart';
 
 class UserViewModel extends LoadingViewModel {
   UserViewModel({required this.repo,  required this.userPreferences});
@@ -12,6 +13,8 @@ class UserViewModel extends LoadingViewModel {
 
   List<UserModel> users = [];
   UserModel? lastUser;
+  int lengthOfAllUsers = Util.defaultIntIfNull;
+  bool isAllUsersLoaded = false;
 
   Future<UserAuth> login(String email, String password) async {
     isLoading = true;
@@ -58,18 +61,24 @@ class UserViewModel extends LoadingViewModel {
     isLoading = true;
 
     try {
-      final List<UserModel> newUsers = await repo.getAllUsers(limit, lastUser);
+      if(isAllUsersLoaded) {
+        isLoading = false;
+        return users;
+      }
+
+      final List<UserModel> newUsers = await repo.getUsersPaginated(limit, lastUser);
       users.addAll(newUsers);
 
       if (newUsers.isNotEmpty) {
         lastUser = newUsers[newUsers.length - 1];
       } else {
         lastUser = null;
+        isAllUsersLoaded = true;
       }
 
       isLoading = false;
     } catch (e) {
-      print(e.toString());
+      print("Exception on UserViewModel: $e");
       isLoading = false;
     }
 
