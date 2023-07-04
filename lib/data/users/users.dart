@@ -69,12 +69,8 @@ class UserModel with ChangeNotifier {
     position = map[keyPosition];
     subPosition = map[keySubPosition];
     licenseNo = map[keyLicenseNo];
-    // if (map[keyLicenceLastPassed].seconds != null) {
-    //   // licenseLastPassed = DateTime.fromMillisecondsSinceEpoch(map[keyLicenceLastPassed].seconds * 1000);
-    // }
-    // if (map[keyLicenseExpiry].seconds != null) {
-    //   // licenseExpiry = DateTime.fromMillisecondsSinceEpoch(map[keyLicenseExpiry].seconds * 1000);
-    // }
+    licenseLastPassed = DateTime.fromMillisecondsSinceEpoch(map[keyLicenceLastPassed].seconds * 1000);
+    licenseExpiry = DateTime.fromMillisecondsSinceEpoch(map[keyLicenseExpiry].seconds * 1000);
     privileges = (map[keyPrivileges] as List<dynamic>).map((item) => item.toString()).toList();
   }
 

@@ -82,43 +82,52 @@ class _AllUsersViewState extends State<AllUsersView> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: Colors.white,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(50),
-                                      child: Image.asset("assets/images/placeholder_person.png"),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            users[index].name,
-                                            style: tsOneTextTheme.titleMedium,
-                                          ),
-                                          Text(
-                                            users[index].position,
-                                            style: tsOneTextTheme.bodySmall,
-                                          ),
-                                          Text(
-                                            users[index].staffNo,
-                                          )
-                                        ],
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context,
+                                    NamedRoute.detailUser,
+                                    arguments: users[index].email
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    CircleAvatar(
+                                      radius: 30,
+                                      backgroundColor: Colors.white,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: Image.asset("assets/images/placeholder_person.png"),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              users[index].name,
+                                              style: tsOneTextTheme.titleMedium,
+                                            ),
+                                            Text(
+                                              users[index].position,
+                                              style: tsOneTextTheme.bodySmall,
+                                            ),
+                                            Text(
+                                              users[index].staffNo,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+                            )
                           );
                         }
                     )
