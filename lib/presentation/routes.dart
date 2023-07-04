@@ -10,6 +10,7 @@ import 'package:ts_one/presentation/view/assessment/new_assessment_candidate.dar
 import 'package:ts_one/presentation/view/assessment/new_assessment_flight_details.dart';
 import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
 import 'package:ts_one/presentation/view/users/add_user.dart';
+import 'package:ts_one/presentation/view/users/all_users.dart';
 import 'package:ts_one/presentation/view/users/login.dart';
 
 class AppRoutes {
@@ -26,6 +27,12 @@ class AppRoutes {
       case NamedRoute.login:
         return MaterialPageRoute<void>(
           builder: (context) => const LoginView(),
+          settings: settings,
+        );
+
+      case NamedRoute.allUsers:
+        return MaterialPageRoute<void>(
+          builder: (context) => const AllUsersView(),
           settings: settings,
         );
 
@@ -102,8 +109,10 @@ class NamedRoute {
 
   static const String main = '/';
   static const String login = '/login';
-  static const String addUser = '/addUser';
   static const String home = '/home';
+
+  static const String allUsers = '/allUsers';
+  static const String addUser = '/addUser';
 
   static const String newAssessmentCandidate = '/newAssessmentCandidate';
   static const String newAssessmentFlightDetails =

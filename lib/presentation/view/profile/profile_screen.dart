@@ -199,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-
+                      Navigator.pushNamed(context, NamedRoute.allUsers);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: tsOneColorScheme.secondary,

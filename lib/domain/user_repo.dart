@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -190,13 +192,38 @@ class UserRepoImpl implements UserRepo {
   }
 
   @override
-  Future<UserModel> updateUser(UserModel userModel) {
-    throw UnimplementedError();
+  Future<UserModel> updateUser(UserModel user) async {
+    UserModel updatedUser = UserModel();
+
+    UserModel currentUser = await getUserByEmail(user.email);
+    try {
+      /** update the user */
+      await _db!
+          .collection(UserModel.firebaseCollection)
+          .doc(currentUser.email)
+          .update(user.toFirebase());
+
+      /** get thew newly updated user */
+      final userData = await _db!
+          .collection(UserModel.firebaseCollection)
+          .doc(currentUser.email)
+          .get();
+
+      /** assign the newly updated user */
+      updatedUser = UserModel.fromFirebaseUser(userData.data()!);
+    } catch (e) {
+      print("Exception in UserRepo on updateUser: $e");
+    }
+
+    return updatedUser;
   }
 
   @override
-  Future<void> deleteUserByEmail(String email) {
-    // TODO: implement deleteUserByEmail
-    throw UnimplementedError();
+  Future<void> deleteUserByEmail(String email) async {
+    /** delete the user */
+    await _db!
+        .collection(UserModel.firebaseCollection)
+        .doc(email)
+        .delete();
   }
 }

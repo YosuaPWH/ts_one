@@ -41,6 +41,41 @@ class UserViewModel extends LoadingViewModel {
     return userAuth;
   }
 
+  Future<void> logout() async {
+    try {
+      repo.logout();
+      userPreferences.clearUser();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<List<UserModel>> getAllUsers() async {
+    isLoading = true;
+    List<UserModel> users = [];
+    try {
+      users = await repo.getAllUsers();
+      isLoading = false;
+    } catch (e) {
+      print(e.toString());
+      isLoading = false;
+    }
+    return users;
+  }
+
+  Future<UserModel> getUserByEmail(String email) async {
+    isLoading = true;
+    UserModel userModel = UserModel();
+    try {
+      userModel = await repo.getUserByEmail(email);
+      isLoading = false;
+    } catch (e) {
+      print(e.toString());
+      isLoading = false;
+    }
+    return userModel;
+  }
+
   Future<UserModel> addUser(UserModel userModel) async {
     isLoading = true;
     UserModel newUserModel = UserModel();
@@ -54,12 +89,27 @@ class UserViewModel extends LoadingViewModel {
     return newUserModel;
   }
 
-  Future<void> logout() async {
+  Future<UserModel> updateUser(UserModel userModel) async {
+    isLoading = true;
+    UserModel newUserModel = UserModel();
     try {
-      repo.logout();
-      userPreferences.clearUser();
+      newUserModel = await repo.updateUser(userModel);
+      isLoading = false;
     } catch (e) {
       print(e.toString());
+      isLoading = false;
+    }
+    return newUserModel;
+  }
+
+  Future<void> deleteUserByEmail(String email) async {
+    isLoading = true;
+    try {
+      await repo.deleteUserByEmail(email);
+      isLoading = false;
+    } catch (e) {
+      print(e.toString());
+      isLoading = false;
     }
   }
 }
