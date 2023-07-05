@@ -7,6 +7,7 @@ import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
+import 'package:ts_one/util/util.dart';
 
 class AllUsersView extends StatefulWidget {
   const AllUsersView({Key? key}) : super(key: key);
@@ -18,15 +19,20 @@ class AllUsersView extends StatefulWidget {
 class _AllUsersViewState extends State<AllUsersView> {
   late UserViewModel viewModel;
   late List<UserModel> users;
+  late List<UserModel> searchedUsers;
   late ScrollController _scrollController;
+  late bool isSearching;
   int limit = 30;
+  int searchLimit = 5;
 
   @override
   void initState() {
     viewModel = Provider.of<UserViewModel>(context, listen: false);
     users = [];
+    searchedUsers = [];
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
+    isSearching = false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getUsers();
@@ -37,6 +43,10 @@ class _AllUsersViewState extends State<AllUsersView> {
 
   void getUsers () async {
     users = await viewModel.getAllUsers(limit);
+  }
+
+  void searchUser(String searchName) async {
+    searchedUsers = await viewModel.getUsersBySearchName(searchName, searchLimit);
   }
 
   void _scrollListener() {
@@ -70,6 +80,51 @@ class _AllUsersViewState extends State<AllUsersView> {
                 child: Column(
                   children: [
                     Expanded(
+                      flex: 0,
+                      child: TextField(
+                          onTapOutside: (event) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                          onChanged: (value) {
+                            if(value.isNotEmpty) {
+                              // capitalize the first letter
+                              value = value.toTitleCase();
+
+                              // set isSearching to true
+                              setState(() {
+                                isSearching = true;
+                              });
+
+                              // search user
+                              searchUser(value);
+                            } else {
+                              setState(() {
+                                isSearching = false;
+                              });
+                            }
+                          },
+                          cursorColor: TsOneColor.primary,
+                          decoration: InputDecoration(
+                            fillColor: TsOneColor.onPrimary,
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: TsOneColor.primary),
+                            ),
+                            hintText: 'Search',
+                            hintStyle: const TextStyle(
+                              color: TsOneColor.onSecondary,
+                            ),
+                            prefixIcon: Container(
+                              padding: const EdgeInsets.all(16),
+                              width: 32,
+                              child: const Icon(Icons.search),
+                            ),
+                          ),
+                        )
+                    ),
+                    !isSearching
+                    ? Expanded(
                       child: users.isNotEmpty
                           ? ListView.builder(
                           shrinkWrap: true,
@@ -137,7 +192,71 @@ class _AllUsersViewState extends State<AllUsersView> {
                           }
                       )
                           : const Center(child: CircularProgressIndicator())
-                    ),
+                    )
+                    : Expanded(
+                        child: !viewModel.isLoading
+                            ? searchedUsers.isNotEmpty
+                              ? ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: searchedUsers.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                  surfaceTintColor: TsOneColor.surface,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context,
+                                          NamedRoute.detailUser,
+                                          arguments: searchedUsers[index].email
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          CircleAvatar(
+                                            radius: 30,
+                                            backgroundColor: Colors.white,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(50),
+                                              child: Image.asset("assets/images/placeholder_person.png"),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    searchedUsers[index].name,
+                                                    style: tsOneTextTheme.titleMedium,
+                                                  ),
+                                                  Text(
+                                                    searchedUsers[index].position,
+                                                    style: tsOneTextTheme.bodySmall,
+                                                  ),
+                                                  Text(
+                                                    searchedUsers[index].staffNo,
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                              );
+                            }
+                        )
+                              : const Center(child: Text("No user found"))
+                            : const Center(child: CircularProgressIndicator())
+                    )
                   ],
                 )
             ),

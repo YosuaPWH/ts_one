@@ -98,6 +98,19 @@ class UserViewModel extends LoadingViewModel {
     return userModel;
   }
 
+  Future<List<UserModel>> getUsersBySearchName(String searchName, int searchLimit) async {
+    isLoading = true;
+    List<UserModel> users = [];
+    try {
+      users = await repo.getUsersBySearchName(searchName, searchLimit);
+      isLoading = false;
+    } catch (e) {
+      print(e.toString());
+      isLoading = false;
+    }
+    return users;
+  }
+
   Future<UserModel> addUser(UserModel userModel) async {
     isLoading = true;
     UserModel newUserModel = UserModel();
