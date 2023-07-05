@@ -88,8 +88,7 @@ class _AddUserViewState extends State<AddUserView> {
     return Consumer(builder: (_, model, child) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Add User", style: TextStyle(fontWeight: FontWeight.w600)),
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: const Text("Add User"),
         ),
         body: SingleChildScrollView(
           child: Form(

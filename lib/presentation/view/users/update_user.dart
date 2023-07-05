@@ -176,7 +176,6 @@ class _UpdateUserViewState extends State<UpdateUserView> {
       return Scaffold(
         appBar: AppBar(
           title: Text("Update User"),
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         ),
         body: userModel.name == Util.defaultStringIfNull
             ? const Center(child: CircularProgressIndicator())
