@@ -647,6 +647,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                     ],
                   ),
                 ),
+                /*
                 Padding(
                   padding:
                   const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
@@ -671,13 +672,14 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                     },
                   ),
                 ),
+                */
                 Padding(
                   padding:
                   const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        userModelUpdated = await viewModel.updateUser(userModel);
+                        userModelUpdated = await viewModel.updateUser(userEmail, userModel);
                         if(!context.mounted) return;
 
                         if(userModelUpdated.name != Util.defaultStringIfNull){

@@ -21,7 +21,7 @@ abstract class UserRepo {
 
   Future<UserModel> addUser(UserModel userModel);
 
-  Future<UserModel> updateUser(UserModel userModel);
+  Future<UserModel> updateUser(String userEmail, UserModel userModel);
 
   Future<void> deleteUserByEmail(String email);
 }
@@ -255,25 +255,46 @@ class UserRepoImpl implements UserRepo {
   }
 
   @override
-  Future<UserModel> updateUser(UserModel user) async {
+  Future<UserModel> updateUser(String userEmail, UserModel user) async {
     UserModel updatedUser = UserModel();
 
-    UserModel currentUser = await getUserByEmail(user.email);
+    UserModel currentUser = await getUserByEmail(userEmail);
     try {
-      /** update the user */
-      await _db!
-          .collection(UserModel.firebaseCollection)
-          .doc(currentUser.email)
-          .update(user.toFirebase());
+      /** if the user changes their email, delete the old user */
+      if (user.email != currentUser.email) {
+        await deleteUserByEmail(currentUser.email);
 
-      /** get thew newly updated user */
-      final userData = await _db!
-          .collection(UserModel.firebaseCollection)
-          .doc(currentUser.email)
-          .get();
+        /** insert the new user */
+        await _db!
+            .collection(UserModel.firebaseCollection)
+            .doc(user.email)
+            .set(user.toFirebase());
 
-      /** assign the newly updated user */
-      updatedUser = UserModel.fromFirebaseUser(userData.data()!);
+        /** get thew newly updated user */
+        final userData = await _db!
+            .collection(UserModel.firebaseCollection)
+            .doc(user.email)
+            .get();
+
+        /** assign the newly updated user */
+        updatedUser = UserModel.fromFirebaseUser(userData.data()!);
+      }
+      else {
+        /** update the user */
+        await _db!
+            .collection(UserModel.firebaseCollection)
+            .doc(currentUser.email)
+            .update(user.toFirebase());
+
+        /** get thew newly updated user */
+        final userData = await _db!
+            .collection(UserModel.firebaseCollection)
+            .doc(currentUser.email)
+            .get();
+
+        /** assign the newly updated user */
+        updatedUser = UserModel.fromFirebaseUser(userData.data()!);
+      }
     } catch (e) {
       print("Exception in UserRepo on updateUser: $e");
     }

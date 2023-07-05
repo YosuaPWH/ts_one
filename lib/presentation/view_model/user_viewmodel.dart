@@ -125,11 +125,11 @@ class UserViewModel extends LoadingViewModel {
     return newUserModel;
   }
 
-  Future<UserModel> updateUser(UserModel userModel) async {
+  Future<UserModel> updateUser(String userEmail, UserModel userModel) async {
     isLoading = true;
     UserModel newUserModel = UserModel();
     try {
-      newUserModel = await repo.updateUser(userModel);
+      newUserModel = await repo.updateUser(userEmail, userModel);
       reset();
       isLoading = false;
     } catch (e) {
