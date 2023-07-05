@@ -16,6 +16,7 @@ class AddUserView extends StatefulWidget {
 class _AddUserViewState extends State<AddUserView> {
   late UserViewModel viewModel;
   late UserModel userModel;
+  late UserModel userModelAdded;
   final _formKey = GlobalKey<FormState>();
 
   bool _cptsChecked = false;
@@ -30,12 +31,23 @@ class _AddUserViewState extends State<AddUserView> {
   @override
   void initState() {
     viewModel = Provider.of<UserViewModel>(context, listen: false);
-    initModel();
+    initAll();
     super.initState();
   }
 
-  void initModel() {
-    userModel = UserModel();
+  void initAll() {
+    setState(() {
+      userModel = UserModel();
+      userModelAdded = UserModel();
+      _cptsChecked = false;
+      _ccpChecked = false;
+      _pgiChecked = false;
+      _fiaChecked = false;
+      _fisChecked = false;
+      _regChecked = false;
+      _trgChecked = false;
+      _utChecked = false;
+    });
   }
 
   void _selectDateLicenseLastPassed(BuildContext context) async {
@@ -385,41 +397,47 @@ class _AddUserViewState extends State<AddUserView> {
                   padding:
                       const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         // send data to view model
-                        viewModel.addUser(userModel);
-                        // clear form
-                        _formKey.currentState!.reset();
+                        userModelAdded = await viewModel.addUser(userModel);
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text("User added successfully"),
-                            duration: const Duration(milliseconds: 1000),
-                            action: SnackBarAction(
-                              label: 'Close',
-                              onPressed: () {
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
-                              },
+                        if(!context.mounted) return;
+
+                        if(userModelAdded.name != Util.defaultStringIfNull) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text("User added successfully"),
+                              duration: const Duration(milliseconds: 1000),
+                              action: SnackBarAction(
+                                label: 'Close',
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                },
+                              ),
                             ),
-                          ),
-                        );
-                      }
-                      else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text("Please fill in all the fields"),
-                            duration: const Duration(milliseconds: 1000),
-                            action: SnackBarAction(
-                              label: 'Close',
-                              onPressed: () {
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
-                              },
+                          );
+                          // clear form
+                          _formKey.currentState!.reset();
+                          // clear checkboxes
+                          initAll();
+                        }
+                        else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text("Something went wrong. Please try again."),
+                              duration: const Duration(milliseconds: 1000),
+                              action: SnackBarAction(
+                                label: 'Close',
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                },
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
