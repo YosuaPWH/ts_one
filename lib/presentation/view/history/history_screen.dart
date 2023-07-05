@@ -5,7 +5,6 @@ import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/shared_components/card_user.dart';
 import 'package:ts_one/presentation/shared_components/search_component.dart';
-import 'package:ts_one/presentation/theme.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});

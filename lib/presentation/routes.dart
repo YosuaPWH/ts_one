@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
-import 'package:ts_one/main.dart';
 import 'package:ts_one/presentation/main_view.dart';
 import 'package:ts_one/presentation/view/assessment/add_assessment_period.dart';
 import 'package:ts_one/presentation/view/assessment/all_assessment_periods.dart';
@@ -13,6 +11,7 @@ import 'package:ts_one/presentation/view/users/add_user.dart';
 import 'package:ts_one/presentation/view/users/all_users.dart';
 import 'package:ts_one/presentation/view/users/detail_user.dart';
 import 'package:ts_one/presentation/view/users/login.dart';
+import 'package:ts_one/presentation/view/users/update_user.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -46,6 +45,13 @@ class AppRoutes {
       case NamedRoute.detailUser:
         return MaterialPageRoute<void>(
           builder: (context) => DetailUserView(
+              userEmail: settings.arguments as String),
+          settings: settings,
+        );
+
+      case NamedRoute.updateUser:
+        return MaterialPageRoute<void>(
+          builder: (context) => UpdateUserView(
               userEmail: settings.arguments as String),
           settings: settings,
         );
@@ -122,6 +128,7 @@ class NamedRoute {
   static const String allUsers = '/allUsers';
   static const String addUser = '/addUser';
   static const String detailUser = '/detailUser';
+  static const String updateUser = '/updateUser';
 
   static const String newAssessmentCandidate = '/newAssessmentCandidate';
   static const String newAssessmentFlightDetails =
