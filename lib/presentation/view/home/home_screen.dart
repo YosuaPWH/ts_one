@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ts_one/data/users/user_preferences.dart';
+import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
+import 'package:ts_one/util/util.dart';
 
 import '../../shared_components/search_component.dart';
 import '../../theme.dart';
@@ -12,18 +15,52 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late UserPreferences userPreferences;
+  late String titleToGreet;
+  late String timeToGreet;
+
+  @override
+  void initState() {
+    userPreferences = getItLocator<UserPreferences>();
+    switch(userPreferences.getPosition()) {
+      case 'CAPT':
+        titleToGreet = 'Captain';
+        break;
+      case 'FO':
+        titleToGreet = 'First Officer';
+        break;
+      case 'Pilot Administrator':
+        titleToGreet = 'Pilot Administrator';
+        break;
+      default:
+        titleToGreet = 'Allstar';
+    }
+
+    var hour = DateTime.now().hour;
+    if(hour < 12) {
+      timeToGreet = "Morning";
+    }
+    else if (hour < 17) {
+      timeToGreet = "Afternoon";
+    }
+    else{
+      timeToGreet = "Evening";
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Hi, Pilot",
+                  "Hi, $titleToGreet!",
                   style: tsOneTextTheme.headlineLarge,
                 ),
                 const Icon(
@@ -35,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Good Morning',
+                'Good $timeToGreet',
                 style: tsOneTextTheme.labelMedium,
               ),
             ),
@@ -43,20 +80,23 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.calendar_month_outlined,
-                    color: TsOneColor.onSecondary,
-                    size: 32,
+                  const Padding(
+                    padding: EdgeInsets.only(right: 4.0),
+                    child: Icon(
+                      Icons.calendar_month_outlined,
+                      color: TsOneColor.onSecondary,
+                      size: 32,
+                    ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Sunday',
+                        Util.convertDateTimeDisplay(DateTime.now().toString(), "EEEE"),
                         style: tsOneTextTheme.labelSmall,
                       ),
                       Text(
-                        '18 June 2023',
+                        Util.convertDateTimeDisplay(DateTime.now().toString(), "dd MMMM yyyy"),
                         style: tsOneTextTheme.labelSmall,
                       ),
                     ],

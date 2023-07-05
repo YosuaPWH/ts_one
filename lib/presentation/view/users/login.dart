@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
@@ -221,6 +220,5 @@ class _LoginViewState extends State<LoginView> {
             ));
       },
     );
-    throw UnimplementedError();
   }
 }

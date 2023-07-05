@@ -5,9 +5,25 @@ import 'package:ts_one/data/users/users.dart';
 
 abstract class UserRepo {
   Future<UserAuth> login(String email, String password);
+
   Future<UserAuth> loginWithGoogle();
-  Future<UserModel> addUser(UserModel userModel);
+
   Future<void> logout();
+
+  Future<List<UserModel>> getUsersPaginated(int limit, UserModel? lastUser);
+
+  Future<int> getLengthOfAllUsers();
+
+  Future<UserModel> getUserByEmail(String email);
+
+  Future<List<UserModel>> getUsersBySearchName(
+      String searchName, int searchLimit);
+
+  Future<UserModel> addUser(UserModel userModel);
+
+  Future<UserModel> updateUser(UserModel userModel);
+
+  Future<void> deleteUserByEmail(String email);
 }
 
 class UserRepoImpl implements UserRepo {
@@ -114,6 +130,105 @@ class UserRepoImpl implements UserRepo {
   }
 
   @override
+  Future<void> logout() async {
+    try {
+      return await _auth!.signOut();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  @override
+  Future<int> getLengthOfAllUsers() async {
+    return await _db!
+        .collection(UserModel.firebaseCollection)
+        .snapshots()
+        .length;
+  }
+
+  @override
+  Future<List<UserModel>> getUsersPaginated(
+      int limit, UserModel? lastUser) async {
+    List<UserModel> users = [];
+
+    try {
+      // get all users from firestore database
+      Query query = _db!
+          .collection(UserModel.firebaseCollection)
+          .orderBy(UserModel.keyName)
+          .limit(limit);
+
+      if (lastUser != null) {
+        final lastDocument = await _db!
+            .collection(UserModel.firebaseCollection)
+            .doc(lastUser.email)
+            .get();
+
+        query = query.startAfterDocument(lastDocument);
+      }
+
+      final usersData = await query.get();
+
+      // create user model from firebase user and user data from firestore
+      users = usersData.docs
+          .map((e) =>
+              UserModel.fromFirebaseUser(e.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print(e.toString());
+    }
+
+    return users;
+  }
+
+  @override
+  Future<UserModel> getUserByEmail(String email) async {
+    UserModel user = UserModel();
+
+    try {
+      // get user data from firestore database by finding the email of the current user
+      final userData =
+          await _db!.collection(UserModel.firebaseCollection).doc(email).get();
+
+      // create user model from firebase user and user data from firestore
+      user = UserModel.fromFirebaseUser(userData.data()!);
+    } catch (e) {
+      print(e.toString());
+    }
+
+    return user;
+  }
+
+  @override
+  Future<List<UserModel>> getUsersBySearchName(
+      String searchName, int searchLimit) async {
+    List<UserModel> users = [];
+
+    try {
+      Query query = _db!
+          .collection(UserModel.firebaseCollection)
+          .orderBy(UserModel.keyName)
+          .limit(searchLimit)
+          // .where(UserModel.keyName, isGreaterThanOrEqualTo: searchName)
+          // .where(UserModel.keyName, isLessThanOrEqualTo: searchName + '\uf8ff');
+          .startAt([searchName])
+          .endAt(['$searchName\uf8ff']);
+
+      final usersData = await query.get();
+
+      // create user model from firebase user and user data from firestore
+      users = usersData.docs
+          .map((e) =>
+              UserModel.fromFirebaseUser(e.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print(e.toString());
+    }
+
+    return users;
+  }
+
+  @override
   Future<UserModel> addUser(UserModel userModel) async {
     UserModel newUserModel = UserModel();
 
@@ -122,7 +237,7 @@ class UserRepoImpl implements UserRepo {
       await _db!
           .collection(UserModel.firebaseCollection)
           .doc(userModel.email)
-          .set(userModel.toMap());
+          .set(userModel.toFirebase());
 
       // get user data from firestore database by finding the email of the current user
       final userData = await _db!
@@ -140,11 +255,35 @@ class UserRepoImpl implements UserRepo {
   }
 
   @override
-  Future<void> logout() async {
+  Future<UserModel> updateUser(UserModel user) async {
+    UserModel updatedUser = UserModel();
+
+    UserModel currentUser = await getUserByEmail(user.email);
     try {
-      return await _auth!.signOut();
+      /** update the user */
+      await _db!
+          .collection(UserModel.firebaseCollection)
+          .doc(currentUser.email)
+          .update(user.toFirebase());
+
+      /** get thew newly updated user */
+      final userData = await _db!
+          .collection(UserModel.firebaseCollection)
+          .doc(currentUser.email)
+          .get();
+
+      /** assign the newly updated user */
+      updatedUser = UserModel.fromFirebaseUser(userData.data()!);
     } catch (e) {
-      print(e.toString());
+      print("Exception in UserRepo on updateUser: $e");
     }
+
+    return updatedUser;
+  }
+
+  @override
+  Future<void> deleteUserByEmail(String email) async {
+    /** delete the user */
+    await _db!.collection(UserModel.firebaseCollection).doc(email).delete();
   }
 }
