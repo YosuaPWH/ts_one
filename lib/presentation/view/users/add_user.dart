@@ -18,15 +18,7 @@ class _AddUserViewState extends State<AddUserView> {
   late UserModel userModel;
   late UserModel userModelAdded;
   final _formKey = GlobalKey<FormState>();
-
-  bool _cptsChecked = false;
-  bool _ccpChecked = false;
-  bool _pgiChecked = false;
-  bool _fiaChecked = false;
-  bool _fisChecked = false;
-  bool _regChecked = false;
-  bool _trgChecked = false;
-  bool _utChecked = false;
+  late Map<String, bool> checkedAndEnabled;
 
   @override
   void initState() {
@@ -39,14 +31,24 @@ class _AddUserViewState extends State<AddUserView> {
     setState(() {
       userModel = UserModel();
       userModelAdded = UserModel();
-      _cptsChecked = false;
-      _ccpChecked = false;
-      _pgiChecked = false;
-      _fiaChecked = false;
-      _fisChecked = false;
-      _regChecked = false;
-      _trgChecked = false;
-      _utChecked = false;
+      checkedAndEnabled = {
+        UserModel.keySubPositionCPTS: false,
+        UserModel.keySubPositionCCP: false,
+        UserModel.keySubPositionPGI: false,
+        UserModel.keySubPositionFIA: false,
+        UserModel.keySubPositionFIS: false,
+        UserModel.keySubPositionREG: false,
+        UserModel.keySubPositionTRG: false,
+        UserModel.keySubPositionUT: false,
+        "enabled_${UserModel.keySubPositionCPTS}": true,
+        "enabled_${UserModel.keySubPositionCCP}": true,
+        "enabled_${UserModel.keySubPositionPGI}": true,
+        "enabled_${UserModel.keySubPositionFIA}": true,
+        "enabled_${UserModel.keySubPositionFIS}": true,
+        "enabled_${UserModel.keySubPositionREG}": true,
+        "enabled_${UserModel.keySubPositionTRG}": true,
+        "enabled_${UserModel.keySubPositionUT}": true,
+      };
     });
   }
 
@@ -176,112 +178,294 @@ class _AddUserViewState extends State<AddUserView> {
                       const Text("Sub Position"),
                       CheckboxListTile(
                         title: Text(UserModel.keySubPositionCPTS),
-                        value: _cptsChecked,
+                        enabled: checkedAndEnabled["enabled_${UserModel.keySubPositionCPTS}"]!,
+                        value: checkedAndEnabled[UserModel.keySubPositionCPTS],
                         onChanged: (value) {
                           setState(() {
-                            _cptsChecked = value!;
-                            if (_cptsChecked) {
+                            checkedAndEnabled[UserModel.keySubPositionCPTS] = value!;
+                            if (checkedAndEnabled[UserModel.keySubPositionCPTS]!) {
+                              // disable REG, TRG, UT
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
+
                               userModel.subPosition.add(UserModel.keySubPositionCPTS);
                             } else {
                               userModel.subPosition.remove(UserModel.keySubPositionCPTS);
+
+                              // if no other subPosition is selected, enable REG, TRG, UT
+                              if (!userModel.subPosition.contains(UserModel.keySubPositionCPTS) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionCCP) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionPGI) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionFIA) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
+                              }
                             }
                           });
                         },
                       ),
                       CheckboxListTile(
                         title: Text(UserModel.keySubPositionCCP),
-                        value: _ccpChecked,
+                        enabled: checkedAndEnabled["enabled_${UserModel.keySubPositionCCP}"]!,
+                        value: checkedAndEnabled[UserModel.keySubPositionCCP],
                         onChanged: (value) {
                           setState(() {
-                            _ccpChecked = value!;
-                            if (_ccpChecked) {
+                            checkedAndEnabled[UserModel.keySubPositionCCP] = value!;
+                            if (checkedAndEnabled[UserModel.keySubPositionCCP]!) {
+                              // disable REG, TRG, UT
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
+
                               userModel.subPosition.add(UserModel.keySubPositionCCP);
                             } else {
                               userModel.subPosition.remove(UserModel.keySubPositionCCP);
+
+                              // if no other subPosition is selected, enable REG, TRG, UT
+                              if (!userModel.subPosition.contains(UserModel.keySubPositionCPTS) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionCCP) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionPGI) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionFIA) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
+                              }
                             }
                           });
                         },
                       ),
                       CheckboxListTile(
                         title: Text(UserModel.keySubPositionPGI),
-                        value: _pgiChecked,
+                        enabled: checkedAndEnabled["enabled_${UserModel.keySubPositionPGI}"]!,
+                        value: checkedAndEnabled[UserModel.keySubPositionPGI],
                         onChanged: (value) {
                           setState(() {
-                            _pgiChecked = value!;
-                            if (_pgiChecked) {
+                            checkedAndEnabled[UserModel.keySubPositionPGI] = value!;
+                            if (checkedAndEnabled[UserModel.keySubPositionPGI]!) {
+                              // disable REG, TRG, UT
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
+
                               userModel.subPosition.add(UserModel.keySubPositionPGI);
                             } else {
                               userModel.subPosition.remove(UserModel.keySubPositionPGI);
+
+                              // if no other subPosition is selected, enable REG, TRG, UT
+                              if (!userModel.subPosition.contains(UserModel.keySubPositionCPTS) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionCCP) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionPGI) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionFIA) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
+                              }
                             }
                           });
                         },
                       ),
                       CheckboxListTile(
                         title: Text(UserModel.keySubPositionFIA),
-                        value: _fiaChecked,
+                        enabled: checkedAndEnabled["enabled_${UserModel.keySubPositionFIA}"]!,
+                        value: checkedAndEnabled[UserModel.keySubPositionFIA],
                         onChanged: (value) {
                           setState(() {
-                            _fiaChecked = value!;
-                            if (_fiaChecked) {
+                            checkedAndEnabled[UserModel.keySubPositionFIA] = value!;
+                            if (checkedAndEnabled[UserModel.keySubPositionFIA]!) {
+                              // disable REG, TRG, UT
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
+
                               userModel.subPosition.add(UserModel.keySubPositionFIA);
                             } else {
                               userModel.subPosition.remove(UserModel.keySubPositionFIA);
+
+                              // if no other subPosition is selected, enable REG, TRG, UT
+                              if (!userModel.subPosition.contains(UserModel.keySubPositionCPTS) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionCCP) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionPGI) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionFIA) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
+                              }
                             }
                           });
                         },
                       ),
                       CheckboxListTile(
                         title: Text(UserModel.keySubPositionFIS),
-                        value: _fisChecked,
+                        enabled: checkedAndEnabled["enabled_${UserModel.keySubPositionFIS}"]!,
+                        value: checkedAndEnabled[UserModel.keySubPositionFIS],
                         onChanged: (value) {
                           setState(() {
-                            _fisChecked = value!;
-                            if (_fisChecked) {
+                            checkedAndEnabled[UserModel.keySubPositionFIS] = value!;
+                            if (checkedAndEnabled[UserModel.keySubPositionFIS]!) {
+                              // disable REG, TRG, UT
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
+
                               userModel.subPosition.add(UserModel.keySubPositionFIS);
                             } else {
                               userModel.subPosition.remove(UserModel.keySubPositionFIS);
+
+                              // if no other subPosition is selected, enable REG, TRG, UT
+                              if (!userModel.subPosition.contains(UserModel.keySubPositionCPTS) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionCCP) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionPGI) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionFIA) &&
+                                  !userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
+                                checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
+                              }
                             }
                           });
                         },
                       ),
                       CheckboxListTile(
                         title: Text(UserModel.keySubPositionREG),
-                        value: _regChecked,
+                        enabled: checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"]!,
+                        value: checkedAndEnabled[UserModel.keySubPositionREG],
                         onChanged: (value) {
                           setState(() {
-                            _regChecked = value!;
-                            if (_regChecked) {
+                            checkedAndEnabled[UserModel.keySubPositionREG] = value!;
+                            if (checkedAndEnabled[UserModel.keySubPositionREG]!) {
+                              // disable all other sub position
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCPTS}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCCP}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionPGI}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIA}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIS}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
+
+                              // uncheck all other sub position
+                              checkedAndEnabled[UserModel.keySubPositionCPTS] = false;
+                              checkedAndEnabled[UserModel.keySubPositionCCP] = false;
+                              checkedAndEnabled[UserModel.keySubPositionPGI] = false;
+                              checkedAndEnabled[UserModel.keySubPositionFIA] = false;
+                              checkedAndEnabled[UserModel.keySubPositionFIS] = false;
+                              checkedAndEnabled[UserModel.keySubPositionTRG] = false;
+                              checkedAndEnabled[UserModel.keySubPositionUT] = false;
+
+                              // clear all sub position
+                              userModel.subPosition.clear();
+
+                              // add REG sub position
                               userModel.subPosition.add(UserModel.keySubPositionREG);
                             } else {
                               userModel.subPosition.remove(UserModel.keySubPositionREG);
+
+                              // enable all other sub position
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCPTS}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCCP}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionPGI}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIA}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIS}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
                             }
                           });
                         },
                       ),
                       CheckboxListTile(
                         title: Text(UserModel.keySubPositionTRG),
-                        value: _trgChecked,
+                        enabled: checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"]!,
+                        value: checkedAndEnabled[UserModel.keySubPositionTRG],
                         onChanged: (value) {
                           setState(() {
-                            _trgChecked = value!;
-                            if (_trgChecked) {
+                            checkedAndEnabled[UserModel.keySubPositionTRG] = value!;
+                            if (checkedAndEnabled[UserModel.keySubPositionTRG]!) {
+                              // disable all other sub position
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCPTS}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCCP}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionPGI}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIA}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIS}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
+
+                              // uncheck all other sub position
+                              checkedAndEnabled[UserModel.keySubPositionCPTS] = false;
+                              checkedAndEnabled[UserModel.keySubPositionCCP] = false;
+                              checkedAndEnabled[UserModel.keySubPositionPGI] = false;
+                              checkedAndEnabled[UserModel.keySubPositionFIA] = false;
+                              checkedAndEnabled[UserModel.keySubPositionFIS] = false;
+                              checkedAndEnabled[UserModel.keySubPositionREG] = false;
+                              checkedAndEnabled[UserModel.keySubPositionUT] = false;
+
+                              // clear all sub position
+                              userModel.subPosition.clear();
+
+                              // add TRG sub position
                               userModel.subPosition.add(UserModel.keySubPositionTRG);
                             } else {
                               userModel.subPosition.remove(UserModel.keySubPositionTRG);
+
+                              // enable all other sub position
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCPTS}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCCP}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionPGI}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIA}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIS}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
                             }
                           });
                         },
                       ),
                       CheckboxListTile(
                         title: Text(UserModel.keySubPositionUT),
-                        value: _utChecked,
+                        enabled: checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"]!,
+                        value: checkedAndEnabled[UserModel.keySubPositionUT],
                         onChanged: (value) {
                           setState(() {
-                            _utChecked = value!;
-                            if (_utChecked) {
+                            checkedAndEnabled[UserModel.keySubPositionUT] = value!;
+                            if (checkedAndEnabled[UserModel.keySubPositionUT]!) {
+                              // disable all other sub position
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCPTS}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCCP}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionPGI}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIA}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIS}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = false;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
+
+                              // uncheck all other sub position
+                              checkedAndEnabled[UserModel.keySubPositionCPTS] = false;
+                              checkedAndEnabled[UserModel.keySubPositionCCP] = false;
+                              checkedAndEnabled[UserModel.keySubPositionPGI] = false;
+                              checkedAndEnabled[UserModel.keySubPositionFIA] = false;
+                              checkedAndEnabled[UserModel.keySubPositionFIS] = false;
+                              checkedAndEnabled[UserModel.keySubPositionREG] = false;
+                              checkedAndEnabled[UserModel.keySubPositionTRG] = false;
+
+                              // clear all sub position
+                              userModel.subPosition.clear();
+
+                              // add UT sub position
                               userModel.subPosition.add(UserModel.keySubPositionUT);
                             } else {
+                              // remove sub position
                               userModel.subPosition.remove(UserModel.keySubPositionUT);
+
+                              // enable all other sub position
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCPTS}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionCCP}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionPGI}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIA}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionFIS}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
+                              checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
                             }
                           });
                         },
