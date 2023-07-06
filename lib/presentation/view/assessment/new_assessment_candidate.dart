@@ -133,14 +133,16 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                   Navigator.pushNamed(
                     context,
                     NamedRoute.newAssessmentFlightDetails,
-                    arguments: NewAssessment(
-                      name: _nameController.text,
-                      staffNumber: _staffNumberController.text,
-                      otherCrewMember: _otherCrewMemberController.text,
-                      aircraftType: _aircraftTypeController.text,
-                      airportAndRoute: _airportAndRouteController.text,
-                      simulationHours: _simulationHoursController.text,
-                    ),
+                    arguments: {
+                      'dataAssessmentCandidate': NewAssessment(
+                        name: _nameController.text,
+                        staffNumber: _staffNumberController.text,
+                        otherCrewMember: _otherCrewMemberController.text,
+                        aircraftType: _aircraftTypeController.text,
+                        airportAndRoute: _airportAndRouteController.text,
+                        simulationHours: _simulationHoursController.text,
+                      ),
+                    },
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -180,9 +182,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
       _inputDateController
         ..text = DateFormat.yMMMd().format(_selectedDate!)
         ..selection = TextSelection.fromPosition(
-          TextPosition(
-              offset: _inputDateController.text.length,
-              affinity: TextAffinity.upstream),
+          TextPosition(offset: _inputDateController.text.length, affinity: TextAffinity.upstream),
         );
     }
   }

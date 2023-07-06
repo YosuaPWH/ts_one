@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/presentation/routes.dart';
+import 'package:ts_one/presentation/shared_components/dropdown_button_form_component.dart';
 import 'package:ts_one/presentation/theme.dart';
 
 import '../../../data/assessments/assessment_variables.dart';
@@ -12,13 +13,11 @@ import '../../view_model/assessment_viewmodel.dart';
 
 class NewAssessmentVariables extends StatefulWidget {
   const NewAssessmentVariables(
-      {Key? key,
-      required this.assessmentFlightDetails,
-      required this.dataCandidate})
+      {Key? key, required this.dataAssessmentFlightDetails, required this.dataAssessmentCandidate})
       : super(key: key);
 
-  final AssessmentFlightDetails assessmentFlightDetails;
-  final NewAssessment dataCandidate;
+  final AssessmentFlightDetails dataAssessmentFlightDetails;
+  final NewAssessment dataAssessmentCandidate;
 
   @override
   State<NewAssessmentVariables> createState() => _NewAssessmentVariablesState();
@@ -29,7 +28,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
   late AssessmentPeriod dataAssessmentPeriod;
   late List<String> assessmentCategories;
   late Map<AssessmentVariables, bool> allAssessmentVariables;
-  Map<AssessmentVariables, Map<String, String>> result = {};
+  Map<AssessmentVariables, Map<String, String>> dataAssessmentVariablesFirst = {};
 
   @override
   void initState() {
@@ -46,8 +45,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
   }
 
   void getAllAssessment() async {
-    dataAssessmentPeriod =
-        await viewModel.getAllAssessmentVariablesFromLastPeriod();
+    dataAssessmentPeriod = await viewModel.getAllAssessmentVariablesFromLastPeriod();
 
     print("size: ${dataAssessmentPeriod.assessmentVariables.length}");
 
@@ -63,6 +61,8 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("data: ${widget.dataAssessmentFlightDetails.toString()}");
+
     return Consumer<AssessmentViewModel>(
       builder: (_, model, child) {
         return Scaffold(
@@ -72,56 +72,55 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
             ),
           ),
           body: Column(
-              children: [
-                Expanded(
-                  child: model.isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children:
-                                  _expansionTilesForNewAssessmentVariables(),
-                            ),
+            children: [
+              Expanded(
+                child: model.isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: _expansionTilesForNewAssessmentVariables(),
                           ),
                         ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                          context, NamedRoute.newAssessmentVariablesSecond,
-                          arguments: {
-                            'dataCandidate' : widget.dataCandidate,
-                            'dataFlightDetails' : widget.assessmentFlightDetails,
-                            'dataVariablesFirst' : result
-                          }
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      backgroundColor: TsOneColor.primary,
-                    ),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: 48,
-                      child: const Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Next",
-                          style: TextStyle(color: TsOneColor.secondary),
-                        ),
+                      ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      NamedRoute.newAssessmentVariablesSecond,
+                      arguments: {
+                        'dataAssessmentCandidate': widget.dataAssessmentCandidate,
+                        'dataAssessmentFlightDetails': widget.dataAssessmentFlightDetails,
+                        'dataAssessmentVariablesFirst': dataAssessmentVariablesFirst
+                      },
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    backgroundColor: TsOneColor.primary,
+                  ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 48,
+                    child: const Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Next",
+                        style: TextStyle(color: TsOneColor.secondary),
                       ),
                     ),
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
+          ),
         );
       },
     );
@@ -153,10 +152,11 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
           children: [
             Container(
               decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(5.0),
-                  ),
-                  color: TsOneColor.secondary),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(5.0),
+                ),
+                color: TsOneColor.secondary,
+              ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: 8.0,
@@ -184,32 +184,37 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                                     contentPadding: EdgeInsets.zero,
                                     child: CheckboxListTile(
                                       value: allAssessmentVariables[data],
-                                      contentPadding:
-                                          const EdgeInsets.only(bottom: 10),
+                                      contentPadding: const EdgeInsets.only(bottom: 10),
                                       dense: true,
                                       onChanged: (newValue) {
                                         setState(() {
-                                          allAssessmentVariables[data] =
-                                              newValue!;
+                                          allAssessmentVariables[data] = newValue!;
 
                                           if (newValue) {
-                                            if (!result.containsKey(data)) {
+                                            if (!dataAssessmentVariablesFirst.containsKey(data)) {
                                               if (data.typeOfAssessment == "Satisfactory") {
-                                                result.addAll({data: {"Assessment": "N/A", "Markers": "N/A", "Empty": "true"}});
+                                                dataAssessmentVariablesFirst.addAll({
+                                                  data: {
+                                                    "Assessment": "N/A",
+                                                    "Markers": "N/A",
+                                                    "Empty": "true"
+                                                  }
+                                                });
                                               } else {
-                                                result.addAll({data: {"PF": "N/A", "PM": "N/A", "Empty": "true"}});
+                                                dataAssessmentVariablesFirst.addAll({
+                                                  data: {"PF": "N/A", "PM": "N/A", "Empty": "true"}
+                                                });
                                               }
                                             } else {
-                                                result[data]?["Empty"] = "true";
+                                              dataAssessmentVariablesFirst[data]?["Empty"] = "true";
                                             }
                                           } else {
-                                            result[data]?["Empty"] = "false";
+                                            dataAssessmentVariablesFirst[data]?["Empty"] = "false";
                                           }
                                         });
                                       },
                                       title: const Text("N/A"),
-                                      controlAffinity:
-                                          ListTileControlAffinity.leading,
+                                      controlAffinity: ListTileControlAffinity.leading,
                                     ),
                                   ),
                                 ),
@@ -221,30 +226,38 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                                         Flexible(
                                           flex: 5,
                                           child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5, bottom: 15),
+                                            padding: const EdgeInsets.only(top: 5, bottom: 15),
                                             child: DropdownButtonFormField(
-                                              value: result[data]?["Assessment"] == "N/A" ? null : result[data]?["Assessment"],
+                                              value: dataAssessmentVariablesFirst[data]?["Assessment"] == "N/A"
+                                                  ? null
+                                                  : dataAssessmentVariablesFirst[data]?["Assessment"],
                                               padding: const EdgeInsets.all(0),
                                               isExpanded: false,
                                               isDense: true,
-                                              onChanged: allAssessmentVariables[data]! ? null : (newValue) {
-                                                setState(() {
-                                                  if (!result.containsKey(data)) {
-                                                    result.addAll({data: {"Assessment": newValue as String, "Markers": "N/A", "Empty": "false"}});
-                                                  } else {
-                                                    result[data]?["Assessment"] = newValue as String;
-                                                  }
-                                                });
-                                              },
+                                              onChanged: allAssessmentVariables[data]!
+                                                  ? null
+                                                  : (newValue) {
+                                                      setState(() {
+                                                        if (!dataAssessmentVariablesFirst.containsKey(data)) {
+                                                          dataAssessmentVariablesFirst.addAll({
+                                                            data: {
+                                                              "Assessment": newValue as String,
+                                                              "Markers": "N/A",
+                                                              "Empty": "false"
+                                                            }
+                                                          });
+                                                        } else {
+                                                          dataAssessmentVariablesFirst[data]?["Assessment"] =
+                                                              newValue as String;
+                                                        }
+                                                      });
+                                                    },
                                               decoration: const InputDecoration(
                                                 border: OutlineInputBorder(),
                                                 label: Text(
                                                   "Assessment",
-                                                  style:
-                                                      TextStyle(fontSize: 12),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(fontSize: 12),
+                                                  overflow: TextOverflow.ellipsis,
                                                 ),
                                               ),
                                               items: const [
@@ -252,16 +265,14 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                                                   value: "Satisfactory",
                                                   child: Text(
                                                     "Satisfactory",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
+                                                    style: TextStyle(fontSize: 12),
                                                   ),
                                                 ),
                                                 DropdownMenuItem(
                                                   value: "Unsatisfactory",
                                                   child: Text(
                                                     "Unsatisfactory",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
+                                                    style: TextStyle(fontSize: 12),
                                                   ),
                                                 )
                                               ],
@@ -274,17 +285,24 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                                         Flexible(
                                           flex: 3,
                                           child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5, bottom: 15),
-                                            child: dropdownMarkers(
-                                              result[data]?["Markers"] == "N/A" ? null : result[data]?["Markers"],
-                                              "Markers",
-                                              allAssessmentVariables[data]!,
-                                              (newValue) {
-                                                if (!result.containsKey(data)) {
-                                                  result.addAll({data: {"Assessment": "N/A", "Markers": newValue, "Empty": "false"}});
+                                            padding: const EdgeInsets.only(top: 5, bottom: 15),
+                                            child: DropdownButtonFormComponent(
+                                              value: dataAssessmentVariablesFirst[data]?["Markers"] == "N/A"
+                                                  ? null
+                                                  : dataAssessmentVariablesFirst[data]?["Markers"],
+                                              label: "Markers",
+                                              isDisabled: allAssessmentVariables[data]!,
+                                              onValueChanged: (newValue) {
+                                                if (!dataAssessmentVariablesFirst.containsKey(data)) {
+                                                  dataAssessmentVariablesFirst.addAll({
+                                                    data: {
+                                                      "Assessment": "N/A",
+                                                      "Markers": newValue,
+                                                      "Empty": "false"
+                                                    }
+                                                  });
                                                 } else {
-                                                  result[data]?["Markers"] = newValue;
+                                                  dataAssessmentVariablesFirst[data]?["Markers"] = newValue;
                                                 }
                                               },
                                             ),
@@ -301,18 +319,25 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                                         Flexible(
                                           flex: 3,
                                           child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5, bottom: 15),
-                                            child: dropdownMarkers(
-                                              result[data]?["PF"] == "N/A" ? null : result[data]?["PF"],
-                                              "PF",
-                                              allAssessmentVariables[data]!,
-                                              (newValue) {
+                                            padding: const EdgeInsets.only(top: 5, bottom: 15),
+                                            child: DropdownButtonFormComponent(
+                                              value: dataAssessmentVariablesFirst[data]?["PF"] == "N/A"
+                                                  ? null
+                                                  : dataAssessmentVariablesFirst[data]?["PF"],
+                                              label: "PF",
+                                              isDisabled: allAssessmentVariables[data]!,
+                                              onValueChanged: (newValue) {
                                                 setState(() {
-                                                  if (!result.containsKey(data)) {
-                                                    result.addAll({data: {"PF": newValue, "PM": "N/A", "Empty" : "false"}});
+                                                  if (!dataAssessmentVariablesFirst.containsKey(data)) {
+                                                    dataAssessmentVariablesFirst.addAll({
+                                                      data: {
+                                                        "PF": newValue,
+                                                        "PM": "N/A",
+                                                        "Empty": "false"
+                                                      }
+                                                    });
                                                   } else {
-                                                    result[data]?["PF"] = newValue;
+                                                    dataAssessmentVariablesFirst[data]?["PF"] = newValue;
                                                   }
                                                 });
                                               },
@@ -325,18 +350,25 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                                         Flexible(
                                           flex: 3,
                                           child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5, bottom: 15),
-                                            child: dropdownMarkers(
-                                              result[data]?["PM"] == "N/A" ? null : result[data]?["PM"],
-                                              "PM",
-                                              allAssessmentVariables[data]!,
-                                              (newValue) {
+                                            padding: const EdgeInsets.only(top: 5, bottom: 15),
+                                            child: DropdownButtonFormComponent(
+                                              value: dataAssessmentVariablesFirst[data]?["PM"] == "N/A"
+                                                  ? null
+                                                  : dataAssessmentVariablesFirst[data]?["PM"],
+                                              label: "PM",
+                                              isDisabled: allAssessmentVariables[data]!,
+                                              onValueChanged: (newValue) {
                                                 setState(() {
-                                                  if (!result.containsKey(data)) {
-                                                    result.addAll({data: {"PF": "N/A", "PM": newValue, "Empty": "false"}});
+                                                  if (!dataAssessmentVariablesFirst.containsKey(data)) {
+                                                    dataAssessmentVariablesFirst.addAll({
+                                                      data: {
+                                                        "PF": "N/A",
+                                                        "PM": newValue,
+                                                        "Empty": "false"
+                                                      }
+                                                    });
                                                   } else {
-                                                    result[data]?["PM"] = newValue;
+                                                    dataAssessmentVariablesFirst[data]?["PM"] = newValue;
                                                   }
                                                 });
                                               },
@@ -363,58 +395,5 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
     }
 
     return expansionTilesVariables;
-  }
-
-  Widget dropdownMarkers(String? value, String label, bool isDisabled, Function(String newValue) onValueChanged) {
-    return DropdownButtonFormField(
-      value: value,
-      onChanged: isDisabled ? null : (value) => onValueChanged(value as String),
-      decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          hintMaxLines: 1,
-          label: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12,
-            ),
-          )),
-      items: const [
-        DropdownMenuItem(
-          value: "1",
-          child: Text(
-            "1",
-            style: TextStyle(fontSize: 12),
-          ),
-        ),
-        DropdownMenuItem(
-          value: "2",
-          child: Text(
-            "2",
-            style: TextStyle(fontSize: 12),
-          ),
-        ),
-        DropdownMenuItem(
-          value: "3",
-          child: Text(
-            "3",
-            style: TextStyle(fontSize: 12),
-          ),
-        ),
-        DropdownMenuItem(
-          value: "4",
-          child: Text(
-            "4",
-            style: TextStyle(fontSize: 12),
-          ),
-        ),
-        DropdownMenuItem(
-          value: "5",
-          child: Text(
-            "5",
-            style: TextStyle(fontSize: 12),
-          ),
-        )
-      ],
-    );
   }
 }

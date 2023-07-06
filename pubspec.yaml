@@ -61,6 +61,9 @@ dependencies:
   email_validator: ^2.1.17
   google_sign_in: ^6.1.4
   flutter_expandable_fab: ^1.8.1
+  signature: ^5.4.0
+  image_picker: ^1.0.0
+  fluttertoast: ^8.2.2
 
 dev_dependencies:
   flutter_test:
