@@ -19,4 +19,14 @@ class AssessmentFlightDetails with ChangeNotifier {
   // AssessmentFlightDetails.fromFirebase(Map<String, dynamic> map) {
   //   _flightDetails = map[flightDetailsKey];
   // }
+
+  @override
+  String toString() {
+    String stringFlightDetails = "";
+    for (var element in flightDetails) {
+      stringFlightDetails += " <=> $element";
+    }
+
+    return stringFlightDetails;
+  }
 }

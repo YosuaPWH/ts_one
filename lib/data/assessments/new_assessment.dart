@@ -10,8 +10,7 @@ class NewAssessment with ChangeNotifier {
     required this.airportAndRoute,
     required this.simulationHours,
     AssessmentFlightDetails? assessmentFlightDetails,
-  }) : _assessmentFlightDetails =
-            assessmentFlightDetails ?? AssessmentFlightDetails();
+  }) : _assessmentFlightDetails = assessmentFlightDetails ?? AssessmentFlightDetails();
 
   String name;
   String staffNumber;
@@ -20,4 +19,10 @@ class NewAssessment with ChangeNotifier {
   String airportAndRoute;
   String simulationHours;
   AssessmentFlightDetails _assessmentFlightDetails;
+
+  @override
+  String toString() {
+    return 'NewAssessment{name: $name, staffNumber: $staffNumber, otherCrewMember: $otherCrewMember,'
+        'aircraftType: $aircraftType, airportAndRoute: $airportAndRoute, simulationHours: $simulationHours}';
+  }
 }

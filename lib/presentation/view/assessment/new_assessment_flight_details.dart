@@ -1,19 +1,17 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/presentation/routes.dart';
-import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
 import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
 
 import '../../theme.dart';
 
 class NewAssessmentFlightDetails extends StatefulWidget {
-  const NewAssessmentFlightDetails({Key? key, required this.dataCandidate})
+  const NewAssessmentFlightDetails({Key? key, required this.dataAssessmentCandidate})
       : super(key: key);
 
-  final NewAssessment dataCandidate;
+  final NewAssessment dataAssessmentCandidate;
 
   @override
   State<NewAssessmentFlightDetails> createState() =>
@@ -155,8 +153,8 @@ class _NewAssessmentFlightDetailsState
                         context,
                         NamedRoute.newAssessmentVariables,
                         arguments: {
-                          'assessmentFlightDetails' : AssessmentFlightDetails(flightDetails: flightDetailsValue),
-                          'dataCandidate' : widget.dataCandidate
+                          'dataAssessmentFlightDetails' : AssessmentFlightDetails(flightDetails: flightDetailsValue),
+                          'dataAssessmentCandidate' : widget.dataAssessmentCandidate
                         }
                       );
                     },
