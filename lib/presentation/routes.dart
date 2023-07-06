@@ -10,6 +10,7 @@ import 'package:ts_one/presentation/view/assessment/new_assessment_candidate.dar
 import 'package:ts_one/presentation/view/assessment/new_assessment_declaration.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_flight_details.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_overall_performance.dart';
+import 'package:ts_one/presentation/view/assessment/new_assessment_success.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables_second.dart';
 import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
@@ -139,6 +140,12 @@ class AppRoutes {
           settings: settings,
         );
 
+      case NamedRoute.newAssessmentSuccess:
+        return MaterialPageRoute<void>(
+          builder: (context) => const NewAssessmentSuccess(),
+          settings: settings
+        );
+
       // =============================================================================
 
       case NamedRoute.allAssessmentPeriods:
@@ -208,6 +215,7 @@ class NamedRoute {
   static const String newAssessmentVariablesSecond = '/newAssessmentVariablesSecond';
   static const String newAssessmentOverallPerformance = '/newAssessmentOverallPerformance';
   static const String newAssessmentDeclaration = '/newAssessmentDeclaration';
+  static const String newAssessmentSuccess = '/newAssessmentSuccess';
 
   static const String allAssessmentPeriods = '/allAssessmentPeriods';
   static const String detailAssessmentPeriod = '/detailAssessmentPeriod';

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
+import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
+import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/shared_components/dropdown_button_form_component.dart';
-
-import '../../../data/assessments/assessment_variables.dart';
-import '../../routes.dart';
-import '../../theme.dart';
+import 'package:ts_one/presentation/theme.dart';
 
 class NewAssessmentOverallPerformance extends StatefulWidget {
   const NewAssessmentOverallPerformance({

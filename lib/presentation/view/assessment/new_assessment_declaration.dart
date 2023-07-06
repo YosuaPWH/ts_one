@@ -1,11 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:signature/signature.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
-
-import '../../theme.dart';
+import 'package:ts_one/presentation/routes.dart';
+import 'package:ts_one/presentation/theme.dart';
 
 class NewAssessmentDeclaration extends StatefulWidget {
   const NewAssessmentDeclaration(
@@ -24,12 +26,13 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
   late SignatureController signatureController;
   late TabController _tabController;
   late ImagePicker imagePicker;
+  File? _image;
 
   @override
   void initState() {
     signatureController = SignatureController(
       penStrokeWidth: 3,
-      penColor: TsOneColor.primary,
+      penColor: tsOneColorScheme.onSecondary,
     );
     _tabController = TabController(length: 2, vsync: this);
     imagePicker = ImagePicker();
@@ -44,6 +47,11 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
 
   Future getImage() async {
     final image = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+    File? img = File(image.path);
+    setState(() {
+      _image = img;
+    });
   }
 
   @override
@@ -97,7 +105,9 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
               ),
             ),
             Container(
+              padding: const EdgeInsets.all(0),
               height: 45,
+              width: 400,
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(25.0),
@@ -112,8 +122,8 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                 labelColor: TsOneColor.secondary,
                 unselectedLabelColor: TsOneColor.primary,
                 tabs: const [
-                  Center(child: Text("Draw")),
-                  Center(child: Text("Image")),
+                  SizedBox.expand(child: Center(child: Text("Draw"))),
+                  SizedBox.expand(child: Center(child: Text("Image"))),
                 ],
               ),
             ),
@@ -122,35 +132,68 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                 physics: const NeverScrollableScrollPhysics(),
                 controller: _tabController,
                 children: [
-                  ClipRRect(
-                    child: SizedBox(
-                      child: Signature(
-                        controller: signatureController,
-                        backgroundColor: TsOneColor.primaryFaded,
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      getImage();
-                    },
-                    child: Ink(
-                      color: TsOneColor.primaryFaded.withOpacity(0.5),
-                      child: const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.camera_alt,
-                              size: 72,
-                              color: TsOneColor.primaryFaded,
-                            ),
-                            Text("Signature")
-                          ],
+                  Stack(children: <Widget>[
+                    ClipRRect(
+                      child: SizedBox(
+                        child: Signature(
+                          controller: signatureController,
+                          backgroundColor: TsOneColor.primaryFaded,
                         ),
                       ),
                     ),
-                  )
+                    Container(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline_outlined,
+                          size: 32,
+                          color: TsOneColor.primary,
+                        ),
+                        onPressed: () {
+                          signatureController.clear();
+                        },
+                      ),
+                    ),
+                  ]),
+                  if (_image == null)
+                    InkWell(
+                      onTap: () {
+                        getImage();
+                      },
+                      child: Ink(
+                        color: TsOneColor.primaryFaded.withOpacity(0.5),
+                        child: const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.camera_alt,
+                                size: 72,
+                                color: TsOneColor.primaryFaded,
+                              ),
+                              Text("Signature")
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: Center(
+                        child: InkWell(
+                          onTap: () {
+                            getImage();
+                          },
+                          child: Ink(
+                            color: TsOneColor.primaryFaded.withOpacity(0.5),
+                            child: Image(
+                              image: FileImage(_image!),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -161,7 +204,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                 contentPadding: const EdgeInsets.only(bottom: 0),
                 child: CheckboxListTile(
                   value: _isConfirmed,
-                  title: const Text("I agree with all of the results"),
+                  title: const Text("I hereby declare that I have filled in the data correctly"),
                   dense: true,
                   controlAffinity: ListTileControlAffinity.leading,
                   onChanged: (newValue) {
@@ -173,7 +216,11 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
               ),
             ),
             ElevatedButton(
-              onPressed: _isConfirmed ? dd : null,
+              onPressed: _isConfirmed
+                  ? () {
+                      Navigator.pushNamed(context, NamedRoute.newAssessmentSuccess);
+                    }
+                  : null,
               style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -185,7 +232,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                 child: const Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "Next",
+                    "Submit",
                     style: TextStyle(color: TsOneColor.secondary),
                   ),
                 ),
@@ -197,5 +244,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
     );
   }
 
-  void dd() {}
+  void toSuccessScreen(BuildContext context) {
+    Navigator.pushNamed(context, NamedRoute.newAssessmentSuccess);
+  }
 }
