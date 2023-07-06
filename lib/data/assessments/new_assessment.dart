@@ -3,26 +3,27 @@ import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 
 class NewAssessment with ChangeNotifier {
   NewAssessment({
-    required this.name,
-    required this.staffNumber,
-    required this.otherCrewMember,
-    required this.aircraftType,
-    required this.airportAndRoute,
-    required this.simulationHours,
+    this.name = "",
+    this.staffNo = "",
+    this.otherCrewMemberStaffNo = "",
+    this.aircraftType = "",
+    this.airportAndRoute = "",
+    this.simulationHours = "",
     AssessmentFlightDetails? assessmentFlightDetails,
   }) : _assessmentFlightDetails = assessmentFlightDetails ?? AssessmentFlightDetails();
 
-  String name;
-  String staffNumber;
-  String otherCrewMember;
-  String aircraftType;
-  String airportAndRoute;
-  String simulationHours;
+  DateTime assessmentDate = DateTime.now();
+  String name = "";
+  String staffNo = "";
+  String otherCrewMemberStaffNo = "";
+  String aircraftType = "";
+  String airportAndRoute = "";
+  String simulationHours = "";
   AssessmentFlightDetails _assessmentFlightDetails;
 
   @override
   String toString() {
-    return 'NewAssessment{name: $name, staffNumber: $staffNumber, otherCrewMember: $otherCrewMember,'
+    return 'NewAssessment{name: $name, staffNumber: $staffNo, otherCrewMember: $otherCrewMemberStaffNo,'
         'aircraftType: $aircraftType, airportAndRoute: $airportAndRoute, simulationHours: $simulationHours}';
   }
 }
