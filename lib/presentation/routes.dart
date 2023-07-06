@@ -71,12 +71,12 @@ class AppRoutes {
         );
 
       case NamedRoute.newAssessmentFlightDetails:
-        final arguments = settings.arguments as Map<String, dynamic>;
-        final dataAssessmentCandidate = arguments['dataAssessmentCandidate'] as NewAssessment;
+        // final arguments = settings.arguments as NewAssessment;
+        // final dataAssessmentCandidate = arguments['dataAssessmentCandidate'] as NewAssessment;
 
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentFlightDetails(
-            dataAssessmentCandidate: dataAssessmentCandidate,
+            dataAssessmentCandidate: settings.arguments as NewAssessment,
           ),
           settings: settings,
         );
@@ -184,7 +184,7 @@ class _UndefinedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('Something went wrong for $name'),
+        child: Text('Something wrong for: $name'),
       ),
     );
   }

@@ -23,7 +23,7 @@ class NewAssessment with ChangeNotifier {
 
   @override
   String toString() {
-    return 'NewAssessment{name: $name, staffNumber: $staffNumber, otherCrewMember: $otherCrewMember,'
+    return 'NewAssessment{name: $name, staffNumber: $staffNo, otherCrewMember: $otherCrewMemberStaffNo,'
         'aircraftType: $aircraftType, airportAndRoute: $airportAndRoute, simulationHours: $simulationHours}';
   }
 }
