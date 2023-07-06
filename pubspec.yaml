@@ -63,6 +63,7 @@ dependencies:
   flutter_expandable_fab: ^1.8.1
   flutter_profile_picture: ^2.0.0
   googleapis: ^11.2.0
+  flutter_typeahead: ^4.6.2
 
 dev_dependencies:
   flutter_test:
