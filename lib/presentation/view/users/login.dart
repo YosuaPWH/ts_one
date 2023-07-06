@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
@@ -185,6 +185,8 @@ class _LoginViewState extends State<LoginView> {
 
                             Navigator.pushNamedAndRemoveUntil(
                                 context, NamedRoute.home, (route) => false);
+                          } else {
+                            Fluttertoast.showToast(msg: userAuth.errorMessage, toastLength: Toast.LENGTH_SHORT);
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -221,6 +223,5 @@ class _LoginViewState extends State<LoginView> {
             ));
       },
     );
-    throw UnimplementedError();
   }
 }

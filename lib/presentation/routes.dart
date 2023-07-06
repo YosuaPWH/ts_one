@@ -14,7 +14,10 @@ import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dar
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables_second.dart';
 import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
 import 'package:ts_one/presentation/view/users/add_user.dart';
+import 'package:ts_one/presentation/view/users/all_users.dart';
+import 'package:ts_one/presentation/view/users/detail_user.dart';
 import 'package:ts_one/presentation/view/users/login.dart';
+import 'package:ts_one/presentation/view/users/update_user.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -33,9 +36,29 @@ class AppRoutes {
           settings: settings,
         );
 
+      case NamedRoute.allUsers:
+        return MaterialPageRoute<void>(
+          builder: (context) => const AllUsersView(),
+          settings: settings,
+        );
+
       case NamedRoute.addUser:
         return MaterialPageRoute<void>(
           builder: (context) => const AddUserView(),
+          settings: settings,
+        );
+
+      case NamedRoute.detailUser:
+        return MaterialPageRoute<void>(
+          builder: (context) => DetailUserView(
+              userEmail: settings.arguments as String),
+          settings: settings,
+        );
+
+      case NamedRoute.updateUser:
+        return MaterialPageRoute<void>(
+          builder: (context) => UpdateUserView(
+              userEmail: settings.arguments as String),
           settings: settings,
         );
 
@@ -126,7 +149,8 @@ class AppRoutes {
 
       case NamedRoute.detailAssessmentPeriod:
         return MaterialPageRoute<void>(
-          builder: (context) => DetailAssessmentPeriodView(assessmentPeriodId: settings.arguments as String),
+          builder: (context) => DetailAssessmentPeriodView(
+              assessmentPeriodId: settings.arguments as String),
           settings: settings,
         );
 
@@ -138,7 +162,8 @@ class AppRoutes {
 
       case NamedRoute.updateAssessmentPeriod:
         return MaterialPageRoute<void>(
-          builder: (context) => UpdateAssessmentPeriodView(assessmentPeriodId: settings.arguments as String),
+          builder: (context) => UpdateAssessmentPeriodView(
+              assessmentPeriodId: settings.arguments as String),
           settings: settings,
         );
 
@@ -170,8 +195,12 @@ class NamedRoute {
 
   static const String main = '/';
   static const String login = '/login';
-  static const String addUser = '/addUser';
   static const String home = '/home';
+
+  static const String allUsers = '/allUsers';
+  static const String addUser = '/addUser';
+  static const String detailUser = '/detailUser';
+  static const String updateUser = '/updateUser';
 
   static const String newAssessmentCandidate = '/newAssessmentCandidate';
   static const String newAssessmentFlightDetails = '/newAssessmentFlightDetails';

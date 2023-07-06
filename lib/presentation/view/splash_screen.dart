@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
-import 'package:ts_one/presentation/theme.dart';
 
 class SplashScreenView extends StatefulWidget {
   const SplashScreenView({super.key, required this.title});

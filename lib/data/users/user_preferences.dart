@@ -13,6 +13,7 @@ class UserPreferences extends ChangeNotifier {
   static String keyUserID = "USER_ID";
   static String keyEmail = "EMAIL";
   static String keyName = "NAME";
+  static String keyPhotoURL = "PHOTO_URL";
   static String keyStaffNo = "STAFF_NO";
   static String keyPosition = "POSITION";
   static String keySubPosition = "SUB_POSITION";
@@ -26,9 +27,17 @@ class UserPreferences extends ChangeNotifier {
     preferences.setString(UserPreferences.keyUserID, userAuth.userCredential!.user!.uid);
     preferences.setString(UserPreferences.keyEmail, userAuth.userCredential!.user!.email!);
     preferences.setString(UserPreferences.keyName, userAuth.userModel!.name);
+
+    preferences.setString(UserPreferences.keyPhotoURL, userAuth.userCredential!.user!.photoURL.toString() ?? "");
+    String? photoUrl = preferences.getString(keyPhotoURL);
+    if(photoUrl != null) {
+      photoUrl = photoUrl.replaceAll("s96-c", "s384-c");
+    }
+    preferences.setString(UserPreferences.keyPhotoURL, photoUrl ?? "");
+
     preferences.setString(UserPreferences.keyStaffNo, userAuth.userModel!.staffNo);
     preferences.setString(UserPreferences.keyPosition, userAuth.userModel!.position);
-    preferences.setString(UserPreferences.keySubPosition, userAuth.userModel!.subPosition);
+    preferences.setStringList(UserPreferences.keySubPosition, userAuth.userModel!.subPosition);
     preferences.setString(UserPreferences.keyLicenseNo, userAuth.userModel!.licenseNo);
     preferences.setString(UserPreferences.keyLicenseLastPassed, userAuth.userModel!.licenseLastPassed.toString());
     preferences.setString(UserPreferences.keyLicenseExpiry, userAuth.userModel!.licenseExpiry.toString());
@@ -41,9 +50,10 @@ class UserPreferences extends ChangeNotifier {
     preferences.setString(UserPreferences.keyUserID, "");
     preferences.setString(UserPreferences.keyEmail, "");
     preferences.setString(UserPreferences.keyName, "");
+    preferences.setString(UserPreferences.keyPhotoURL, "");
     preferences.setString(UserPreferences.keyStaffNo, "");
     preferences.setString(UserPreferences.keyPosition, "");
-    preferences.setString(UserPreferences.keySubPosition, "");
+    preferences.setStringList(UserPreferences.keySubPosition, []);
     preferences.setString(UserPreferences.keyLicenseNo, "");
     preferences.setString(UserPreferences.keyLicenseLastPassed, "");
     preferences.setString(UserPreferences.keyLicenseExpiry, "");
@@ -91,6 +101,15 @@ class UserPreferences extends ChangeNotifier {
     return preferences.getString(UserPreferences.keyName) ?? "";
   }
 
+  void savePhotoURL(String photoURL) {
+    preferences.setString(UserPreferences.keyPhotoURL, photoURL);
+    notifyListeners();
+  }
+
+  String getPhotoURL() {
+    return preferences.getString(UserPreferences.keyPhotoURL) ?? "";
+  }
+
   void savePosition(String position) {
     preferences.setString(UserPreferences.keyPosition, position);
     notifyListeners();
@@ -100,13 +119,13 @@ class UserPreferences extends ChangeNotifier {
     return preferences.getString(UserPreferences.keyPosition) ?? "";
   }
 
-  void saveSubPosition(String subPosition) {
-    preferences.setString(UserPreferences.keySubPosition, subPosition);
+  void saveSubPosition(List<String> subPosition) {
+    preferences.setStringList(UserPreferences.keySubPosition, subPosition);
     notifyListeners();
   }
 
-  String getSubPosition() {
-    return preferences.getString(UserPreferences.keySubPosition) ?? "";
+  List<String> getSubPosition() {
+    return preferences.getStringList(UserPreferences.keySubPosition) ?? [];
   }
 
   void saveLicenseNo(String licenseNo) {

@@ -11,7 +11,7 @@ class UpdateAssessmentPeriodView extends StatefulWidget {
   const UpdateAssessmentPeriodView({Key? key, required this.assessmentPeriodId}) : super(key: key);
 
   final String assessmentPeriodId;
-  
+
   @override
   State<UpdateAssessmentPeriodView> createState() => _UpdateAssessmentPeriodViewState();
 }
@@ -20,22 +20,24 @@ class _UpdateAssessmentPeriodViewState extends State<UpdateAssessmentPeriodView>
   late AssessmentViewModel viewModel;
   late AssessmentPeriod assessmentPeriod;
   late String assessmentPeriodId;
+  late ScrollController scrollController;
   final _formKey = GlobalKey<FormState>();
   late List<Map<String, TextEditingController>> controllers;
   late List<Map<String, Widget>> inputs;
-  
+
   @override
   void initState() {
     viewModel = Provider.of<AssessmentViewModel>(context, listen: false);
     assessmentPeriod = AssessmentPeriod();
     assessmentPeriodId = widget.assessmentPeriodId;
+    scrollController = ScrollController();
     controllers = [];
     inputs = [];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getAssessmentPeriodById();
     });
-    
+
     super.initState();
   }
 
@@ -258,7 +260,7 @@ class _UpdateAssessmentPeriodViewState extends State<UpdateAssessmentPeriodView>
       builder: (_, model, child) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text("New Form Assessment"),
+            title: const Text("Update Form Assessment"),
           ),
           body: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -337,6 +339,7 @@ class _UpdateAssessmentPeriodViewState extends State<UpdateAssessmentPeriodView>
                               child: SizedBox(
                                 height: 200.0,
                                 child: SingleChildScrollView(
+                                  controller: scrollController,
                                   child: Column(
                                     children: [
                                       for (var i = 0; i < inputs.length; i++)
@@ -382,6 +385,12 @@ class _UpdateAssessmentPeriodViewState extends State<UpdateAssessmentPeriodView>
                                                             inputs.removeLast();
                                                           }
                                                         });
+
+                                                        scrollController.animateTo(
+                                                          scrollController.position.maxScrollExtent,
+                                                          duration: const Duration(milliseconds: 500),
+                                                          curve: Curves.easeOut,
+                                                        );
                                                       },
                                                       style: ElevatedButton.styleFrom(
                                                         backgroundColor: tsOneColorScheme.secondary,
@@ -400,6 +409,14 @@ class _UpdateAssessmentPeriodViewState extends State<UpdateAssessmentPeriodView>
                                                       onPressed: () {
                                                         setState(() {
                                                           _buildInput(inputs.length);
+                                                        });
+
+                                                        Future.delayed(const Duration(milliseconds: 200)).then((value) => {
+                                                          scrollController.animateTo(
+                                                            scrollController.position.maxScrollExtent,
+                                                            duration: const Duration(milliseconds: 500),
+                                                            curve: Curves.easeOut,
+                                                          )
                                                         });
                                                       },
                                                       style: ElevatedButton.styleFrom(
