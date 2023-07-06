@@ -186,7 +186,18 @@ class _LoginViewState extends State<LoginView> {
                             Navigator.pushNamedAndRemoveUntil(
                                 context, NamedRoute.home, (route) => false);
                           } else {
-                            Fluttertoast.showToast(msg: userAuth.errorMessage, toastLength: Toast.LENGTH_SHORT);
+                            SnackBar(
+                              content: Text(
+                                  "Error: ${userAuth.errorMessage}"),
+                              duration: const Duration(milliseconds: 3000),
+                              action: SnackBarAction(
+                                label: 'Close',
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                },
+                              ),
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(
