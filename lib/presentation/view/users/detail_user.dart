@@ -143,6 +143,7 @@ class _DetailUserViewState extends State<DetailUserView> {
                               ),
                               child: Column(
                                 children: [
+                                  // email
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -170,6 +171,8 @@ class _DetailUserViewState extends State<DetailUserView> {
                                       ),
                                     ],
                                   ),
+
+                                  // rank
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -177,7 +180,7 @@ class _DetailUserViewState extends State<DetailUserView> {
                                       const Padding(
                                           padding: EdgeInsets.only(
                                               top: 16.0, left: 16.0),
-                                          child: Text("Position",
+                                          child: Text("Rank",
                                               style: TextStyle(
                                                 color: TsOneColor.onPrimary,
                                                 fontSize: 16,
@@ -197,14 +200,19 @@ class _DetailUserViewState extends State<DetailUserView> {
                                       ),
                                     ],
                                   ),
-                                  Row(
+
+                                  // instructor
+                                  user.getInstructorString()
+                                      == Util.defaultStringIfNull
+                                  ? const SizedBox()
+                                  : Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       const Padding(
                                           padding: EdgeInsets.only(
                                               top: 16.0, left: 16.0),
-                                          child: Text("Sub Position",
+                                          child: Text("Instructor",
                                               style: TextStyle(
                                                 color: TsOneColor.onPrimary,
                                                 fontSize: 16,
@@ -224,6 +232,39 @@ class _DetailUserViewState extends State<DetailUserView> {
                                       ),
                                     ],
                                   ),
+
+                                  // attribute
+                                  user.attribute == Util.defaultStringIfNull
+                                  ? const SizedBox()
+                                  : Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 16.0, left: 16.0),
+                                          child: Text("Attribute",
+                                              style: TextStyle(
+                                                color: TsOneColor.onPrimary,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: 'Poppins',
+                                              ))),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 16.0, right: 16.0),
+                                        child: Text(user.attribute,
+                                            style: const TextStyle(
+                                              color: TsOneColor.onPrimary,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: 'Poppins',
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // license no
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -241,7 +282,8 @@ class _DetailUserViewState extends State<DetailUserView> {
                                       Padding(
                                         padding: const EdgeInsets.only(
                                             top: 16.0, right: 16.0),
-                                        child: Text(user.licenseNo,
+                                        child: Text(
+                                            user.licenseNo,
                                             style: const TextStyle(
                                               color: TsOneColor.onPrimary,
                                               fontSize: 13,
@@ -251,13 +293,17 @@ class _DetailUserViewState extends State<DetailUserView> {
                                       ),
                                     ],
                                   ),
+
+                                  // license expiry
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       const Padding(
                                           padding: EdgeInsets.only(
-                                              top: 16.0, left: 16.0),
+                                              top: 16.0,
+                                              bottom: 16.0,
+                                              left: 16.0),
                                           child: Text("License Expiry",
                                               style: TextStyle(
                                                 color: TsOneColor.onPrimary,
@@ -267,7 +313,7 @@ class _DetailUserViewState extends State<DetailUserView> {
                                               ))),
                                       Padding(
                                         padding: const EdgeInsets.only(
-                                            top: 16.0, right: 16.0),
+                                            top: 16.0, bottom: 16.0, right: 16.0),
                                         child: Text(
                                             Util.convertDateTimeDisplay(
                                                 user.licenseExpiry.toString(),
@@ -295,6 +341,12 @@ class _DetailUserViewState extends State<DetailUserView> {
                     ),
             ),
             floatingActionButtonLocation: ExpandableFab.location,
+            /**
+             * THIS IS FOR UPDATE AND DELETE BUTTON.
+             * IF YOU WANT TO USE IT, UNCOMMENT THE CODE BELOW.
+             * MAKE SURE TO UPDATE THE CODE FOR UPDATING USER DATA IN update_user.dart
+             */
+            /*
             floatingActionButton: ExpandableFab(
               backgroundColor: TsOneColor.primary,
               children: [
@@ -308,12 +360,6 @@ class _DetailUserViewState extends State<DetailUserView> {
                   backgroundColor: TsOneColor.primary,
                   child: const Icon(Icons.edit),
                 ),
-                /**
-                 * THIS IS FOR UPDATE AND DELETE BUTTON.
-                 * IF YOU WANT TO USE IT, UNCOMMENT THE CODE BELOW.
-                 * MAKE SURE TO UPDATE THE CODE FOR UPDATING USER DATA IN update_user.dart
-                 */
-                /*
                 FloatingActionButton(
                   heroTag: "buttonDelete",
                   onPressed: () {
@@ -348,9 +394,9 @@ class _DetailUserViewState extends State<DetailUserView> {
                   backgroundColor: TsOneColor.primary,
                   child: const Icon(Icons.delete),
                 ),
-                */
               ],
             ),
+            */
           );
         },
       ),

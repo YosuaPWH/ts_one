@@ -23,7 +23,7 @@ class UserModel with ChangeNotifier {
   List<String> privileges = [];
 
   // this is the collection name in firebase
-  static String firebaseCollection = "temp";
+  static String firebaseCollection = "users";
 
   // all the keys for the map stored in firebase
   static String keyEmail = "EMAIL";
@@ -93,13 +93,15 @@ class UserModel with ChangeNotifier {
   }
 
   String getInstructorString() {
-    String subPositionString = "";
+    String subPositionString = Util.defaultStringIfNull;
+
     for (int i = 0; i < instructor.length; i++) {
       subPositionString += instructor[i];
       if (i != instructor.length - 1) {
         subPositionString += ", ";
       }
     }
+
     return subPositionString;
   }
 
