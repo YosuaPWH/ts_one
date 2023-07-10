@@ -93,6 +93,33 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         readOnly: true,
                       ),
                     ),
+
+                    // Flight crew 1
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Flight Crew 1',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
                     // name
                     Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
@@ -229,7 +256,33 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                       ),
                     ),
 
-                    // other crew member's name
+                    // Flight crew 2
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Flight Crew 2',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // flight crew 2's name
                     Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: TypeAheadFormField<UserModel>(
@@ -307,7 +360,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         textInputAction: TextInputAction.next,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please select other crew member by finding name';
+                            return 'Please select user by finding name';
                           }
                           return null;
                         },
@@ -361,6 +414,33 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         readOnly: true,
                       ),
                     ),
+
+                    // Other
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Other',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
                     // aircraft type
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
