@@ -37,7 +37,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
     _usersSearched = [];
 
     nameTextController = TextEditingController(text: _newAssessment.name);
-    staffNoTextController = TextEditingController(text: _newAssessment.staffNo);
+    staffNoTextController = TextEditingController(text: _newAssessment.getStaffNo());
     licenseNoTextController = TextEditingController();
     licenseExpiryTextController = TextEditingController();
     otherCrewMemberNameTextController = TextEditingController();
@@ -94,7 +94,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                           hideSuggestionsOnKeyboardHide: false,
                           onReset: () {
                             _newAssessment.name = "";
-                            _newAssessment.staffNo = "";
+                            _newAssessment.staffNo = 0;
                             nameTextController.text = "";
                             staffNoTextController.text = "";
                             // refresh the UI
@@ -149,10 +149,10 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                           onSuggestionSelected: (UserModel? suggestion) {
                             if (suggestion != null) {
                               _newAssessment.name = suggestion.name;
-                              _newAssessment.staffNo = suggestion.staffNo;
+                              _newAssessment.staffNo = suggestion.idNo;
 
-                              nameTextController.text = "${suggestion.position} ${suggestion.name}";
-                              staffNoTextController.text = suggestion.staffNo;
+                              nameTextController.text = "${suggestion.rank} ${suggestion.name}";
+                              staffNoTextController.text = suggestion.idNo.toString();
                               licenseNoTextController.text = suggestion.licenseNo;
                               licenseExpiryTextController.text = Util.convertDateTimeDisplay(suggestion.licenseExpiry.toString(), "dd MMM yyyy");
                               // refresh the UI
@@ -179,7 +179,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         },
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         onChanged: (value) {
-                          _newAssessment.staffNo = value;
+                          _newAssessment.staffNo = int.parse(value);
                         },
                         readOnly: true,
                       ),
@@ -202,7 +202,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         },
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         onChanged: (value) {
-                          _newAssessment.staffNo = value;
+                          _newAssessment.staffNo = int.parse(value);
                         },
                         readOnly: true,
                       ),
@@ -225,7 +225,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         },
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         onChanged: (value) {
-                          _newAssessment.staffNo = value;
+                          _newAssessment.staffNo = int.parse(value);
                         },
                         readOnly: true,
                       ),
@@ -289,9 +289,9 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                           },
                           onSuggestionSelected: (UserModel? suggestion) {
                             if (suggestion != null) {
-                              _newAssessment.otherCrewMemberStaffNo = suggestion.staffNo;
+                              _newAssessment.otherCrewMemberStaffNo = suggestion.idNo.toString();
 
-                              otherCrewMemberNameTextController.text = "${suggestion.position} ${suggestion.name}";
+                              otherCrewMemberNameTextController.text = "${suggestion.rank} ${suggestion.name}";
                               otherCrewMemberStaffNoTextController.text = _newAssessment.otherCrewMemberStaffNo;
                               // refresh the UI
                               setState(() {});

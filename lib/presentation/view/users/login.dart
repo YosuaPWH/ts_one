@@ -102,7 +102,7 @@ class _LoginViewState extends State<LoginView> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  "Welcome, ${userPreferences.getPosition()} ${userPreferences.getName()}"),
+                                  "Welcome, ${userPreferences.getRank()} ${userPreferences.getName()}"),
                               duration: const Duration(milliseconds: 3000),
                               action: SnackBarAction(
                                 label: 'Close',
@@ -170,7 +170,7 @@ class _LoginViewState extends State<LoginView> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                    "Welcome, ${userPreferences.getPosition()} ${userPreferences.getName()}"),
+                                    "Welcome, ${userPreferences.getRank()} ${userPreferences.getName()}"),
                                 duration: const Duration(milliseconds: 3000),
                                 action: SnackBarAction(
                                   label: 'Close',

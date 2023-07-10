@@ -53,7 +53,7 @@ class AppRoutes {
       case NamedRoute.detailUser:
         return MaterialPageRoute<void>(
           builder: (context) => DetailUserView(
-              userEmail: settings.arguments as String),
+              userIDNo: settings.arguments as String),
           settings: settings,
         );
 
