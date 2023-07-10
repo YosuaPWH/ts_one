@@ -13,11 +13,8 @@ import '../../view_model/assessment_viewmodel.dart';
 class NewAssessmentVariables extends StatefulWidget {
   const NewAssessmentVariables(
       {Key? key,
-      required this.assessmentFlightDetails,
       required this.dataCandidate})
       : super(key: key);
-
-  final AssessmentFlightDetails assessmentFlightDetails;
   final NewAssessment dataCandidate;
 
   @override
@@ -97,7 +94,6 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                           context, NamedRoute.newAssessmentVariablesSecond,
                           arguments: {
                             'dataCandidate' : widget.dataCandidate,
-                            'dataFlightDetails' : widget.assessmentFlightDetails,
                             'dataVariablesFirst' : result
                           }
                       );

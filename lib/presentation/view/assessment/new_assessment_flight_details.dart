@@ -23,12 +23,28 @@ class NewAssessmentFlightDetails extends StatefulWidget {
 class _NewAssessmentFlightDetailsState
     extends State<NewAssessmentFlightDetails> {
   late AssessmentViewModel viewModel;
-  late Map<String, bool> assessmentFlightDetails;
+  late Map<String, bool> assessmentFlightDetails1;
+  late Map<String, bool> assessmentFlightDetails2;
+
+  late int assessmentFlightDetails1Count;
+  late int assessmentFlightDetails2Count;
+  late bool assessmentFlightDetails1Error;
+  late bool assessmentFlightDetails2Error;
+
+  late NewAssessment dataCandidate;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     viewModel = Provider.of<AssessmentViewModel>(context, listen: false);
-    assessmentFlightDetails = {};
+    assessmentFlightDetails1 = {};
+    assessmentFlightDetails2 = {};
+    assessmentFlightDetails1Count = 0;
+    assessmentFlightDetails2Count = 0;
+    assessmentFlightDetails1Error = false;
+    assessmentFlightDetails2Error = false;
+
+    dataCandidate = widget.dataCandidate;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _getAssessmentFlightDetails();
@@ -38,11 +54,9 @@ class _NewAssessmentFlightDetailsState
   }
 
   void _getAssessmentFlightDetails() async {
-    assessmentFlightDetails = await viewModel.getAllAssessmentFlightDetails();
+    assessmentFlightDetails1 = await viewModel.getAllAssessmentFlightDetails();
+    assessmentFlightDetails2 = await viewModel.getAllAssessmentFlightDetails();
   }
-
-  List<String> flightDetailsValue = ["Training"];
-  String trainingOrCheckingValue = "";
 
   @override
   Widget build(BuildContext context) {
@@ -60,122 +74,271 @@ class _NewAssessmentFlightDetailsState
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TsOneColor.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                    child: DropdownButton(
-                      style: const TextStyle(color: TsOneColor.secondary),
-                      underline: Container(),
-                      dropdownColor: tsOneColorScheme.secondary,
-                      isExpanded: true,
-                      selectedItemBuilder: (BuildContext context) {
-                        return <String>["Training", "Checking"]
-                            .map<Widget>((item) {
-                          return DropdownMenuItem(
-                            value: item,
-                            child: Text(item),
-                          );
-                        }).toList();
-                      },
-                      icon: const Icon(
-                        Icons.expand_more,
-                        color: TsOneColor.secondary,
-                      ),
-                      value: trainingOrCheckingValue != ""
-                          ? trainingOrCheckingValue
-                          : "Training",
-                      onChanged: (value) {
-                        setState(() {
-                          trainingOrCheckingValue = value.toString();
-                          flightDetailsValue.first = value.toString();
-                        });
-                      },
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'Training',
-                          child: Text(
-                            'Training',
-                            style: TextStyle(color: TsOneColor.primary),
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Checking',
-                          child: Text(
-                            'Checking',
-                            style: TextStyle(color: TsOneColor.primary),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   if (!model.isLoading)
-                    Column(
-                      children: assessmentFlightDetails.keys
-                          .map<Widget>(
-                            (item) => ListTileTheme(
-                              contentPadding: const EdgeInsets.all(0),
-                              child: CheckboxListTile(
-                                value: assessmentFlightDetails[item],
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    assessmentFlightDetails[item] = newValue!;
-                                    if (!flightDetailsValue.contains(item)) {
-                                      flightDetailsValue.add(item);
-                                    } else {
-                                      flightDetailsValue.remove(item);
-                                    }
-                                  });
-                                },
-                                title: Text(
-                                  item,
-                                  style: const TextStyle(fontSize: 14),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 16.0),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    'Flight Crew 1',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          DropdownButtonFormField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Training or Checking Details',
+                            ),
+                            items: const [
+                              DropdownMenuItem(
+                                value: "Training",
+                                child: Text("Training"),
                               ),
+                              DropdownMenuItem(
+                                value: "Checking",
+                                child: Text("Checking"),
+                              ),
+                              DropdownMenuItem(
+                                value: "Re-training",
+                                child: Text("Re-training"),
+                              )
+                            ],
+                            validator: (value) {
+                              if (value == null) {
+                                return "Select one of the options available";
+                              }
+                              return null;
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            value: dataCandidate.sessionDetails1,
+                            onChanged: (value) {
+                              setState(() {
+                                dataCandidate.sessionDetails1 = value.toString();
+                              });
+                            },
+                          ),
+                          assessmentFlightDetails1Error
+                          ? const Padding(
+                            padding: EdgeInsets.only(left: 8.0, top: 16.0, bottom: 8.0),
+                            child: Text(
+                              "Select at least one option",
+                              style: TextStyle(color: Colors.red),
                             ),
                           )
-                          .toList(),
+                          : const SizedBox(),
+                          Column(
+                            children: assessmentFlightDetails1.keys
+                                .map<Widget>(
+                                  (item) => ListTileTheme(
+                                contentPadding: const EdgeInsets.all(0),
+                                child: CheckboxListTile(
+                                  dense: true,
+                                  value: assessmentFlightDetails1[item],
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      assessmentFlightDetails1[item] = newValue!;
+
+                                      if (!dataCandidate.assessmentFlightDetails1.flightDetails.contains(item)) {
+                                        dataCandidate.assessmentFlightDetails1.flightDetails.add(item);
+                                        assessmentFlightDetails1Count++;
+                                      } else {
+                                        dataCandidate.assessmentFlightDetails1.flightDetails.remove(item);
+                                        assessmentFlightDetails1Count--;
+                                      }
+
+                                      if (assessmentFlightDetails1Count == 0) {
+                                        setState(() {
+                                          assessmentFlightDetails1Error = true;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          assessmentFlightDetails1Error = false;
+                                        });
+                                      }
+                                    });
+                                  },
+                                  title: Text(
+                                    item,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  controlAffinity:
+                                  ListTileControlAffinity.leading,
+                                ),
+                              ),
+                            )
+                                .toList(),
+                          ),
+
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 16.0),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    'Flight Crew 2',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          DropdownButtonFormField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Training or Checking Details',
+                            ),
+                            items: const [
+                              DropdownMenuItem(
+                                value: "Training",
+                                child: Text("Training"),
+                              ),
+                              DropdownMenuItem(
+                                value: "Checking",
+                                child: Text("Checking"),
+                              ),
+                              DropdownMenuItem(
+                                value: "Re-training",
+                                child: Text("Re-training"),
+                              )
+                            ],
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (value) {
+                              if (value == null) {
+                                return "Select one of the options available";
+                              }
+                              return null;
+                            },
+                            value: dataCandidate.sessionDetails2,
+                            onChanged: (value) {
+                              setState(() {
+                                dataCandidate.sessionDetails2 = value.toString();
+                              });
+                            },
+                          ),
+                          assessmentFlightDetails2Error
+                          ? const Padding(
+                        padding: EdgeInsets.only(left: 8.0, top: 16.0, bottom: 8.0),
+                        child: Text(
+                          "Select at least one option",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      )
+                          : const SizedBox(),
+                          Column(
+                            children: assessmentFlightDetails2.keys
+                                .map<Widget>(
+                                  (item) => ListTileTheme(
+                                contentPadding: const EdgeInsets.all(0),
+                                child: CheckboxListTile(
+                                  dense: true,
+                                  value: assessmentFlightDetails2[item],
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      assessmentFlightDetails2[item] = newValue!;
+
+                                      if (!dataCandidate.assessmentFlightDetails2.flightDetails.contains(item)) {
+                                        dataCandidate.assessmentFlightDetails2.flightDetails.add(item);
+                                        assessmentFlightDetails2Count++;
+                                      } else {
+                                        dataCandidate.assessmentFlightDetails2.flightDetails.remove(item);
+                                        assessmentFlightDetails2Count--;
+                                      }
+
+                                      if (assessmentFlightDetails2Count == 0) {
+                                        setState(() {
+                                          assessmentFlightDetails2Error = true;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          assessmentFlightDetails2Error = false;
+                                        });
+                                      }
+                                    });
+                                  },
+                                  title: Text(
+                                    item,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  controlAffinity:
+                                  ListTileControlAffinity.leading,
+                                ),
+                              ),
+                            )
+                                .toList(),
+                          ),
+
+                          ElevatedButton(
+                            onPressed: () {
+                              if (assessmentFlightDetails1Count == 0) {
+                                assessmentFlightDetails1Error = true;
+                              }
+                              if (assessmentFlightDetails2Count == 0) {
+                                assessmentFlightDetails2Error = true;
+                              }
+                              if(_formKey.currentState!.validate() && !assessmentFlightDetails1Error && !assessmentFlightDetails2Error) {
+                                Navigator.pushNamed(
+                                    context,
+                                    NamedRoute.newAssessmentVariables,
+                                    arguments: dataCandidate
+                                );
+                              } else {
+                                setState(() {
+                                  assessmentFlightDetails1Error = true;
+                                  assessmentFlightDetails2Error = true;
+                                });
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 40),
+                              backgroundColor: TsOneColor.primary,
+                              foregroundColor: TsOneColor.primaryContainer,
+                              surfaceTintColor: TsOneColor.primaryContainer,
+                            ),
+                            child: const Text(
+                              "Next",
+                              style: TextStyle(color: TsOneColor.onPrimary),
+                            ),
+                          )
+                        ],
+                      ),
                     )
                   else
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 30),
+                    const Center(
                       child: CircularProgressIndicator(),
                     ),
-                  const SizedBox(height: 50),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                        context,
-                        NamedRoute.newAssessmentVariables,
-                        arguments: {
-                          'assessmentFlightDetails' : AssessmentFlightDetails(flightDetails: flightDetailsValue),
-                          'dataCandidate' : widget.dataCandidate
-                        }
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        backgroundColor: TsOneColor.primary),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: 48,
-                      child: const Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Next",
-                          style: TextStyle(color: TsOneColor.secondary),
-                        ),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),

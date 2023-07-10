@@ -78,15 +78,15 @@ class AppRoutes {
         );
 
       case NamedRoute.newAssessmentVariables:
-        final arguments = settings.arguments as Map<String, dynamic>;
-        final assessmentFlightDetails =
-            arguments['assessmentFlightDetails'] as AssessmentFlightDetails;
-        final dataCandidate = arguments['dataCandidate'] as NewAssessment;
-
+        // final arguments = settings.arguments as Map<String, dynamic>;
+        // final assessmentFlightDetails =
+        //     arguments['assessmentFlightDetails'] as AssessmentFlightDetails;
+        // final dataCandidate = arguments['dataCandidate'] as NewAssessment;
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentVariables(
-            assessmentFlightDetails: assessmentFlightDetails,
-            dataCandidate: dataCandidate,
+            // assessmentFlightDetails: assessmentFlightDetails,
+            // dataCandidate: dataCandidate,
+            dataCandidate: settings.arguments as NewAssessment,
           ),
           settings: settings,
         );
