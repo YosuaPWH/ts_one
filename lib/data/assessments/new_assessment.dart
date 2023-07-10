@@ -4,9 +4,8 @@ import 'package:ts_one/util/util.dart';
 
 class NewAssessment with ChangeNotifier {
   NewAssessment({
-    this.name = "",
-    this.staffNo = Util.defaultIntIfNull,
-    this.otherCrewMemberStaffNo = "",
+    this.idNo1 = Util.defaultIntIfNull,
+    this.idNo2 = Util.defaultIntIfNull,
     this.aircraftType = "",
     this.airportAndRoute = "",
     this.simulationHours = "",
@@ -15,19 +14,33 @@ class NewAssessment with ChangeNotifier {
             assessmentFlightDetails ?? AssessmentFlightDetails();
 
   DateTime assessmentDate = DateTime.now();
-  String name = "";
-  int staffNo = Util.defaultIntIfNull;
-  String otherCrewMemberStaffNo = "";
+
+  // Flight Crew 1
+  int idNo1 = Util.defaultIntIfNull;
+  DateTime licenseExpiry1 = DateTime.now();
+
+  // Flight Crew 2
+  int idNo2 = Util.defaultIntIfNull;
+  DateTime licenseExpiry2 = DateTime.now();
+
   String aircraftType = "";
   String airportAndRoute = "";
   String simulationHours = "";
   AssessmentFlightDetails _assessmentFlightDetails;
 
-  String getStaffNo() {
-    if (staffNo == Util.defaultIntIfNull) {
+  String getIDNo1() {
+    if (idNo1 == Util.defaultIntIfNull) {
       return "";
     } else {
-      return staffNo.toString();
+      return idNo1.toString();
+    }
+  }
+
+  String getIDNo2() {
+    if (idNo2 == Util.defaultIntIfNull) {
+      return "";
+    } else {
+      return idNo2.toString();
     }
   }
 }
