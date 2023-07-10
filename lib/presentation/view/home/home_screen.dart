@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     userPreferences = getItLocator<UserPreferences>();
-    switch(userPreferences.getPosition()) {
+    switch(userPreferences.getRank()) {
       case 'CAPT':
         titleToGreet = 'Captain';
         break;

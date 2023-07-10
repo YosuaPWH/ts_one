@@ -83,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               Text(
-                                userPreferences.getPosition(),
+                                userPreferences.getRank(),
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -92,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               Text(
-                                userPreferences.getStaffNo(),
+                                userPreferences.getIDNo().toString(),
                                 style: const TextStyle(
                                   color: TsOneColor.onSurface,
                                 ),

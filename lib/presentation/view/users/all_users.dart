@@ -147,7 +147,7 @@ class _AllUsersViewState extends State<AllUsersView> {
                                   Navigator.pushNamed(
                                       context,
                                       NamedRoute.detailUser,
-                                      arguments: users[index].email
+                                      arguments: users[index].idNo.toString()
                                   );
                                 },
                                 child: Padding(
@@ -174,11 +174,11 @@ class _AllUsersViewState extends State<AllUsersView> {
                                                 style: tsOneTextTheme.titleMedium,
                                               ),
                                               Text(
-                                                users[index].position,
+                                                users[index].rank,
                                                 style: tsOneTextTheme.bodySmall,
                                               ),
                                               Text(
-                                                users[index].staffNo,
+                                                users[index].idNo.toString(),
                                               )
                                             ],
                                           ),
@@ -210,7 +210,7 @@ class _AllUsersViewState extends State<AllUsersView> {
                                       Navigator.pushNamed(
                                           context,
                                           NamedRoute.detailUser,
-                                          arguments: searchedUsers[index].email
+                                          arguments: searchedUsers[index].idNo.toString()
                                       );
                                     },
                                     child: Padding(
@@ -237,11 +237,11 @@ class _AllUsersViewState extends State<AllUsersView> {
                                                     style: tsOneTextTheme.titleMedium,
                                                   ),
                                                   Text(
-                                                    searchedUsers[index].position,
+                                                    searchedUsers[index].rank,
                                                     style: tsOneTextTheme.bodySmall,
                                                   ),
                                                   Text(
-                                                    searchedUsers[index].staffNo,
+                                                    searchedUsers[index].idNo.toString(),
                                                   )
                                                 ],
                                               ),
@@ -260,6 +260,12 @@ class _AllUsersViewState extends State<AllUsersView> {
                   ],
                 )
             ),
+            /**
+             * THIS IS FOR ADD BUTTON.
+             * IF YOU WANT TO USE IT, UNCOMMENT THE CODE BELOW.
+             * MAKE SURE TO UPDATE THE CODE FOR ADDING USER DATA IN add_user.dart
+             */
+            /*
             floatingActionButton: FloatingActionButton(
               backgroundColor: TsOneColor.primary,
               onPressed: () {
@@ -267,6 +273,7 @@ class _AllUsersViewState extends State<AllUsersView> {
               },
               child: const Icon(Icons.add),
             ),
+             */
           );
         },
       ),

@@ -25,8 +25,6 @@ class UserPreferences extends ChangeNotifier {
   void saveUser(UserAuth userAuth) {
     preferences.setBool(UserPreferences.keyIsLogin, true);
     preferences.setString(UserPreferences.keyUserID, userAuth.userCredential!.user!.uid);
-    preferences.setString(UserPreferences.keyEmail, userAuth.userCredential!.user!.email!);
-    preferences.setString(UserPreferences.keyName, userAuth.userModel!.name);
 
     preferences.setString(UserPreferences.keyPhotoURL, userAuth.userCredential!.user!.photoURL.toString() ?? "");
     String? photoUrl = preferences.getString(keyPhotoURL);
@@ -35,29 +33,30 @@ class UserPreferences extends ChangeNotifier {
     }
     preferences.setString(UserPreferences.keyPhotoURL, photoUrl ?? "");
 
-    preferences.setString(UserPreferences.keyStaffNo, userAuth.userModel!.staffNo);
-    preferences.setString(UserPreferences.keyPosition, userAuth.userModel!.position);
-    preferences.setStringList(UserPreferences.keySubPosition, userAuth.userModel!.subPosition);
-    preferences.setString(UserPreferences.keyLicenseNo, userAuth.userModel!.licenseNo);
-    preferences.setString(UserPreferences.keyLicenseLastPassed, userAuth.userModel!.licenseLastPassed.toString());
-    preferences.setString(UserPreferences.keyLicenseExpiry, userAuth.userModel!.licenseExpiry.toString());
-    preferences.setStringList(UserPreferences.keyPrivileges, userAuth.userModel!.privileges);
+    preferences.setString(UserModel.keyEmail, userAuth.userCredential!.user!.email!);
+    preferences.setString(UserModel.keyName, userAuth.userModel!.name);
+    preferences.setInt(UserModel.keyIDNo, userAuth.userModel!.idNo);
+    preferences.setString(UserModel.keyRank, userAuth.userModel!.rank);
+    preferences.setStringList(UserModel.keyInstructor, userAuth.userModel!.instructor);
+    preferences.setString(UserModel.keyLicenseNo, userAuth.userModel!.licenseNo);
+    preferences.setString(UserModel.keyLicenseExpiry, userAuth.userModel!.licenseExpiry.toString());
+    preferences.setStringList(UserModel.keyPrivileges, userAuth.userModel!.privileges);
     notifyListeners();
   }
 
   void clearUser() {
     preferences.setBool(UserPreferences.keyIsLogin, false);
     preferences.setString(UserPreferences.keyUserID, "");
-    preferences.setString(UserPreferences.keyEmail, "");
-    preferences.setString(UserPreferences.keyName, "");
     preferences.setString(UserPreferences.keyPhotoURL, "");
-    preferences.setString(UserPreferences.keyStaffNo, "");
-    preferences.setString(UserPreferences.keyPosition, "");
-    preferences.setStringList(UserPreferences.keySubPosition, []);
-    preferences.setString(UserPreferences.keyLicenseNo, "");
-    preferences.setString(UserPreferences.keyLicenseLastPassed, "");
-    preferences.setString(UserPreferences.keyLicenseExpiry, "");
-    preferences.setStringList(UserPreferences.keyPrivileges, []);
+
+    preferences.setString(UserModel.keyEmail, "");
+    preferences.setString(UserModel.keyName, "");
+    preferences.setInt(UserModel.keyIDNo, 0);
+    preferences.setString(UserModel.keyRank, "");
+    preferences.setStringList(UserModel.keyInstructor, []);
+    preferences.setString(UserModel.keyLicenseNo, "");
+    preferences.setString(UserModel.keyLicenseExpiry, "");
+    preferences.setStringList(UserModel.keyPrivileges, []);
     notifyListeners();
   }
 
@@ -65,102 +64,58 @@ class UserPreferences extends ChangeNotifier {
     return preferences.getBool(UserPreferences.keyIsLogin) ?? false;
   }
 
-  void saveEmail(String email) {
-    preferences.setString(UserPreferences.keyEmail, email);
-    notifyListeners();
-  }
-
-  String getEmail() {
-    return preferences.getString(UserPreferences.keyEmail) ?? "";
-  }
-
-  void saveUserID(String userID) {
-    preferences.setString(UserPreferences.keyUserID, userID);
-    notifyListeners();
-  }
-
   String getUserID() {
     return preferences.getString(UserPreferences.keyUserID) ?? "";
-  }
-
-  void saveStaffNo(String staffNo) {
-    preferences.setString(UserPreferences.keyStaffNo, staffNo);
-    notifyListeners();
-  }
-
-  String getStaffNo() {
-    return preferences.getString(UserPreferences.keyStaffNo) ?? "";
-  }
-
-  void saveName(String name) {
-    preferences.setString(UserPreferences.keyName, name);
-    notifyListeners();
-  }
-
-  String getName() {
-    return preferences.getString(UserPreferences.keyName) ?? "";
-  }
-
-  void savePhotoURL(String photoURL) {
-    preferences.setString(UserPreferences.keyPhotoURL, photoURL);
-    notifyListeners();
   }
 
   String getPhotoURL() {
     return preferences.getString(UserPreferences.keyPhotoURL) ?? "";
   }
 
-  void savePosition(String position) {
-    preferences.setString(UserPreferences.keyPosition, position);
-    notifyListeners();
+  String getEmail() {
+    return preferences.getString(UserModel.keyEmail) ?? "";
   }
 
-  String getPosition() {
-    return preferences.getString(UserPreferences.keyPosition) ?? "";
+  String getName() {
+    return preferences.getString(UserModel.keyName) ?? "";
   }
 
-  void saveSubPosition(List<String> subPosition) {
-    preferences.setStringList(UserPreferences.keySubPosition, subPosition);
-    notifyListeners();
+  int getIDNo() {
+    return preferences.getInt(UserModel.keyIDNo) ?? 0;
   }
 
-  List<String> getSubPosition() {
-    return preferences.getStringList(UserPreferences.keySubPosition) ?? [];
+  String getRank() {
+    return preferences.getString(UserModel.keyRank) ?? "";
   }
 
-  void saveLicenseNo(String licenseNo) {
-    preferences.setString(UserPreferences.keyLicenseNo, licenseNo);
-    notifyListeners();
+  List<String> getInstructor() {
+    return preferences.getStringList(UserModel.keyInstructor) ?? [];
   }
 
   String getLicenseNo() {
-    return preferences.getString(UserPreferences.keyLicenseNo) ?? "";
-  }
-
-  void saveLicenseLastPassed(String licenseLastPassed) {
-    preferences.setString(UserPreferences.keyLicenseLastPassed, licenseLastPassed);
-    notifyListeners();
-  }
-
-  String getLicenseLastPassed() {
-    return preferences.getString(UserPreferences.keyLicenseLastPassed) ?? "";
-  }
-
-  void saveLicenseExpiry(String licenseExpiry) {
-    preferences.setString(UserPreferences.keyLicenseExpiry, licenseExpiry);
-    notifyListeners();
+    return preferences.getString(UserModel.keyLicenseNo) ?? "";
   }
 
   String getLicenseExpiry() {
-    return preferences.getString(UserPreferences.keyLicenseExpiry) ?? "";
-  }
-
-  void savePrivileges(List<String> privileges) {
-    preferences.setStringList(UserPreferences.keyPrivileges, privileges);
-    notifyListeners();
+    return preferences.getString(UserModel.keyLicenseExpiry) ?? "";
   }
 
   List<String> getPrivileges() {
-    return preferences.getStringList(UserPreferences.keyPrivileges) ?? [];
+    return preferences.getStringList(UserModel.keyPrivileges) ?? [];
+  }
+
+  String getPrivilegesString() {
+    String privileges = "";
+    for(int i = 0; i < getPrivileges().length; i++) {
+      privileges += getPrivileges()[i];
+      if(i < getPrivileges().length - 1) {
+        privileges += ", ";
+      }
+    }
+    return privileges;
+  }
+
+  bool isPrivilege(String privilege) {
+    return getPrivileges().contains(privilege);
   }
 }

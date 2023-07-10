@@ -85,14 +85,14 @@ class UserViewModel extends LoadingViewModel {
     return users;
   }
 
-  Future<UserModel> getUserByEmail(String email) async {
+  Future<UserModel> getUserByIDNo(String idNo) async {
     isLoading = true;
     UserModel userModel = UserModel();
     try {
-      userModel = await repo.getUserByEmail(email);
+      userModel = await repo.getUserByIDNo(idNo);
       isLoading = false;
     } catch (e) {
-      print(e.toString());
+      print("Exception on UserViewModel: $e");
       isLoading = false;
     }
     return userModel;

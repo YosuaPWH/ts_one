@@ -1,22 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ts_one/util/util.dart';
 
 class UserModel with ChangeNotifier {
   UserModel({
     this.email = "",
-    this.staffNo = "",
+    this.idNo = Util.defaultIntIfNull,
     this.name = "",
-    this.position = "",
+    this.rank = "",
     this.licenseNo = "",
+    this.attribute = "",
   });
 
   String email = "";
-  String staffNo = "";
+  int idNo = Util.defaultIntIfNull;
   String name = "";
-  String position = "";
-  List<String> subPosition = [];
+  String rank = "";
+  List <String> instructor = [];
   String licenseNo = "";
-  DateTime licenseLastPassed = DateTime.now();
+  String attribute = "";
   DateTime licenseExpiry = DateTime.now();
   List<String> privileges = [];
 
@@ -24,15 +26,15 @@ class UserModel with ChangeNotifier {
   static String firebaseCollection = "users";
 
   // all the keys for the map stored in firebase
-  static String keyEmail = "Email";
-  static String keyLicenseExpiry = "License Expiry";
-  static String keyLicenceLastPassed = "License Last Passed";
-  static String keyLicenseNo = "License No";
-  static String keyName = "Name";
-  static String keyPosition = "Position";
-  static String keySubPosition = "Sub Position";
-  static String keyStaffNo = "Staff No";
-  static String keyPrivileges = "Privileges";
+  static String keyEmail = "EMAIL";
+  static String keyLicenseExpiry = "LICENSE EXPIRY";
+  static String keyLicenseNo = "LICENSE NO.";
+  static String keyAttribute = "ATTRIBUTE";
+  static String keyName = "NAME";
+  static String keyRank = "RANK";
+  static String keyInstructor = "INSTRUCTOR";
+  static String keyIDNo = "ID NO";
+  static String keyPrivileges = "PRIVILEGES";
 
   /** ALL PRIVILEGES */
   static String keyPrivilegeCreateAssessment = "create-assessment"; // for instructor to make a new assessment
@@ -64,44 +66,48 @@ class UserModel with ChangeNotifier {
 
   UserModel.fromFirebaseUser(Map<String, dynamic> map) {
     email = map[keyEmail]; // if null, return empty string
-    staffNo = map[keyStaffNo];
+    idNo = map[keyIDNo];
     name = map[keyName];
-    position = map[keyPosition];
-    subPosition = (map[keySubPosition] as List<dynamic>).map((item) => item.toString()).toList();
+    rank = map[keyRank];
+    instructor = (map[keyInstructor] as List<dynamic>).map((item) => item.toString()).toList();
+    attribute = map[keyAttribute];
     licenseNo = map[keyLicenseNo];
-    licenseLastPassed = DateTime.fromMillisecondsSinceEpoch(map[keyLicenceLastPassed].seconds * 1000);
     licenseExpiry = DateTime.fromMillisecondsSinceEpoch(map[keyLicenseExpiry].seconds * 1000);
-    privileges = (map[keyPrivileges] as List<dynamic>).map((item) => item.toString()).toList();
+    if (map[keyPrivileges] != null) {
+      privileges = (map[keyPrivileges] as List<dynamic>).map((item) => item.toString()).toList();
+    }
   }
 
   Map<String, dynamic> toFirebase() {
     return {
       keyEmail: email,
-      keyStaffNo: staffNo,
+      keyIDNo: idNo,
       keyName: name,
-      keyPosition: position,
-      keySubPosition: subPosition,
+      keyRank: rank,
+      keyInstructor: instructor,
+      keyAttribute: attribute,
       keyLicenseNo: licenseNo,
-      keyLicenceLastPassed: licenseLastPassed,
       keyLicenseExpiry: licenseExpiry,
       keyPrivileges: privileges,
     };
   }
 
-  String getSubPositionString() {
-    String subPositionString = "";
-    for (int i = 0; i < subPosition.length; i++) {
-      subPositionString += subPosition[i];
-      if (i != subPosition.length - 1) {
+  String getInstructorString() {
+    String subPositionString = Util.defaultStringIfNull;
+
+    for (int i = 0; i < instructor.length; i++) {
+      subPositionString += instructor[i];
+      if (i != instructor.length - 1) {
         subPositionString += ", ";
       }
     }
+
     return subPositionString;
   }
 
   @override
   String toString() {
-    return 'User(email: $email, staffNo: $staffNo, name: $name, position: $position, subPosition: $subPosition, licenseNo: $licenseNo, licenseLastPassed: $licenseLastPassed, licenseExpiry: $licenseExpiry,'
+    return 'User(email: $email, staffNo: $idNo, name: $name, position: $rank, subPosition: $instructor, licenseNo: $licenseNo, licenseExpiry: $licenseExpiry,'
         ' privileges: $privileges)';
   }
 }

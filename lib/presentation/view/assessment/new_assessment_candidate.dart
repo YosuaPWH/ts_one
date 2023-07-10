@@ -21,12 +21,15 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
   late UserViewModel _userViewModel;
   late List<UserModel> _usersSearched;
 
-  late TextEditingController nameTextController;
-  late TextEditingController staffNoTextController;
-  late TextEditingController licenseNoTextController;
-  late TextEditingController licenseExpiryTextController;
-  late TextEditingController otherCrewMemberNameTextController;
-  late TextEditingController otherCrewMemberStaffNoTextController;
+  late TextEditingController name1TextController;
+  late TextEditingController staffNo1TextController;
+  late TextEditingController licenseNo1TextController;
+  late TextEditingController licenseExpiry1TextController;
+
+  late TextEditingController name2TextController;
+  late TextEditingController staffNo2TextController;
+  late TextEditingController licenseNo2TextController;
+  late TextEditingController licenseExpiry2TextController;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -36,12 +39,15 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
     _userViewModel = Provider.of<UserViewModel>(context, listen: false);
     _usersSearched = [];
 
-    nameTextController = TextEditingController(text: _newAssessment.name);
-    staffNoTextController = TextEditingController(text: _newAssessment.staffNo);
-    licenseNoTextController = TextEditingController();
-    licenseExpiryTextController = TextEditingController();
-    otherCrewMemberNameTextController = TextEditingController();
-    otherCrewMemberStaffNoTextController = TextEditingController(text: _newAssessment.otherCrewMemberStaffNo);
+    name1TextController = TextEditingController();
+    staffNo1TextController = TextEditingController(text: _newAssessment.getIDNo1());
+    licenseNo1TextController = TextEditingController();
+    licenseExpiry1TextController = TextEditingController();
+
+    name2TextController = TextEditingController();
+    staffNo2TextController = TextEditingController(text: _newAssessment.getIDNo2());
+    licenseNo2TextController = TextEditingController();
+    licenseExpiry2TextController = TextEditingController();
 
     super.initState();
   }
@@ -92,22 +98,14 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: TypeAheadFormField<UserModel>(
                           hideSuggestionsOnKeyboardHide: false,
-                          onReset: () {
-                            _newAssessment.name = "";
-                            _newAssessment.staffNo = "";
-                            nameTextController.text = "";
-                            staffNoTextController.text = "";
-                            // refresh the UI
-                            setState(() {});
-                          },
                           textFieldConfiguration: TextFieldConfiguration(
-                            controller: nameTextController,
+                            controller: name1TextController,
                             onTap: () {
                               // clear the text field
-                              nameTextController.clear();
-                              staffNoTextController.clear();
-                              licenseNoTextController.clear();
-                              licenseExpiryTextController.clear();
+                              name1TextController.clear();
+                              staffNo1TextController.clear();
+                              licenseNo1TextController.clear();
+                              licenseExpiry1TextController.clear();
                               // refresh the UI
                               setState(() {});
                             },
@@ -148,13 +146,13 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                           },
                           onSuggestionSelected: (UserModel? suggestion) {
                             if (suggestion != null) {
-                              _newAssessment.name = suggestion.name;
-                              _newAssessment.staffNo = suggestion.staffNo;
+                              _newAssessment.idNo1 = suggestion.idNo;
+                              _newAssessment.licenseExpiry1 = suggestion.licenseExpiry;
 
-                              nameTextController.text = "${suggestion.position} ${suggestion.name}";
-                              staffNoTextController.text = suggestion.staffNo;
-                              licenseNoTextController.text = suggestion.licenseNo;
-                              licenseExpiryTextController.text = Util.convertDateTimeDisplay(suggestion.licenseExpiry.toString(), "dd MMM yyyy");
+                              name1TextController.text = "${suggestion.rank} ${suggestion.name}";
+                              staffNo1TextController.text = suggestion.idNo.toString();
+                              licenseNo1TextController.text = suggestion.licenseNo;
+                              licenseExpiry1TextController.text = Util.convertDateTimeDisplay(suggestion.licenseExpiry.toString(), "dd MMM yyyy");
                               // refresh the UI
                               setState(() {});
                             }
@@ -165,7 +163,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: TextFormField(
-                        controller: staffNoTextController,
+                        controller: staffNo1TextController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Staff Number',
@@ -179,7 +177,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         },
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         onChanged: (value) {
-                          _newAssessment.staffNo = value;
+                          _newAssessment.idNo1 = int.parse(value);
                         },
                         readOnly: true,
                       ),
@@ -188,7 +186,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: TextFormField(
-                        controller: licenseNoTextController,
+                        controller: licenseNo1TextController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'License Number',
@@ -202,7 +200,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         },
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         onChanged: (value) {
-                          _newAssessment.staffNo = value;
+                          _newAssessment.idNo1 = int.parse(value);
                         },
                         readOnly: true,
                       ),
@@ -211,7 +209,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: TextFormField(
-                        controller: licenseExpiryTextController,
+                        controller: licenseExpiry1TextController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'License Expiry',
@@ -225,36 +223,31 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         },
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         onChanged: (value) {
-                          _newAssessment.staffNo = value;
+                          _newAssessment.idNo1 = int.parse(value);
                         },
                         readOnly: true,
                       ),
                     ),
+
                     // other crew member's name
                     Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: TypeAheadFormField<UserModel>(
                           hideSuggestionsOnKeyboardHide: false,
-                          onReset: () {
-                            _newAssessment.otherCrewMemberStaffNo = "";
-
-                            otherCrewMemberNameTextController.clear();
-                            otherCrewMemberStaffNoTextController.clear();
-                            // refresh the UI
-                            setState(() {});
-                          },
                           textFieldConfiguration: TextFieldConfiguration(
-                            controller: otherCrewMemberNameTextController,
+                            controller: name2TextController,
                             onTap: () {
                               // clear the text field
-                              otherCrewMemberNameTextController.clear();
-                              otherCrewMemberStaffNoTextController.clear();
+                              name2TextController.clear();
+                              staffNo2TextController.clear();
+                              licenseNo2TextController.clear();
+                              licenseExpiry2TextController.clear();
                               // refresh the UI
                               setState(() {});
                             },
                             decoration: InputDecoration(
                               border: const OutlineInputBorder(),
-                              labelText: 'Other Crew Member',
+                              labelText: 'Name',
                               suffixIcon: IconButton(
                                 onPressed: () {},
                                 icon: const Icon(Icons.search),
@@ -289,10 +282,13 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                           },
                           onSuggestionSelected: (UserModel? suggestion) {
                             if (suggestion != null) {
-                              _newAssessment.otherCrewMemberStaffNo = suggestion.staffNo;
+                              _newAssessment.idNo2 = suggestion.idNo;
+                              _newAssessment.licenseExpiry2 = suggestion.licenseExpiry;
 
-                              otherCrewMemberNameTextController.text = "${suggestion.position} ${suggestion.name}";
-                              otherCrewMemberStaffNoTextController.text = _newAssessment.otherCrewMemberStaffNo;
+                              name2TextController.text = "${suggestion.rank} ${suggestion.name}";
+                              staffNo2TextController.text = _newAssessment.idNo2.toString();
+                              licenseNo2TextController.text = suggestion.licenseNo;
+                              licenseExpiry2TextController.text = Util.convertDateTimeDisplay(suggestion.licenseExpiry.toString(), "dd MMM yyyy");
                               // refresh the UI
                               setState(() {});
                             }
@@ -303,7 +299,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: TextFormField(
-                        controller: otherCrewMemberStaffNoTextController,
+                        controller: staffNo2TextController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Staff Number',
@@ -319,6 +315,53 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         readOnly: true,
                       ),
                     ),
+                    // license no
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: TextFormField(
+                        controller: licenseNo2TextController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'License Number',
+                        ),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select user by finding name';
+                          }
+                          return null;
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        onChanged: (value) {
+                          _newAssessment.idNo2 = int.parse(value);
+                        },
+                        readOnly: true,
+                      ),
+                    ),
+                    // license expiry
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: TextFormField(
+                        controller: licenseExpiry2TextController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'License Expiry',
+                        ),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select user by finding name';
+                          }
+                          return null;
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        onChanged: (value) {
+                          _newAssessment.idNo2 = int.parse(value);
+                        },
+                        readOnly: true,
+                      ),
+                    ),
+                    // aircraft type
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: TextFormField(
