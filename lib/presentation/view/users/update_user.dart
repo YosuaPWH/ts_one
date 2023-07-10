@@ -1,10 +1,11 @@
-import 'package:email_validator/email_validator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 import 'package:ts_one/util/util.dart';
+
+/// THIS FILE IS DEPRECATED.
+/// UPDATE THIS FILE IF YOU ARE GOING TO USE IT.
 
 class UpdateUserView extends StatefulWidget {
   const UpdateUserView ({Key? key, required this.userEmail}) : super(key: key);
@@ -38,7 +39,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
   }
 
   getUserByEmail() async {
-    userModel = await viewModel.getUserByEmail(userEmail);
+    userModel = await viewModel.getUserByIDNo(userEmail);
     setState(() {
       // Set the default values for the checkboxes
       checkedAndEnabled = {
@@ -60,7 +61,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
         "enabled_${UserModel.keySubPositionUT}": true,
       };
 
-      if (userModel.subPosition.contains(UserModel.keySubPositionCPTS)) {
+      if (userModel.instructor.contains(UserModel.keySubPositionCPTS)) {
         checkedAndEnabled[UserModel.keySubPositionCPTS] = true;
 
         // disable REG, TRG, UT
@@ -68,7 +69,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
         checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
         checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
       }
-      if (userModel.subPosition.contains(UserModel.keySubPositionCCP)) {
+      if (userModel.instructor.contains(UserModel.keySubPositionCCP)) {
         checkedAndEnabled[UserModel.keySubPositionCCP] = true;
 
         // disable REG, TRG, UT
@@ -76,7 +77,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
         checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
         checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
       }
-      if (userModel.subPosition.contains(UserModel.keySubPositionPGI)) {
+      if (userModel.instructor.contains(UserModel.keySubPositionPGI)) {
         checkedAndEnabled[UserModel.keySubPositionPGI] = true;
 
         // disable REG, TRG, UT
@@ -84,7 +85,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
         checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
         checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
       }
-      if (userModel.subPosition.contains(UserModel.keySubPositionFIA)) {
+      if (userModel.instructor.contains(UserModel.keySubPositionFIA)) {
         checkedAndEnabled[UserModel.keySubPositionFIA] = true;
 
         // disable REG, TRG, UT
@@ -92,7 +93,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
         checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
         checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
       }
-      if (userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+      if (userModel.instructor.contains(UserModel.keySubPositionFIS)) {
         checkedAndEnabled[UserModel.keySubPositionFIS] = true;
 
         // disable REG, TRG, UT
@@ -100,7 +101,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
         checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
         checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
       }
-      if (userModel.subPosition.contains(UserModel.keySubPositionREG)) {
+      if (userModel.instructor.contains(UserModel.keySubPositionREG)) {
         checkedAndEnabled[UserModel.keySubPositionREG] = true;
 
         // disable CPTS, CCP, PGI, FIA, FIS, TRG, UT
@@ -112,7 +113,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
         checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
         checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
       }
-      if (userModel.subPosition.contains(UserModel.keySubPositionTRG)) {
+      if (userModel.instructor.contains(UserModel.keySubPositionTRG)) {
         checkedAndEnabled[UserModel.keySubPositionTRG] = true;
 
         // disable CPTS, CCP, PGI, FIA, FIS, REG, UT
@@ -124,7 +125,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
         checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = false;
         checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
       }
-      if (userModel.subPosition.contains(UserModel.keySubPositionUT)) {
+      if (userModel.instructor.contains(UserModel.keySubPositionUT)) {
         checkedAndEnabled[UserModel.keySubPositionUT] = true;
 
         // disable CPTS, CCP, PGI, FIA, FIS, REG, TRG
@@ -137,22 +138,6 @@ class _UpdateUserViewState extends State<UpdateUserView> {
         checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
       }
     });
-  }
-
-  void _selectDateLicenseLastPassed(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: userModel.licenseLastPassed,
-      firstDate: DateTime(2006),
-      lastDate: DateTime(2099),
-      helpText: "Select license last passed date",
-    );
-    if (picked != null && picked != userModel.licenseLastPassed) {
-      print("Date Selected: $picked");
-      setState(() {
-        userModel.licenseLastPassed = picked;
-      });
-    }
   }
 
   void _selectDateLicenseExpiry(BuildContext context) async {
@@ -175,7 +160,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
     return Consumer<UserViewModel>(builder: (_, model, child) {
       return Scaffold(
         appBar: AppBar(
-          title: Text("Update User"),
+          title: const Text("Update User"),
         ),
         body: userModel.name == Util.defaultStringIfNull
             ? const Center(child: CircularProgressIndicator())
@@ -218,7 +203,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                       labelText: 'Staff No',
                     ),
                     textInputAction: TextInputAction.next,
-                    initialValue: userModel.staffNo,
+                    initialValue: userModel.idNo.toString(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter staff number';
@@ -227,7 +212,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                     },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     onChanged: (value) {
-                      userModel.staffNo = value;
+                      userModel.idNo = int.parse(value);
                     },
                   ),
                 ),
@@ -238,7 +223,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                       border: OutlineInputBorder(),
                       labelText: 'Position',
                     ),
-                    value: userModel.position,
+                    value: userModel.rank,
                     validator: (value) {
                       if (value == null) {
                         return "Position is required";
@@ -248,7 +233,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     // value: userModel.position,
                     onChanged: (value) {
-                      userModel.position = value!;
+                      userModel.rank = value!;
                     },
                     items: [
                       DropdownMenuItem(
@@ -281,16 +266,16 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
 
-                                userModel.subPosition.add(UserModel.keySubPositionCPTS);
+                                userModel.instructor.add(UserModel.keySubPositionCPTS);
                               } else {
-                                userModel.subPosition.remove(UserModel.keySubPositionCPTS);
+                                userModel.instructor.remove(UserModel.keySubPositionCPTS);
 
                                 // if no other subPosition is selected, enable REG, TRG, UT
-                                if (!userModel.subPosition.contains(UserModel.keySubPositionCPTS) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionCCP) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionPGI) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionFIA) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+                                if (!userModel.instructor.contains(UserModel.keySubPositionCPTS) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionCCP) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionPGI) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionFIA) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionFIS)) {
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
@@ -312,16 +297,16 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
 
-                                userModel.subPosition.add(UserModel.keySubPositionCCP);
+                                userModel.instructor.add(UserModel.keySubPositionCCP);
                               } else {
-                                userModel.subPosition.remove(UserModel.keySubPositionCCP);
+                                userModel.instructor.remove(UserModel.keySubPositionCCP);
 
                                 // if no other subPosition is selected, enable REG, TRG, UT
-                                if (!userModel.subPosition.contains(UserModel.keySubPositionCPTS) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionCCP) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionPGI) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionFIA) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+                                if (!userModel.instructor.contains(UserModel.keySubPositionCPTS) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionCCP) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionPGI) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionFIA) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionFIS)) {
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
@@ -343,16 +328,16 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
 
-                                userModel.subPosition.add(UserModel.keySubPositionPGI);
+                                userModel.instructor.add(UserModel.keySubPositionPGI);
                               } else {
-                                userModel.subPosition.remove(UserModel.keySubPositionPGI);
+                                userModel.instructor.remove(UserModel.keySubPositionPGI);
 
                                 // if no other subPosition is selected, enable REG, TRG, UT
-                                if (!userModel.subPosition.contains(UserModel.keySubPositionCPTS) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionCCP) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionPGI) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionFIA) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+                                if (!userModel.instructor.contains(UserModel.keySubPositionCPTS) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionCCP) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionPGI) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionFIA) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionFIS)) {
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
@@ -374,16 +359,16 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
 
-                                userModel.subPosition.add(UserModel.keySubPositionFIA);
+                                userModel.instructor.add(UserModel.keySubPositionFIA);
                               } else {
-                                userModel.subPosition.remove(UserModel.keySubPositionFIA);
+                                userModel.instructor.remove(UserModel.keySubPositionFIA);
 
                                 // if no other subPosition is selected, enable REG, TRG, UT
-                                if (!userModel.subPosition.contains(UserModel.keySubPositionCPTS) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionCCP) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionPGI) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionFIA) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+                                if (!userModel.instructor.contains(UserModel.keySubPositionCPTS) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionCCP) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionPGI) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionFIA) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionFIS)) {
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
@@ -405,16 +390,16 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = false;
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = false;
 
-                                userModel.subPosition.add(UserModel.keySubPositionFIS);
+                                userModel.instructor.add(UserModel.keySubPositionFIS);
                               } else {
-                                userModel.subPosition.remove(UserModel.keySubPositionFIS);
+                                userModel.instructor.remove(UserModel.keySubPositionFIS);
 
                                 // if no other subPosition is selected, enable REG, TRG, UT
-                                if (!userModel.subPosition.contains(UserModel.keySubPositionCPTS) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionCCP) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionPGI) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionFIA) &&
-                                    !userModel.subPosition.contains(UserModel.keySubPositionFIS)) {
+                                if (!userModel.instructor.contains(UserModel.keySubPositionCPTS) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionCCP) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionPGI) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionFIA) &&
+                                    !userModel.instructor.contains(UserModel.keySubPositionFIS)) {
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionREG}"] = true;
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionTRG}"] = true;
                                   checkedAndEnabled["enabled_${UserModel.keySubPositionUT}"] = true;
@@ -450,12 +435,12 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                                 checkedAndEnabled[UserModel.keySubPositionUT] = false;
 
                                 // clear all sub position
-                                userModel.subPosition.clear();
+                                userModel.instructor.clear();
 
                                 // add REG sub position
-                                userModel.subPosition.add(UserModel.keySubPositionREG);
+                                userModel.instructor.add(UserModel.keySubPositionREG);
                               } else {
-                                userModel.subPosition.remove(UserModel.keySubPositionREG);
+                                userModel.instructor.remove(UserModel.keySubPositionREG);
 
                                 // enable all other sub position
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionCPTS}"] = true;
@@ -496,12 +481,12 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                                 checkedAndEnabled[UserModel.keySubPositionUT] = false;
 
                                 // clear all sub position
-                                userModel.subPosition.clear();
+                                userModel.instructor.clear();
 
                                 // add TRG sub position
-                                userModel.subPosition.add(UserModel.keySubPositionTRG);
+                                userModel.instructor.add(UserModel.keySubPositionTRG);
                               } else {
-                                userModel.subPosition.remove(UserModel.keySubPositionTRG);
+                                userModel.instructor.remove(UserModel.keySubPositionTRG);
 
                                 // enable all other sub position
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionCPTS}"] = true;
@@ -542,13 +527,13 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                                 checkedAndEnabled[UserModel.keySubPositionTRG] = false;
 
                                 // clear all sub position
-                                userModel.subPosition.clear();
+                                userModel.instructor.clear();
 
                                 // add UT sub position
-                                userModel.subPosition.add(UserModel.keySubPositionUT);
+                                userModel.instructor.add(UserModel.keySubPositionUT);
                               } else {
                                 // remove sub position
-                                userModel.subPosition.remove(UserModel.keySubPositionUT);
+                                userModel.instructor.remove(UserModel.keySubPositionUT);
 
                                 // enable all other sub position
                                 checkedAndEnabled["enabled_${UserModel.keySubPositionCPTS}"] = true;
@@ -585,36 +570,6 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                     onChanged: (value) {
                       userModel.licenseNo = value;
                     },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          onTap: () {
-                            _selectDateLicenseLastPassed(context);
-                            FocusScope.of(context).unfocus();
-                          },
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'License Last Passed',
-                          ),
-                          controller: TextEditingController(
-                              text: Util.convertDateTimeDisplay(userModel.licenseLastPassed.toString())
-                          ),
-                          readOnly: true,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          _selectDateLicenseLastPassed(context);
-                          FocusScope.of(context).unfocus();
-                        },
-                        icon: const Icon(Icons.calendar_today),
-                      ),
-                    ],
                   ),
                 ),
                 Padding(

@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
+import 'package:ts_one/util/util.dart';
 
 class NewAssessment with ChangeNotifier {
   NewAssessment({
     this.name = "",
-    this.staffNo = "",
+    this.staffNo = Util.defaultIntIfNull,
     this.otherCrewMemberStaffNo = "",
     this.aircraftType = "",
     this.airportAndRoute = "",
     this.simulationHours = "",
     AssessmentFlightDetails? assessmentFlightDetails,
-  }) : _assessmentFlightDetails = assessmentFlightDetails ?? AssessmentFlightDetails();
+  }) : _assessmentFlightDetails =
+            assessmentFlightDetails ?? AssessmentFlightDetails();
 
   DateTime assessmentDate = DateTime.now();
   String name = "";
-  String staffNo = "";
+  int staffNo = Util.defaultIntIfNull;
   String otherCrewMemberStaffNo = "";
   String aircraftType = "";
   String airportAndRoute = "";
   String simulationHours = "";
   AssessmentFlightDetails _assessmentFlightDetails;
 
-  @override
-  String toString() {
-    return 'NewAssessment{name: $name, staffNumber: $staffNo, otherCrewMember: $otherCrewMemberStaffNo,'
-        'aircraftType: $aircraftType, airportAndRoute: $airportAndRoute, simulationHours: $simulationHours}';
+  String getStaffNo() {
+    if (staffNo == Util.defaultIntIfNull) {
+      return "";
+    } else {
+      return staffNo.toString();
+    }
   }
 }

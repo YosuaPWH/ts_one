@@ -13,10 +13,10 @@ class Util{
   static DateTime defaultDateIfNull = DateTime(1999, 9, 9, 9, 9, 9, 9, 9);
 
   // this is used to set the default string if the string is null
-  static String defaultStringIfNull = "";
+  static const String defaultStringIfNull = "";
 
   // this is used to set the default int if the int is null
-  static int defaultIntIfNull = 0;
+  static const int defaultIntIfNull = 0;
 }
 
 extension StringCasingExtension on String {

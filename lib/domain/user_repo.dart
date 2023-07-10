@@ -14,7 +14,7 @@ abstract class UserRepo {
 
   Future<int> getLengthOfAllUsers();
 
-  Future<UserModel> getUserByEmail(String email);
+  Future<UserModel> getUserByIDNo(String idNo);
 
   Future<List<UserModel>> getUsersBySearchName(
       String searchName, int searchLimit);
@@ -48,11 +48,13 @@ class UserRepoImpl implements UserRepo {
         // get user data from firestore database by finding the uid of the current user
         final userData = await _db!
             .collection(UserModel.firebaseCollection)
-            .doc(userCredential.user!.email)
+            .where(UserModel.keyEmail, isEqualTo: email)
             .get();
 
+        print(userData.docs.first.data());
+
         // create user model from firebase user and user data from firestore
-        UserModel userModel = UserModel.fromFirebaseUser(userData.data()!);
+        UserModel userModel = UserModel.fromFirebaseUser(userData.docs.first.data());
 
         // return user auth with user model and message
         userAuth.userModel = userModel;
@@ -100,11 +102,12 @@ class UserRepoImpl implements UserRepo {
           // get user data from firestore database by finding the uid of the current user
           final userData = await _db!
               .collection(UserModel.firebaseCollection)
-              .doc(userCredential.user!.email)
+              // .doc(userCredential.user!.email)
+              .where(UserModel.keyEmail, isEqualTo: userCredential.user!.email)
               .get();
 
           // create user model from firebase user and user data from firestore
-          UserModel userModel = UserModel.fromFirebaseUser(userData.data()!);
+          UserModel userModel = UserModel.fromFirebaseUser(userData.docs[0].data());
 
           // return user auth with user model and message
           userAuth.userModel = userModel;
@@ -161,7 +164,7 @@ class UserRepoImpl implements UserRepo {
       if (lastUser != null) {
         final lastDocument = await _db!
             .collection(UserModel.firebaseCollection)
-            .doc(lastUser.email)
+            .doc(lastUser.idNo.toString())
             .get();
 
         query = query.startAfterDocument(lastDocument);
@@ -175,25 +178,25 @@ class UserRepoImpl implements UserRepo {
               UserModel.fromFirebaseUser(e.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      print(e.toString());
+      print("Exception in UserRepo getUsersPaginated: $e");
     }
 
     return users;
   }
 
   @override
-  Future<UserModel> getUserByEmail(String email) async {
+  Future<UserModel> getUserByIDNo(String idNo) async {
     UserModel user = UserModel();
 
     try {
       // get user data from firestore database by finding the email of the current user
       final userData =
-          await _db!.collection(UserModel.firebaseCollection).doc(email).get();
+          await _db!.collection(UserModel.firebaseCollection).doc(idNo).get();
 
       // create user model from firebase user and user data from firestore
       user = UserModel.fromFirebaseUser(userData.data()!);
     } catch (e) {
-      print(e.toString());
+      print("Exception in UserRepo getUserByEmail: $e");
     }
 
     return user;
@@ -258,7 +261,7 @@ class UserRepoImpl implements UserRepo {
   Future<UserModel> updateUser(String userEmail, UserModel user) async {
     UserModel updatedUser = UserModel();
 
-    UserModel currentUser = await getUserByEmail(userEmail);
+    UserModel currentUser = await getUserByIDNo(userEmail);
     try {
       /** if the user changes their email, delete the old user */
       if (user.email != currentUser.email) {
