@@ -326,6 +326,7 @@ class _NewAssessmentFlightDetailsState
                                 assessmentFlightDetails2Error = true;
                               }
                               if(_formKey.currentState!.validate() && !assessmentFlightDetails1Error && !assessmentFlightDetails2Error) {
+                                print("From newAssessmentFlightDetails $dataCandidate");
                                 Navigator.pushNamed(
                                     context,
                                     NamedRoute.newAssessmentVariables,

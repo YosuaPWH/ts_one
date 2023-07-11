@@ -44,12 +44,7 @@ class _NewAssessmentVariablesSecondState extends State<NewAssessmentVariablesSec
           onPressed: () {
             Navigator.pushNamed(
               context,
-              NamedRoute.newAssessmentOverallPerformance,
-              arguments: {
-                'dataAssessmentCandidate': widget.dataCandidate,
-                'dataAssessmentFlightDetails': widget.dataAssessmentFlightDetails,
-                'dataAssessmentVariablesFirst': widget.dataAssessmentVariables
-              },
+              NamedRoute.newAssessmentHumanFactorVariables,
             );
           },
           style: ElevatedButton.styleFrom(

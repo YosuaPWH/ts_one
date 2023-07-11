@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
+import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/util/util.dart';
 
 class NewAssessment with ChangeNotifier {
@@ -29,12 +30,14 @@ class NewAssessment with ChangeNotifier {
   DateTime licenseExpiry1 = Util.defaultDateIfNull;
   String sessionDetails1 = "Training";
   AssessmentFlightDetails assessmentFlightDetails1 = AssessmentFlightDetails();
+  AssessmentVariables assessmentVariablesFlights1 = AssessmentVariables();
 
   // Flight Crew 2
   int idNo2 = Util.defaultIntIfNull;
   DateTime licenseExpiry2 = Util.defaultDateIfNull;
   String sessionDetails2 = "Training";
   AssessmentFlightDetails assessmentFlightDetails2 = AssessmentFlightDetails();
+  AssessmentVariables assessmentVariablesFlights2 = AssessmentVariables();
 
   String aircraftType = "";
   String airportAndRoute = "";
@@ -61,6 +64,7 @@ class NewAssessment with ChangeNotifier {
     return "NewAssessment: typeOfAssessment: $typeOfAssessment, idNo1: $idNo1, idNo2: $idNo2, aircraftType: $aircraftType, airportAndRoute: $airportAndRoute, simulationHours: $simulationHours"
         ", assessmentDate: $assessmentDate, licenseExpiry1: $licenseExpiry1, licenseExpiry2: $licenseExpiry2, "
         "sessionDetails1: $sessionDetails1, sessionDetails2: $sessionDetails2, "
-        "assessmentFlightDetails1: $assessmentFlightDetails1, assessmentFlightDetails2: $assessmentFlightDetails2";
+        "assessmentFlightDetails1: $assessmentFlightDetails1, assessmentFlightDetails2: $assessmentFlightDetails2, "
+        "assessmentVariablesFlights1: $assessmentVariablesFlights1, assessmentVariablesFlights2: $assessmentVariablesFlights2";
   }
 }
