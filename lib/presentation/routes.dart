@@ -12,6 +12,7 @@ import 'package:ts_one/presentation/view/assessment/all_assessment_periods.dart'
 import 'package:ts_one/presentation/view/assessment/detail_assessment_period.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_candidate.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_flight_details.dart';
+import 'package:ts_one/presentation/view/assessment/new_assessment_simulator_flight.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables_second.dart';
 import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
@@ -64,16 +65,25 @@ class AppRoutes {
           settings: settings,
         );
 
+      case NamedRoute.newAssessmentSimulatorFlight:
+        return MaterialPageRoute<void>(
+          builder: (context) => const NewAssessmentSimulatorFlightView(),
+          settings: settings,
+        );
+
       case NamedRoute.newAssessmentCandidate:
         return MaterialPageRoute<void>(
-          builder: (context) => const NewAssessmentCandidate(),
+          builder: (context) => NewAssessmentCandidate(
+            newAssessment: settings.arguments as NewAssessment,
+          ),
           settings: settings,
         );
 
       case NamedRoute.newAssessmentFlightDetails:
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentFlightDetails(
-              dataCandidate: settings.arguments as NewAssessment),
+              dataCandidate: settings.arguments as NewAssessment
+          ),
           settings: settings,
         );
 
@@ -169,6 +179,7 @@ class NamedRoute {
   static const String detailUser = '/detailUser';
   static const String updateUser = '/updateUser';
 
+  static const String newAssessmentSimulatorFlight = '/newAssessmentSimulatorFlight';
   static const String newAssessmentCandidate = '/newAssessmentCandidate';
   static const String newAssessmentFlightDetails =
       '/newAssessmentFlightDetails';

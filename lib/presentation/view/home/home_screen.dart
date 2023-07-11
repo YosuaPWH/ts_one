@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   OutlinedButton.icon(
                     onPressed: () {
                       Navigator.pushNamed(
-                          context, NamedRoute.newAssessmentCandidate);
+                          context, NamedRoute.newAssessmentSimulatorFlight);
                     },
                     icon: const Icon(
                       Icons.add,

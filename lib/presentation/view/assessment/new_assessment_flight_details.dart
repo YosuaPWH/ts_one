@@ -23,12 +23,14 @@ class NewAssessmentFlightDetails extends StatefulWidget {
 class _NewAssessmentFlightDetailsState
     extends State<NewAssessmentFlightDetails> {
   late AssessmentViewModel viewModel;
-  late Map<String, bool> assessmentFlightDetails1;
-  late Map<String, bool> assessmentFlightDetails2;
 
+  late Map<String, bool> assessmentFlightDetails1;
   late int assessmentFlightDetails1Count;
-  late int assessmentFlightDetails2Count;
   late bool assessmentFlightDetails1Error;
+
+  late bool _flightCrew2Enabled;
+  late Map<String, bool> assessmentFlightDetails2;
+  late int assessmentFlightDetails2Count;
   late bool assessmentFlightDetails2Error;
 
   late NewAssessment dataCandidate;
@@ -38,10 +40,17 @@ class _NewAssessmentFlightDetailsState
   void initState() {
     viewModel = Provider.of<AssessmentViewModel>(context, listen: false);
     assessmentFlightDetails1 = {};
-    assessmentFlightDetails2 = {};
     assessmentFlightDetails1Count = 0;
-    assessmentFlightDetails2Count = 0;
     assessmentFlightDetails1Error = false;
+
+    if(widget.dataCandidate.typeOfAssessment == NewAssessment.keyTypeOfAssessmentSimulator) {
+      _flightCrew2Enabled = true;
+    } else {
+      _flightCrew2Enabled = false;
+    }
+
+    assessmentFlightDetails2 = {};
+    assessmentFlightDetails2Count = 0;
     assessmentFlightDetails2Error = false;
 
     dataCandidate = widget.dataCandidate;
@@ -82,6 +91,7 @@ class _NewAssessmentFlightDetailsState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // flight crew 1
                           const Padding(
                             padding: EdgeInsets.only(bottom: 16.0),
                             child: Row(
@@ -113,16 +123,16 @@ class _NewAssessmentFlightDetailsState
                             ),
                             items: const [
                               DropdownMenuItem(
-                                value: "Training",
-                                child: Text("Training"),
+                                value: NewAssessment.keySessionDetailsTraining,
+                                child: Text(NewAssessment.keySessionDetailsTraining),
                               ),
                               DropdownMenuItem(
-                                value: "Checking",
-                                child: Text("Checking"),
+                                value: NewAssessment.keySessionDetailsCheck,
+                                child: Text(NewAssessment.keySessionDetailsCheck),
                               ),
                               DropdownMenuItem(
-                                value: "Re-training",
-                                child: Text("Re-training"),
+                                value: NewAssessment.keySessionDetailsRetraining,
+                                child: Text(NewAssessment.keySessionDetailsRetraining),
                               )
                             ],
                             validator: (value) {
@@ -191,113 +201,120 @@ class _NewAssessmentFlightDetailsState
                                 .toList(),
                           ),
 
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 16.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey,
-                                  ),
+                          // flight crew 2
+                          _flightCrew2Enabled
+                          ? const SizedBox()
+                          : Column(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(bottom: 16.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Divider(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Text(
+                                        'Flight Crew 2',
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text(
-                                    'Flight Crew 2',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          DropdownButtonFormField(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Training or Checking Details',
-                            ),
-                            items: const [
-                              DropdownMenuItem(
-                                value: "Training",
-                                child: Text("Training"),
                               ),
-                              DropdownMenuItem(
-                                value: "Checking",
-                                child: Text("Checking"),
+                              DropdownButtonFormField(
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Training or Checking Details',
+                                ),
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: NewAssessment.keySessionDetailsTraining,
+                                    child: Text(NewAssessment.keySessionDetailsTraining),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: NewAssessment.keySessionDetailsCheck,
+                                    child: Text(NewAssessment.keySessionDetailsCheck),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: NewAssessment.keySessionDetailsRetraining,
+                                    child: Text(NewAssessment.keySessionDetailsRetraining),
+                                  )
+                                ],
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                validator: (value) {
+                                  if (value == null) {
+                                    return "Select one of the options available";
+                                  }
+                                  return null;
+                                },
+                                value: dataCandidate.sessionDetails2,
+                                onChanged: (value) {
+                                  setState(() {
+                                    dataCandidate.sessionDetails2 = value.toString();
+                                  });
+                                },
                               ),
-                              DropdownMenuItem(
-                                value: "Re-training",
-                                child: Text("Re-training"),
+                              assessmentFlightDetails2Error
+                                  ? const Padding(
+                                padding: EdgeInsets.only(left: 8.0, top: 16.0, bottom: 8.0),
+                                child: Text(
+                                  "Select at least one option",
+                                  style: TextStyle(color: Colors.red),
+                                ),
                               )
-                            ],
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (value) {
-                              if (value == null) {
-                                return "Select one of the options available";
-                              }
-                              return null;
-                            },
-                            value: dataCandidate.sessionDetails2,
-                            onChanged: (value) {
-                              setState(() {
-                                dataCandidate.sessionDetails2 = value.toString();
-                              });
-                            },
-                          ),
-                          assessmentFlightDetails2Error
-                          ? const Padding(
-                        padding: EdgeInsets.only(left: 8.0, top: 16.0, bottom: 8.0),
-                        child: Text(
-                          "Select at least one option",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      )
-                          : const SizedBox(),
-                          Column(
-                            children: assessmentFlightDetails2.keys
-                                .map<Widget>(
-                                  (item) => ListTileTheme(
-                                contentPadding: const EdgeInsets.all(0),
-                                child: CheckboxListTile(
-                                  dense: true,
-                                  value: assessmentFlightDetails2[item],
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      assessmentFlightDetails2[item] = newValue!;
-
-                                      if (!dataCandidate.assessmentFlightDetails2.flightDetails.contains(item)) {
-                                        dataCandidate.assessmentFlightDetails2.flightDetails.add(item);
-                                        assessmentFlightDetails2Count++;
-                                      } else {
-                                        dataCandidate.assessmentFlightDetails2.flightDetails.remove(item);
-                                        assessmentFlightDetails2Count--;
-                                      }
-
-                                      if (assessmentFlightDetails2Count == 0) {
+                                  : const SizedBox(),
+                              Column(
+                                children: assessmentFlightDetails2.keys
+                                    .map<Widget>(
+                                      (item) => ListTileTheme(
+                                    contentPadding: const EdgeInsets.all(0),
+                                    child: CheckboxListTile(
+                                      dense: true,
+                                      value: assessmentFlightDetails2[item],
+                                      onChanged: (newValue) {
                                         setState(() {
-                                          assessmentFlightDetails2Error = true;
+                                          assessmentFlightDetails2[item] = newValue!;
+
+                                          if (!dataCandidate.assessmentFlightDetails2.flightDetails.contains(item)) {
+                                            dataCandidate.assessmentFlightDetails2.flightDetails.add(item);
+                                            assessmentFlightDetails2Count++;
+                                          } else {
+                                            dataCandidate.assessmentFlightDetails2.flightDetails.remove(item);
+                                            assessmentFlightDetails2Count--;
+                                          }
+
+                                          if (assessmentFlightDetails2Count == 0) {
+                                            setState(() {
+                                              assessmentFlightDetails2Error = true;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              assessmentFlightDetails2Error = false;
+                                            });
+                                          }
                                         });
-                                      } else {
-                                        setState(() {
-                                          assessmentFlightDetails2Error = false;
-                                        });
-                                      }
-                                    });
-                                  },
-                                  title: Text(
-                                    item,
-                                    style: const TextStyle(fontSize: 14),
+                                      },
+                                      title: Text(
+                                        item,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                    ),
                                   ),
-                                  controlAffinity:
-                                  ListTileControlAffinity.leading,
-                                ),
+                                )
+                                    .toList(),
                               ),
-                            )
-                                .toList(),
+                            ],
                           ),
 
                           ElevatedButton(
@@ -305,7 +322,7 @@ class _NewAssessmentFlightDetailsState
                               if (assessmentFlightDetails1Count == 0) {
                                 assessmentFlightDetails1Error = true;
                               }
-                              if (assessmentFlightDetails2Count == 0) {
+                              if (assessmentFlightDetails2Count == 0 && _flightCrew2Enabled) {
                                 assessmentFlightDetails2Error = true;
                               }
                               if(_formKey.currentState!.validate() && !assessmentFlightDetails1Error && !assessmentFlightDetails2Error) {
@@ -314,11 +331,6 @@ class _NewAssessmentFlightDetailsState
                                     NamedRoute.newAssessmentVariables,
                                     arguments: dataCandidate
                                 );
-                              } else {
-                                setState(() {
-                                  assessmentFlightDetails1Error = true;
-                                  assessmentFlightDetails2Error = true;
-                                });
                               }
                             },
                             style: ElevatedButton.styleFrom(
