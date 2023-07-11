@@ -203,8 +203,7 @@ class _NewAssessmentFlightDetailsState
 
                           // flight crew 2
                           _flightCrew2Enabled
-                          ? const SizedBox()
-                          : Column(
+                          ? Column(
                             children: [
                               const Padding(
                                 padding: EdgeInsets.only(bottom: 16.0),
@@ -315,7 +314,8 @@ class _NewAssessmentFlightDetailsState
                                     .toList(),
                               ),
                             ],
-                          ),
+                          )
+                          : const SizedBox(),
 
                           ElevatedButton(
                             onPressed: () {
