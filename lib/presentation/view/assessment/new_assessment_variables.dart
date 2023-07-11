@@ -11,10 +11,9 @@ import '../../../data/assessments/new_assessment.dart';
 import '../../view_model/assessment_viewmodel.dart';
 
 class NewAssessmentVariables extends StatefulWidget {
-  const NewAssessmentVariables({Key? key, required this.dataAssessmentFlightDetails, required this.dataAssessmentCandidate}) : super(key: key);
+  const NewAssessmentVariables({Key? key, required this.dataCandidate}) : super(key: key);
 
-  final AssessmentFlightDetails dataAssessmentFlightDetails;
-  final NewAssessment dataAssessmentCandidate;
+  final NewAssessment dataCandidate;
 
   @override
   State<NewAssessmentVariables> createState() => _NewAssessmentVariablesState();
@@ -23,6 +22,8 @@ class NewAssessmentVariables extends StatefulWidget {
 class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
   late AssessmentViewModel viewModel;
   late AssessmentPeriod dataAssessmentPeriod;
+  late NewAssessment _newAssessment;
+  late bool _flightCrew2Enabled;
   late List<String> assessmentCategories;
   late List<String> manualAssessmentCategories;
   late Map<AssessmentVariables, bool> allAssessmentVariablesFirstCrew;
@@ -30,9 +31,11 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
   Map<AssessmentVariables, Map<String, String>> dataAssessmentFlightFirstCrew = {};
   Map<AssessmentVariables, Map<String, String>> dataAssessmentFlightSecondCrew = {};
 
+
   @override
   void initState() {
     viewModel = Provider.of<AssessmentViewModel>(context, listen: false);
+    _newAssessment = widget.dataCandidate;
     dataAssessmentPeriod = AssessmentPeriod();
     assessmentCategories = [];
     allAssessmentVariablesFirstCrew = {};
@@ -43,13 +46,19 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
       getAllAssessment();
     });
 
+    if(_newAssessment.typeOfAssessment == NewAssessment.keyTypeOfAssessmentSimulator) {
+      _flightCrew2Enabled = true;
+    } else {
+      _flightCrew2Enabled = false;
+    }
+
     super.initState();
   }
 
   void getAllAssessment() async {
     dataAssessmentPeriod = await viewModel.getAllFlightAssessmentVariablesFromLastPeriod();
 
-    print("size: ${dataAssessmentPeriod.assessmentVariables.length}");
+    // print("size: ${dataAssessmentPeriod.assessmentVariables.length}");
 
     for (var assessmentVariable in dataAssessmentPeriod.assessmentVariables) {
       if (!assessmentCategories.contains(assessmentVariable.category)) {
@@ -58,13 +67,11 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
       allAssessmentVariablesFirstCrew.addAll({assessmentVariable: false});
       allAssessmentVariablesSecondCrew.addAll({assessmentVariable: false});
     }
-    print("jlh: ${allAssessmentVariablesFirstCrew.length}");
+    // print("jlh: ${allAssessmentVariablesFirstCrew.length}");
   }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("data: ${widget.dataAssessmentFlightDetails.toString()}");
-
     return Consumer<AssessmentViewModel>(
       builder: (_, model, child) {
         return Scaffold(
@@ -74,35 +81,37 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
             ),
           ),
           body: Column(
-            children: [
-              Expanded(
-                child: model.isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: _expansionTilesForNewAssessmentVariables(),
+              children: [
+                Expanded(
+                  child: model.isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              children:
+                                  _expansionTilesForNewAssessmentVariables(),
+                            ),
                           ),
                         ),
                       ),
-              ),
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      NamedRoute.newAssessmentVariablesSecond,
-                      arguments: {
-                        'dataAssessmentCandidate': widget.dataAssessmentCandidate,
-                        'dataAssessmentFlightDetails': widget.dataAssessmentFlightDetails,
-                        'dataAssessmentVariablesFirst': dataAssessmentFlightFirstCrew
-                      },
-                    );
+                    print("Assessment Variables: $_newAssessment");
+                    // Navigator.pushNamed(
+                    //   context,
+                    //   NamedRoute.newAssessmentVariablesSecond,
+                    //   arguments: {
+                    //     'dataAssessmentCandidate': widget.dataAssessmentCandidate,
+                    //     'dataAssessmentFlightDetails': widget.dataAssessmentFlightDetails,
+                    //     'dataAssessmentVariablesFirst': dataAssessmentFlightFirstCrew
+                    //   },
+                    // );
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -120,7 +129,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         );
@@ -132,7 +141,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
     List<Widget> expansionTilesVariables = [];
 
     // print("dadas: $assessmentVariables");
-    print("JUMLAH: ${allAssessmentVariablesFirstCrew.length}");
+    // print("JUMLAH: ${allAssessmentVariablesFirstCrew.length}");
     for (var assessmentCategory in assessmentCategories) {
       expansionTilesVariables.add(
         ExpansionTile(
@@ -154,11 +163,10 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
           children: [
             Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(5.0),
-                ),
-                color: TsOneColor.secondary,
-              ),
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(5.0),
+                  ),
+                  color: TsOneColor.secondary),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: 8.0,

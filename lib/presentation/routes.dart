@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
+import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
+import 'package:ts_one/main.dart';
 import 'package:ts_one/presentation/main_view.dart';
 import 'package:ts_one/presentation/view/assessment/add_assessment_period.dart';
 import 'package:ts_one/presentation/view/assessment/all_assessment_periods.dart';
@@ -12,6 +16,7 @@ import 'package:ts_one/presentation/view/assessment/new_assessment_flight_detail
 import 'package:ts_one/presentation/view/assessment/new_assessment_human_factor.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_overall_performance.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_success.dart';
+import 'package:ts_one/presentation/view/assessment/new_assessment_simulator_flight.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables_second.dart';
 import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
@@ -64,48 +69,48 @@ class AppRoutes {
           settings: settings,
         );
 
-      // ====================== NEW ASSESSMENT ==========================================
+      case NamedRoute.newAssessmentSimulatorFlight:
+        return MaterialPageRoute<void>(
+          builder: (context) => const NewAssessmentSimulatorFlightView(),
+          settings: settings,
+        );
 
       case NamedRoute.newAssessmentCandidate:
         return MaterialPageRoute<void>(
-          builder: (context) => const NewAssessmentCandidate(),
+          builder: (context) => NewAssessmentCandidate(
+            newAssessment: settings.arguments as NewAssessment,
+          ),
           settings: settings,
         );
 
       case NamedRoute.newAssessmentFlightDetails:
-        // final arguments = settings.arguments as NewAssessment;
-        // final dataAssessmentCandidate = arguments['dataAssessmentCandidate'] as NewAssessment;
-
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentFlightDetails(
-            dataAssessmentCandidate: settings.arguments as NewAssessment,
+              dataCandidate: settings.arguments as NewAssessment
           ),
           settings: settings,
         );
 
       case NamedRoute.newAssessmentVariables:
-        final arguments = settings.arguments as Map<String, dynamic>;
-        final dataAssessmentFlightDetails = arguments['dataAssessmentFlightDetails'] as AssessmentFlightDetails;
-        final dataAssessmentCandidate = arguments['dataAssessmentCandidate'] as NewAssessment;
-
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentVariables(
-            dataAssessmentFlightDetails: dataAssessmentFlightDetails,
-            dataAssessmentCandidate: dataAssessmentCandidate,
+            dataCandidate: settings.arguments as NewAssessment,
           ),
           settings: settings,
         );
 
       case NamedRoute.newAssessmentVariablesSecond:
         final arguments = settings.arguments as Map<String, dynamic>;
-        final dataAssessmentCandidate = arguments['dataAssessmentCandidate'] as NewAssessment;
-        final dataAssessmentFlightDetails = arguments['dataAssessmentFlightDetails'] as AssessmentFlightDetails;
-        final dataVariablesFirst = arguments['dataAssessmentVariablesFirst'] as Map<AssessmentVariables, Map<String, String>>;
+        final dataCandidate = arguments['dataCandidate'] as NewAssessment;
+        final dataFlightDetails =
+            arguments['dataFlightDetails'] as AssessmentFlightDetails;
+        final dataVariablesFirst = arguments['dataVariablesFirst']
+            as Map<AssessmentVariables, Map<String, String>>;
 
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentVariablesSecond(
-            dataCandidate: dataAssessmentCandidate,
-            dataAssessmentFlightDetails: dataAssessmentFlightDetails,
+            dataAssessmentFlightDetails: dataFlightDetails,
+            dataCandidate: dataCandidate,
             dataAssessmentVariables: dataVariablesFirst,
           ),
           settings: settings,
@@ -198,7 +203,7 @@ class _UndefinedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('Something wrong for: $name'),
+        child: Text('Something went wrong for $name'),
       ),
     );
   }
@@ -216,6 +221,7 @@ class NamedRoute {
   static const String detailUser = '/detailUser';
   static const String updateUser = '/updateUser';
 
+  static const String newAssessmentSimulatorFlight = '/newAssessmentSimulatorFlight';
   static const String newAssessmentCandidate = '/newAssessmentCandidate';
   static const String newAssessmentFlightDetails = '/newAssessmentFlightDetails';
   static const String newAssessmentVariables = '/newAssessmentVariables';

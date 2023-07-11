@@ -10,7 +10,9 @@ import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 import 'package:ts_one/util/util.dart';
 
 class NewAssessmentCandidate extends StatefulWidget {
-  const NewAssessmentCandidate({super.key});
+  const NewAssessmentCandidate({super.key, required this.newAssessment});
+
+  final NewAssessment newAssessment;
 
   @override
   State<NewAssessmentCandidate> createState() => _NewAssessmentCandidateState();
@@ -26,6 +28,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
   late TextEditingController licenseNo1TextController;
   late TextEditingController licenseExpiry1TextController;
 
+  late bool _flightCrew2Enabled;
   late TextEditingController name2TextController;
   late TextEditingController staffNo2TextController;
   late TextEditingController licenseNo2TextController;
@@ -35,7 +38,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
 
   @override
   void initState() {
-    _newAssessment = NewAssessment();
+    _newAssessment = widget.newAssessment;
     _userViewModel = Provider.of<UserViewModel>(context, listen: false);
     _usersSearched = [];
 
@@ -43,6 +46,12 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
     staffNo1TextController = TextEditingController(text: _newAssessment.getIDNo1());
     licenseNo1TextController = TextEditingController();
     licenseExpiry1TextController = TextEditingController();
+
+    if(_newAssessment.typeOfAssessment == NewAssessment.keyTypeOfAssessmentSimulator) {
+      _flightCrew2Enabled = true;
+    } else {
+      _flightCrew2Enabled = false;
+    }
 
     name2TextController = TextEditingController();
     staffNo2TextController = TextEditingController(text: _newAssessment.getIDNo2());
@@ -93,6 +102,33 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         readOnly: true,
                       ),
                     ),
+
+                    // Flight crew 1
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Flight Crew 1',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
                     // name
                     Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
@@ -229,138 +265,197 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                       ),
                     ),
 
-                    // other crew member's name
-                    Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: TypeAheadFormField<UserModel>(
-                          hideSuggestionsOnKeyboardHide: false,
-                          textFieldConfiguration: TextFieldConfiguration(
-                            controller: name2TextController,
-                            onTap: () {
-                              // clear the text field
-                              name2TextController.clear();
-                              staffNo2TextController.clear();
-                              licenseNo2TextController.clear();
-                              licenseExpiry2TextController.clear();
-                              // refresh the UI
-                              setState(() {});
-                            },
-                            decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              labelText: 'Name',
-                              suffixIcon: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.search),
+                    _flightCrew2Enabled
+                    ? Column(
+                      children: [
+                        // Flight crew 2
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 16.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Divider(
+                                  color: Colors.grey,
+                                ),
                               ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  'Flight Crew 2',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                              Expanded(
+                                child: Divider(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // flight crew 2's name
+                        Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: TypeAheadFormField<UserModel>(
+                              hideSuggestionsOnKeyboardHide: false,
+                              textFieldConfiguration: TextFieldConfiguration(
+                                controller: name2TextController,
+                                onTap: () {
+                                  // clear the text field
+                                  name2TextController.clear();
+                                  staffNo2TextController.clear();
+                                  licenseNo2TextController.clear();
+                                  licenseExpiry2TextController.clear();
+                                  // refresh the UI
+                                  setState(() {});
+                                },
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  labelText: 'Name',
+                                  suffixIcon: IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.search),
+                                  ),
+                                ),
+                              ),
+                              suggestionsCallback: (pattern) async {
+                                // wait for the user finish typing
+                                Future.delayed(const Duration(milliseconds: 500));
+                                if(pattern.isNotEmpty) {
+                                  _usersSearched = await _userViewModel.getUsersBySearchName(pattern.toTitleCase(), 5);
+                                  return _usersSearched;
+                                } else {
+                                  return [];
+                                }
+                              },
+                              itemBuilder: (context, UserModel suggestion) {
+                                return ListTile(
+                                  title: Text(suggestion.name),
+                                );
+                              },
+                              noItemsFoundBuilder: (context) {
+                                return const SizedBox(
+                                    height: 100,
+                                    child: Center(
+                                      child: Text(
+                                        'No users found.',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    )
+                                );
+                              },
+                              onSuggestionSelected: (UserModel? suggestion) {
+                                if (suggestion != null) {
+                                  _newAssessment.idNo2 = suggestion.idNo;
+                                  _newAssessment.licenseExpiry2 = suggestion.licenseExpiry;
+
+                                  name2TextController.text = "${suggestion.rank} ${suggestion.name}";
+                                  staffNo2TextController.text = _newAssessment.idNo2.toString();
+                                  licenseNo2TextController.text = suggestion.licenseNo;
+                                  licenseExpiry2TextController.text = Util.convertDateTimeDisplay(suggestion.licenseExpiry.toString(), "dd MMM yyyy");
+                                  // refresh the UI
+                                  setState(() {});
+                                }
+                              },
+                            )
+                        ),
+                        // other crew member's staff no
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: TextFormField(
+                            controller: staffNo2TextController,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Staff Number',
+                            ),
+                            textInputAction: TextInputAction.next,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select user by finding name';
+                              }
+                              return null;
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            readOnly: true,
+                          ),
+                        ),
+                        // license no
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: TextFormField(
+                            controller: licenseNo2TextController,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'License Number',
+                            ),
+                            textInputAction: TextInputAction.next,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select user by finding name';
+                              }
+                              return null;
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            onChanged: (value) {
+                              _newAssessment.idNo2 = int.parse(value);
+                            },
+                            readOnly: true,
+                          ),
+                        ),
+                        // license expiry
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: TextFormField(
+                            controller: licenseExpiry2TextController,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'License Expiry',
+                            ),
+                            textInputAction: TextInputAction.next,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select user by finding name';
+                              }
+                              return null;
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            onChanged: (value) {
+                              _newAssessment.idNo2 = int.parse(value);
+                            },
+                            readOnly: true,
+                          ),
+                        ),
+                      ],
+                    )
+                    : Container(),
+
+                    // Other
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
                             ),
                           ),
-                          suggestionsCallback: (pattern) async {
-                            // wait for the user finish typing
-                            Future.delayed(const Duration(milliseconds: 500));
-                            if(pattern.isNotEmpty) {
-                              _usersSearched = await _userViewModel.getUsersBySearchName(pattern.toTitleCase(), 5);
-                              return _usersSearched;
-                            } else {
-                              return [];
-                            }
-                          },
-                          itemBuilder: (context, UserModel suggestion) {
-                            return ListTile(
-                              title: Text(suggestion.name),
-                            );
-                          },
-                          noItemsFoundBuilder: (context) {
-                            return const SizedBox(
-                                height: 100,
-                                child: Center(
-                                  child: Text(
-                                    'No users found.',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                )
-                            );
-                          },
-                          onSuggestionSelected: (UserModel? suggestion) {
-                            if (suggestion != null) {
-                              _newAssessment.idNo2 = suggestion.idNo;
-                              _newAssessment.licenseExpiry2 = suggestion.licenseExpiry;
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Other',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                              name2TextController.text = "${suggestion.rank} ${suggestion.name}";
-                              staffNo2TextController.text = _newAssessment.idNo2.toString();
-                              licenseNo2TextController.text = suggestion.licenseNo;
-                              licenseExpiry2TextController.text = Util.convertDateTimeDisplay(suggestion.licenseExpiry.toString(), "dd MMM yyyy");
-                              // refresh the UI
-                              setState(() {});
-                            }
-                          },
-                        )
-                    ),
-                    // other crew member's staff no
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: TextFormField(
-                        controller: staffNo2TextController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Staff Number',
-                        ),
-                        textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select other crew member by finding name';
-                          }
-                          return null;
-                        },
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        readOnly: true,
-                      ),
-                    ),
-                    // license no
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: TextFormField(
-                        controller: licenseNo2TextController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'License Number',
-                        ),
-                        textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select user by finding name';
-                          }
-                          return null;
-                        },
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        onChanged: (value) {
-                          _newAssessment.idNo2 = int.parse(value);
-                        },
-                        readOnly: true,
-                      ),
-                    ),
-                    // license expiry
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: TextFormField(
-                        controller: licenseExpiry2TextController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'License Expiry',
-                        ),
-                        textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select user by finding name';
-                          }
-                          return null;
-                        },
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        onChanged: (value) {
-                          _newAssessment.idNo2 = int.parse(value);
-                        },
-                        readOnly: true,
-                      ),
-                    ),
                     // aircraft type
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
@@ -438,6 +533,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    print("pada $_newAssessment");
                     if (_formKey.currentState!.validate()) {
                       Navigator.pushNamed(
                         context,
