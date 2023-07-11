@@ -9,6 +9,7 @@ import 'package:ts_one/presentation/view/assessment/detail_assessment_period.dar
 import 'package:ts_one/presentation/view/assessment/new_assessment_candidate.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_declaration.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_flight_details.dart';
+import 'package:ts_one/presentation/view/assessment/new_assessment_human_factor.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_overall_performance.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_success.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
@@ -108,6 +109,12 @@ class AppRoutes {
             dataAssessmentVariables: dataVariablesFirst,
           ),
           settings: settings,
+        );
+
+      case NamedRoute.newAssessmentHumanFactorVariables:
+        return MaterialPageRoute<void>(
+          builder: (context) => const NewAssessmentHumanFactor(),
+          settings: settings
         );
 
       case NamedRoute.newAssessmentOverallPerformance:
@@ -213,6 +220,7 @@ class NamedRoute {
   static const String newAssessmentFlightDetails = '/newAssessmentFlightDetails';
   static const String newAssessmentVariables = '/newAssessmentVariables';
   static const String newAssessmentVariablesSecond = '/newAssessmentVariablesSecond';
+  static const String newAssessmentHumanFactorVariables = '/newAssessmentHumanFactorVariables';
   static const String newAssessmentOverallPerformance = '/newAssessmentOverallPerformance';
   static const String newAssessmentDeclaration = '/newAssessmentDeclaration';
   static const String newAssessmentSuccess = '/newAssessmentSuccess';

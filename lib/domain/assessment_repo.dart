@@ -11,6 +11,10 @@ abstract class AssessmentRepo {
 
   Future<AssessmentPeriod> getAssessmentPeriodById(String id);
 
+  Future<AssessmentPeriod> getFlightAssessmentPeriodById(String id);
+
+  Future<AssessmentPeriod> getHumanFactorAssessmentPeriodById(String id);
+
   Future<AssessmentPeriod> addAssessmentPeriod(
       AssessmentPeriod assessmentPeriodModel);
 
@@ -121,6 +125,107 @@ class AssessmentRepoImpl implements AssessmentRepo {
     } catch (e) {
       log("Exception in AssessmentRepo on getAssessmentPeriodById: $e");
     }
+    return assessmentPeriod;
+  }
+
+  @override
+  Future<AssessmentPeriod> getFlightAssessmentPeriodById(String id) async {
+    AssessmentPeriod assessmentPeriod = AssessmentPeriod();
+    List<AssessmentVariables> flightAssessmentVariables = [];
+
+    try {
+      assessmentPeriod = await _db!
+          .collection(AssessmentPeriod.firebaseCollection)
+          .doc(id)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        return AssessmentPeriod.fromFirebase(
+            documentSnapshot.data() as Map<String, dynamic>);
+      });
+
+      final flightCategory = [
+        "Flight Preparation",
+        "Takeoff",
+        "Flight Manoeuvres and Procedure",
+        "App. & Missed App. Procedures",
+        "Landing",
+        "LVO Qualification / Checking",
+        "SOP's",
+        "Advance Maneuvers"
+      ];
+
+      final documents = await _db!
+          .collection(AssessmentVariables.firebaseCollection)
+          .where(AssessmentVariables.keyAssessmentPeriodId,
+          isEqualTo: assessmentPeriod.id)
+          .where(AssessmentVariables.keyCategory, whereIn: flightCategory)
+          .get()
+          .then((QuerySnapshot querySnapshot) {
+        return querySnapshot.docs;
+      });
+
+      documents.sort(assessmentVariableCollectionComparator);
+
+      for (var doc in documents) {
+        flightAssessmentVariables.add(AssessmentVariables.fromFirebase(
+            doc.data() as Map<String, dynamic>));
+      }
+
+      assessmentPeriod.assessmentVariables = flightAssessmentVariables;
+
+    } catch (e) {
+      log("Exception in AssessmentRepo on getHumanFactorAssessmentPeriodById: $e");
+    }
+
+    return assessmentPeriod;
+  }
+
+  @override
+  Future<AssessmentPeriod> getHumanFactorAssessmentPeriodById(String id) async {
+    AssessmentPeriod assessmentPeriod = AssessmentPeriod();
+    List<AssessmentVariables> humanFactorAssessmentVariables = [];
+
+    try {
+      assessmentPeriod = await _db!
+          .collection(AssessmentPeriod.firebaseCollection)
+          .doc(id)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+         return AssessmentPeriod.fromFirebase(
+           documentSnapshot.data() as Map<String, dynamic>);
+      });
+
+      final humanFactorCategory = [
+        "Teamwork & Communication",
+        "Leadership & Task Management",
+        "Situational Awareness",
+        "Decision Making",
+        "Customer Focus"
+      ];
+
+      final documents = await _db!
+        .collection(AssessmentVariables.firebaseCollection)
+        .where(AssessmentVariables.keyAssessmentPeriodId,
+        isEqualTo: assessmentPeriod.id)
+        .where(AssessmentVariables.keyCategory, whereIn: humanFactorCategory)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+          return querySnapshot.docs;
+      });
+
+      documents.sort(assessmentVariableCollectionComparator);
+
+      for (var doc in documents) {
+        humanFactorAssessmentVariables.add(AssessmentVariables.fromFirebase(
+          doc.data() as Map<String, dynamic>));
+      }
+
+      assessmentPeriod.assessmentVariables = humanFactorAssessmentVariables;
+
+    } catch (e) {
+      log("Exception in AssessmentRepo on getHumanFactorAssessmentPeriodById: $e");
+    }
+
     return assessmentPeriod;
   }
 

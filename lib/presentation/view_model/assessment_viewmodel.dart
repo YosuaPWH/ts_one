@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/domain/assessment_repo.dart';
@@ -55,17 +56,34 @@ class AssessmentViewModel extends LoadingViewModel {
     return listFlightDetails;
   }
 
-  Future<AssessmentPeriod> getAllAssessmentVariablesFromLastPeriod() async {
+  Future<AssessmentPeriod> getAllFlightAssessmentVariablesFromLastPeriod() async {
     isLoading = true;
     AssessmentPeriod lastAssessmentPeriodData = AssessmentPeriod();
     try {
       List<AssessmentPeriod> assessmentPeriod = await repo.getAllAssessmentPeriods();
       String lastAssessmentPeriodId = assessmentPeriod.first.id;
 
-      lastAssessmentPeriodData = await repo.getAssessmentPeriodById(lastAssessmentPeriodId);
+      lastAssessmentPeriodData = await repo.getFlightAssessmentPeriodById(lastAssessmentPeriodId);
       isLoading = false;
     } catch (e) {
       log("Exception on getAllAssessmentVariablesFromLastPeriod function on Assessment View Model: $e");
+      isLoading = false;
+    }
+
+    return lastAssessmentPeriodData;
+  }
+
+  Future<AssessmentPeriod> getAllHumanFactorAssessmentVariablesFromLastPeriod() async {
+    isLoading = true;
+    AssessmentPeriod lastAssessmentPeriodData = AssessmentPeriod();
+    try {
+      List<AssessmentPeriod> assessmentPeriod = await repo.getAllAssessmentPeriods();
+      String lastAssessmentPeriodId = assessmentPeriod.first.id;
+
+      lastAssessmentPeriodData = await repo.getHumanFactorAssessmentPeriodById(lastAssessmentPeriodId);
+      isLoading = false;
+    } catch (e) {
+      debugPrint("Exception on getAllHumanFactorAssessmentVariablesFromLastPeriod function on Assessment ViewModel: $e");
       isLoading = false;
     }
 
