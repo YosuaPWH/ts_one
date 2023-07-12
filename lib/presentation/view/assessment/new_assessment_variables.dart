@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
+import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/shared_components/dropdown_button_form_component.dart';
 import 'package:ts_one/presentation/theme.dart';
@@ -26,6 +27,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
   late bool _flightCrew2Enabled;
   late List<String> assessmentCategories;
   late List<String> manualAssessmentCategories;
+  late List<AssessmentVariables> allAssessmentVariables;
   late Map<AssessmentVariables, bool> allAssessmentVariablesFirstCrew;
   late Map<AssessmentVariables, bool> allAssessmentVariablesSecondCrew;
   Map<AssessmentVariables, Map<String, String>> dataAssessmentFlightFirstCrew = {};
@@ -36,8 +38,11 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
   void initState() {
     viewModel = Provider.of<AssessmentViewModel>(context, listen: false);
     _newAssessment = widget.dataCandidate;
+    // _newAssessment.assessmentVariablesFlights1 = [];
+    // _newAssessment.assessmentVariablesFlights2 = [];
     dataAssessmentPeriod = AssessmentPeriod();
     assessmentCategories = [];
+    allAssessmentVariables = [];
     allAssessmentVariablesFirstCrew = {};
     allAssessmentVariablesSecondCrew = {};
     manualAssessmentCategories = ["Aircraft System/Procedures", "Abnormal/Emer.Proc"];
@@ -64,8 +69,19 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
       if (!assessmentCategories.contains(assessmentVariable.category)) {
         assessmentCategories.add(assessmentVariable.category);
       }
+
+      allAssessmentVariables.add(assessmentVariable);
       allAssessmentVariablesFirstCrew.addAll({assessmentVariable: false});
       allAssessmentVariablesSecondCrew.addAll({assessmentVariable: false});
+
+      _newAssessment.assessmentVariablesFlights1.add(AssessmentVariableResults(
+        assessmentVariableId: assessmentVariable.id,
+        assessmentVariableName: assessmentVariable.name,
+      ));
+      _newAssessment.assessmentVariablesFlights2.add(AssessmentVariableResults(
+        assessmentVariableId: assessmentVariable.id,
+        assessmentVariableName: assessmentVariable.name,
+      ));
     }
     // print("jlh: ${allAssessmentVariablesFirstCrew.length}");
   }
@@ -102,16 +118,11 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                 padding: const EdgeInsets.all(16),
                 child: ElevatedButton(
                   onPressed: () {
-                    print("Assessment Variables: $_newAssessment");
-                    // Navigator.pushNamed(
-                    //   context,
-                    //   NamedRoute.newAssessmentVariablesSecond,
-                    //   arguments: {
-                    //     'dataAssessmentCandidate': widget.dataAssessmentCandidate,
-                    //     'dataAssessmentFlightDetails': widget.dataAssessmentFlightDetails,
-                    //     'dataAssessmentVariablesFirst': dataAssessmentFlightFirstCrew
-                    //   },
-                    // );
+                    Navigator.pushNamed(
+                      context,
+                      NamedRoute.newAssessmentHumanFactorVariables,
+                      arguments: _newAssessment,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -174,30 +185,33 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                 ),
                 child: Column(
                   children: [
-                    for (var data in allAssessmentVariablesFirstCrew.keys)
-                      if (data.category == assessmentCategory)
+                    for (var index = 0; index < allAssessmentVariables.length; index++)
+                      // Text(data.toString()),
+                      if (allAssessmentVariables[index].category == assessmentCategory)
                         Column(
                           children: [
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                data.name,
+                                allAssessmentVariables[index].name,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
-                            for (int i = 1; i <= 2; i++)
+                            for (int flightCrewNo = 1; flightCrewNo <= 2; flightCrewNo++)
                               Column(
                                 children: [
                                   Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text("Crew $i"),
+                                    child: Text("Crew $flightCrewNo"),
                                   ),
                                   fieldForEveryCrew(
-                                      data,
-                                      i == 1 ? dataAssessmentFlightFirstCrew : dataAssessmentFlightSecondCrew,
-                                      i == 1 ? allAssessmentVariablesFirstCrew : allAssessmentVariablesSecondCrew,
+                                    allAssessmentVariables[index],
+                                    index,
+                                    flightCrewNo,
+                                    flightCrewNo == 1 ? dataAssessmentFlightFirstCrew : dataAssessmentFlightSecondCrew,
+                                    flightCrewNo == 1 ? allAssessmentVariablesFirstCrew : allAssessmentVariablesSecondCrew,
                                   ),
                                 ],
                               ),
@@ -293,7 +307,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                           ),
                         )
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -312,6 +326,8 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
 
   Widget fieldForEveryCrew(
       AssessmentVariables data,
+      int currentIndexInListOfAssessmentVariables,
+      int flightCrewNo,
       Map<AssessmentVariables, Map<String, String>> dataCrew,
       Map<AssessmentVariables, bool> allVariableCrew) {
     return Row(
@@ -343,9 +359,24 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                       }
                     } else {
                       dataCrew[data]?["Empty"] = "true";
+                      dataCrew[data]?["Assessment"] = "N/A";
+                      dataCrew[data]?["Markers"] = "N/A";
+                      dataCrew[data]?["PF"] = "N/A";
+                      dataCrew[data]?["PM"] = "N/A";
                     }
                   } else {
                     dataCrew[data]?["Empty"] = "false";
+                  }
+
+                  switch(flightCrewNo) {
+                    case 1:
+                      _newAssessment.assessmentVariablesFlights1[currentIndexInListOfAssessmentVariables].isNotApplicable = newValue;
+                      _newAssessment.assessmentVariablesFlights1[currentIndexInListOfAssessmentVariables].reset();
+                      break;
+                    case 2:
+                      _newAssessment.assessmentVariablesFlights2[currentIndexInListOfAssessmentVariables].isNotApplicable = newValue;
+                      _newAssessment.assessmentVariablesFlights2[currentIndexInListOfAssessmentVariables].reset();
+                      break;
                   }
                 });
               },
@@ -374,10 +405,23 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                               setState(() {
                                 if (!dataCrew.containsKey(data)) {
                                   dataCrew.addAll({
-                                    data: {"Assessment": newValue as String, "Markers": "N/A", "Empty": "false"}
+                                    data: {
+                                      "Assessment": newValue as String,
+                                      "Markers": "N/A",
+                                      "Empty": "false"
+                                    }
                                   });
                                 } else {
                                   dataCrew[data]?["Assessment"] = newValue as String;
+                                }
+
+                                switch(flightCrewNo){
+                                  case 1:
+                                    _newAssessment.assessmentVariablesFlights1[currentIndexInListOfAssessmentVariables].assessmentSatisfactory = newValue as String;
+                                    break;
+                                  case 2:
+                                    _newAssessment.assessmentVariablesFlights2[currentIndexInListOfAssessmentVariables].assessmentSatisfactory = newValue as String;
+                                    break;
                                 }
                               });
                             },
@@ -422,10 +466,23 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                       onValueChanged: (newValue) {
                         if (!dataCrew.containsKey(data)) {
                           dataCrew.addAll({
-                            data: {"Assessment": "N/A", "Markers": newValue, "Empty": "false"}
+                            data: {
+                              "Assessment": "N/A",
+                              "Markers": newValue,
+                              "Empty": "false"
+                            }
                           });
                         } else {
                           dataCrew[data]?["Markers"] = newValue;
+                        }
+
+                        switch(flightCrewNo){
+                          case 1:
+                            _newAssessment.assessmentVariablesFlights1[currentIndexInListOfAssessmentVariables].assessmentMarkers = int.parse(newValue);
+                            break;
+                          case 2:
+                            _newAssessment.assessmentVariablesFlights2[currentIndexInListOfAssessmentVariables].assessmentMarkers = int.parse(newValue);
+                            break;
                         }
                       },
                     ),
@@ -451,10 +508,22 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                         setState(() {
                           if (!dataCrew.containsKey(data)) {
                             dataCrew.addAll({
-                              data: {"PF": newValue, "PM": "N/A", "Empty": "false"}
+                              data: {
+                                "PF": newValue,
+                                "PM": "N/A",
+                                "Empty": "false"
+                              }
                             });
                           } else {
                             dataCrew[data]?["PF"] = newValue;
+                          }
+                          switch(flightCrewNo){
+                            case 1:
+                              _newAssessment.assessmentVariablesFlights1[currentIndexInListOfAssessmentVariables].pilotFlyingMarkers = int.parse(newValue);
+                              break;
+                            case 2:
+                              _newAssessment.assessmentVariablesFlights2[currentIndexInListOfAssessmentVariables].pilotFlyingMarkers = int.parse(newValue);
+                              break;
                           }
                         });
                       },
@@ -476,10 +545,22 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                         setState(() {
                           if (!dataCrew.containsKey(data)) {
                             dataCrew.addAll({
-                              data: {"PF": "N/A", "PM": newValue, "Empty": "false"}
+                              data: {
+                                "PF": "N/A",
+                                "PM": newValue,
+                                "Empty": "false"
+                              }
                             });
                           } else {
                             dataCrew[data]?["PM"] = newValue;
+                          }
+                          switch(flightCrewNo){
+                            case 1:
+                              _newAssessment.assessmentVariablesFlights1[currentIndexInListOfAssessmentVariables].pilotMonitoringMarkers = int.parse(newValue);
+                              break;
+                            case 2:
+                              _newAssessment.assessmentVariablesFlights2[currentIndexInListOfAssessmentVariables].pilotMonitoringMarkers = int.parse(newValue);
+                              break;
                           }
                         });
                       },

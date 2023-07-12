@@ -3,13 +3,18 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
+import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
+import 'package:ts_one/data/assessments/new_assessment.dart';
+import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/shared_components/dropdown_button_form_component.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
 
 class NewAssessmentHumanFactor extends StatefulWidget {
-  const NewAssessmentHumanFactor({super.key});
+  const NewAssessmentHumanFactor({super.key, required this.dataCandidate});
+
+  final NewAssessment dataCandidate;
 
   @override
   State<NewAssessmentHumanFactor> createState() => _NewAssessmentHumanFactorState();
@@ -18,7 +23,9 @@ class NewAssessmentHumanFactor extends StatefulWidget {
 class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
   late AssessmentViewModel viewModel;
   late AssessmentPeriod dataAssessmentPeriod;
+  late NewAssessment _newAssessment;
   late List<String> assessmentCategories;
+  late List<AssessmentVariables> allAssessmentVariables;
   late Map<AssessmentVariables, bool> allAssessmentVariablesFirstCrew;
   late Map<AssessmentVariables, bool> allAssessmentVariablesSecondCrew;
   Map<AssessmentVariables, Map<String, String>> dataAssessmentHumanFactorFirstCrew = {};
@@ -28,7 +35,9 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
   void initState() {
     viewModel = Provider.of<AssessmentViewModel>(context, listen: false);
     dataAssessmentPeriod = AssessmentPeriod();
+    _newAssessment = widget.dataCandidate;
     assessmentCategories = [];
+    allAssessmentVariables = [];
     allAssessmentVariablesFirstCrew = {};
     allAssessmentVariablesSecondCrew = {};
 
@@ -41,14 +50,25 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
 
   void getAllAssessment() async {
     dataAssessmentPeriod = await viewModel.getAllHumanFactorAssessmentVariablesFromLastPeriod();
-    log("data ${dataAssessmentPeriod.toString()}");
+    // log("data ${dataAssessmentPeriod.toString()}");
 
     for (var assessmentVariable in dataAssessmentPeriod.assessmentVariables) {
       if (!assessmentCategories.contains(assessmentVariable.category)) {
         assessmentCategories.add(assessmentVariable.category);
       }
+
+      allAssessmentVariables.add(assessmentVariable);
       allAssessmentVariablesFirstCrew.addAll({assessmentVariable: false});
       allAssessmentVariablesSecondCrew.addAll({assessmentVariable: false});
+
+      _newAssessment.assessmentVariablesFlightsHumanFactor1.add(AssessmentVariableResults(
+        assessmentVariableId: assessmentVariable.id,
+        assessmentVariableName: assessmentVariable.name,
+      ));
+      _newAssessment.assessmentVariablesFlightsHumanFactor2.add(AssessmentVariableResults(
+        assessmentVariableId: assessmentVariable.id,
+        assessmentVariableName: assessmentVariable.name,
+      ));
     }
   }
 
@@ -76,7 +96,38 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
                           ),
                         ),
                       ),
-              )
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: ElevatedButton(
+                  onPressed: () {
+                    log(_newAssessment.assessmentVariablesFlights1.toString());
+                    log(_newAssessment.assessmentVariablesFlightsHumanFactor1.toString());
+                    log(_newAssessment.setOverallPerformance1().toString());
+
+                    Navigator.pushNamed(
+                      context,
+                      NamedRoute.newAssessmentOverallPerformance,
+                      arguments: _newAssessment,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    backgroundColor: TsOneColor.primary,
+                  ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 48,
+                    child: const Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Next",
+                        style: TextStyle(color: TsOneColor.secondary),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         );
@@ -120,30 +171,32 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
                 ),
                 child: Column(
                   children: [
-                    for (var data in allAssessmentVariablesFirstCrew.keys)
-                      if (data.category == assessmentCategory)
+                    for (var index = 0; index < allAssessmentVariables.length; index++)
+                      if (allAssessmentVariables[index].category == assessmentCategory)
                         Column(
                           children: [
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                data.name,
+                                allAssessmentVariables[index].name,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
-                            for (int i = 1; i <= 2; i++)
+                            for (int flightCrewNo = 1; flightCrewNo <= 2; flightCrewNo++)
                               Column(
                                 children: [
                                   Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text("Crew $i"),
+                                    child: Text("Crew $flightCrewNo"),
                                   ),
                                   fieldForEveryCrew(
-                                    data,
-                                    i == 1 ? dataAssessmentHumanFactorFirstCrew : dataAssessmentHumanFactorSecondCrew,
-                                    i == 1 ? allAssessmentVariablesFirstCrew : allAssessmentVariablesSecondCrew,
+                                    allAssessmentVariables[index],
+                                    index,
+                                    flightCrewNo,
+                                    flightCrewNo == 1 ? dataAssessmentHumanFactorFirstCrew : dataAssessmentHumanFactorSecondCrew,
+                                    flightCrewNo == 1 ? allAssessmentVariablesFirstCrew : allAssessmentVariablesSecondCrew,
                                   ),
                                 ],
                               ),
@@ -167,8 +220,13 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
     return expansionTilesHumanFactorVariables;
   }
 
-  Widget fieldForEveryCrew(AssessmentVariables data, Map<AssessmentVariables, Map<String, String>> dataCrew,
+  Widget fieldForEveryCrew(
+      AssessmentVariables data,
+      int currentIndexInListOfAssessmentVariables,
+      int flightCrewNo,
+      Map<AssessmentVariables, Map<String, String>> dataCrew,
       Map<AssessmentVariables, bool> allVariableCrew) {
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -198,6 +256,17 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
                   } else {
                     dataCrew[data]?["Empty"] = "false";
                   }
+
+                  switch(flightCrewNo) {
+                    case 1:
+                      _newAssessment.assessmentVariablesFlightsHumanFactor1[currentIndexInListOfAssessmentVariables].isNotApplicable = newValue;
+                      _newAssessment.assessmentVariablesFlightsHumanFactor1[currentIndexInListOfAssessmentVariables].reset();
+                      break;
+                    case 2:
+                      _newAssessment.assessmentVariablesFlightsHumanFactor2[currentIndexInListOfAssessmentVariables].isNotApplicable = newValue;
+                      _newAssessment.assessmentVariablesFlightsHumanFactor2[currentIndexInListOfAssessmentVariables].reset();
+                      break;
+                  }
                 });
               },
             ),
@@ -224,6 +293,15 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
                         } else {
                           dataCrew[data]?["PF"] = newValue;
                         }
+
+                        switch(flightCrewNo) {
+                          case 1:
+                            _newAssessment.assessmentVariablesFlightsHumanFactor1[currentIndexInListOfAssessmentVariables].pilotFlyingMarkers = int.parse(newValue);
+                            break;
+                          case 2:
+                            _newAssessment.assessmentVariablesFlightsHumanFactor2[currentIndexInListOfAssessmentVariables].pilotFlyingMarkers = int.parse(newValue);
+                            break;
+                        }
                       });
                     },
                   ),
@@ -248,6 +326,15 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
                           });
                         } else {
                           dataCrew[data]?["PM"] = newValue;
+                        }
+
+                        switch(flightCrewNo) {
+                          case 1:
+                            _newAssessment.assessmentVariablesFlightsHumanFactor1[currentIndexInListOfAssessmentVariables].pilotMonitoringMarkers = int.parse(newValue);
+                            break;
+                          case 2:
+                            _newAssessment.assessmentVariablesFlightsHumanFactor2[currentIndexInListOfAssessmentVariables].pilotMonitoringMarkers = int.parse(newValue);
+                            break;
                         }
                       });
                     },

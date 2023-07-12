@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
+import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/util/util.dart';
 
@@ -23,21 +26,25 @@ class NewAssessment with ChangeNotifier {
   static const String keySessionDetailsRetraining = "Re-training";
 
   String typeOfAssessment = "";
-  DateTime assessmentDate = Util.defaultDateIfNull;
+  DateTime assessmentDate = DateTime.now();
 
   // Flight Crew 1
   int idNo1 = Util.defaultIntIfNull;
   DateTime licenseExpiry1 = Util.defaultDateIfNull;
   String sessionDetails1 = "Training";
   AssessmentFlightDetails assessmentFlightDetails1 = AssessmentFlightDetails();
-  AssessmentVariables assessmentVariablesFlights1 = AssessmentVariables();
+  List<AssessmentVariableResults> assessmentVariablesFlights1 = [];
+  List<AssessmentVariableResults> assessmentVariablesFlightsHumanFactor1 = [];
+  double overallPerformance1 = 0.0;
 
   // Flight Crew 2
   int idNo2 = Util.defaultIntIfNull;
   DateTime licenseExpiry2 = Util.defaultDateIfNull;
   String sessionDetails2 = "Training";
   AssessmentFlightDetails assessmentFlightDetails2 = AssessmentFlightDetails();
-  AssessmentVariables assessmentVariablesFlights2 = AssessmentVariables();
+  List<AssessmentVariableResults> assessmentVariablesFlights2 = [];
+  List<AssessmentVariableResults> assessmentVariablesFlightsHumanFactor2 = [];
+  double overallPerformance2 = 0.0;
 
   String aircraftType = "";
   String airportAndRoute = "";
@@ -59,12 +66,65 @@ class NewAssessment with ChangeNotifier {
     }
   }
 
+  double setOverallPerformance1() {
+    double totalScore = 0;
+    int totalVariablesAssessed = 0;
+    for (AssessmentVariableResults assessmentVariableResults in assessmentVariablesFlights1) {
+      if(assessmentVariableResults.assessmentMarkers != null) {
+        totalScore += assessmentVariableResults.assessmentMarkers!;
+        totalVariablesAssessed++;
+        continue;
+      }
+      if(assessmentVariableResults.pilotFlyingMarkers != null && assessmentVariableResults.pilotMonitoringMarkers != null) {
+        totalScore += (assessmentVariableResults.pilotFlyingMarkers! + assessmentVariableResults.pilotMonitoringMarkers!) / 2;
+        totalVariablesAssessed++;
+        continue;
+      }
+    }
+    for (AssessmentVariableResults assessmentVariableResults in assessmentVariablesFlightsHumanFactor1) {
+      if(assessmentVariableResults.pilotFlyingMarkers != null && assessmentVariableResults.pilotMonitoringMarkers != null) {
+        totalScore += (assessmentVariableResults.pilotFlyingMarkers! + assessmentVariableResults.pilotMonitoringMarkers!) / 2;
+        totalVariablesAssessed++;
+        continue;
+      }
+    }
+    overallPerformance1 = totalScore / totalVariablesAssessed;
+    return overallPerformance1;
+  }
+
+  double setOverallPerformance2() {
+    double totalScore = 0;
+    int totalVariablesAssessed = 0;
+    for (AssessmentVariableResults assessmentVariableResults in assessmentVariablesFlights2) {
+      if(assessmentVariableResults.assessmentMarkers != null) {
+        totalScore += assessmentVariableResults.assessmentMarkers!;
+        totalVariablesAssessed++;
+        continue;
+      }
+      if(assessmentVariableResults.pilotFlyingMarkers != null && assessmentVariableResults.pilotMonitoringMarkers != null) {
+        totalScore += (assessmentVariableResults.pilotFlyingMarkers! + assessmentVariableResults.pilotMonitoringMarkers!) / 2;
+        totalVariablesAssessed++;
+        continue;
+      }
+    }
+    for (AssessmentVariableResults assessmentVariableResults in assessmentVariablesFlightsHumanFactor2) {
+      if(assessmentVariableResults.pilotFlyingMarkers != null && assessmentVariableResults.pilotMonitoringMarkers != null) {
+        totalScore += (assessmentVariableResults.pilotFlyingMarkers! + assessmentVariableResults.pilotMonitoringMarkers!) / 2;
+        totalVariablesAssessed++;
+        continue;
+      }
+    }
+    overallPerformance2 = totalScore / totalVariablesAssessed;
+    return overallPerformance2;
+  }
+
   @override
   String toString() {
     return "NewAssessment: typeOfAssessment: $typeOfAssessment, idNo1: $idNo1, idNo2: $idNo2, aircraftType: $aircraftType, airportAndRoute: $airportAndRoute, simulationHours: $simulationHours"
         ", assessmentDate: $assessmentDate, licenseExpiry1: $licenseExpiry1, licenseExpiry2: $licenseExpiry2, "
         "sessionDetails1: $sessionDetails1, sessionDetails2: $sessionDetails2, "
         "assessmentFlightDetails1: $assessmentFlightDetails1, assessmentFlightDetails2: $assessmentFlightDetails2, "
-        "assessmentVariablesFlights1: $assessmentVariablesFlights1, assessmentVariablesFlights2: $assessmentVariablesFlights2";
+        "assessmentVariablesFlights1: $assessmentVariablesFlights1, assessmentVariablesFlights2: $assessmentVariablesFlights2, "
+        "assessmentVariablesFlightsHumanFactor1: $assessmentVariablesFlightsHumanFactor1, assessmentVariablesFlightsHumanFactor2: $assessmentVariablesFlightsHumanFactor2";
   }
 }

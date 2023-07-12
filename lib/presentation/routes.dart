@@ -118,21 +118,16 @@ class AppRoutes {
 
       case NamedRoute.newAssessmentHumanFactorVariables:
         return MaterialPageRoute<void>(
-          builder: (context) => const NewAssessmentHumanFactor(),
+          builder: (context) => NewAssessmentHumanFactor(
+            dataCandidate: settings.arguments as NewAssessment,
+          ),
           settings: settings
         );
 
       case NamedRoute.newAssessmentOverallPerformance:
-        final arguments = settings.arguments as Map<String, dynamic>;
-        final dataAssessmentCandidate = arguments['dataAssessmentCandidate'] as NewAssessment;
-        final dataAssessmentFlightDetails = arguments['dataAssessmentFlightDetails'] as AssessmentFlightDetails;
-        final dataAssessmentVariablesFirst = arguments['dataAssessmentVariablesFirst'] as Map<AssessmentVariables, Map<String, String>>;
-
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentOverallPerformance(
-            dataAssessmentCandidate: dataAssessmentCandidate,
-            dataAssessmentFlightDetails: dataAssessmentFlightDetails,
-            dataAssessmentVariables: dataAssessmentVariablesFirst,
+            dataCandidate: settings.arguments as NewAssessment,
           ),
           settings: settings,
         );

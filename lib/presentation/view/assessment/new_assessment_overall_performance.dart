@@ -9,14 +9,10 @@ import 'package:ts_one/presentation/theme.dart';
 class NewAssessmentOverallPerformance extends StatefulWidget {
   const NewAssessmentOverallPerformance({
     super.key,
-    required this.dataAssessmentCandidate,
-    required this.dataAssessmentFlightDetails,
-    required this.dataAssessmentVariables,
+    required this.dataCandidate,
   });
 
-  final NewAssessment dataAssessmentCandidate;
-  final AssessmentFlightDetails dataAssessmentFlightDetails;
-  final Map<AssessmentVariables, Map<String, String>> dataAssessmentVariables;
+  final NewAssessment dataCandidate;
 
   @override
   State<NewAssessmentOverallPerformance> createState() => _NewAssessmentOverallPerformanceState();
@@ -36,9 +32,7 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
         child: ElevatedButton(
           onPressed: () {
             Navigator.pushNamed(context, NamedRoute.newAssessmentDeclaration, arguments: {
-              'dataAssessmentCandidate': widget.dataAssessmentCandidate,
-              'dataAssessmentFlightDetails': widget.dataAssessmentFlightDetails,
-              'dataAssessmentVariablesFirst': widget.dataAssessmentVariables
+              'dataAssessmentCandidate': widget.dataCandidate,
             });
           },
           style: ElevatedButton.styleFrom(
