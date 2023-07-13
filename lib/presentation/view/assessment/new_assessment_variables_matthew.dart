@@ -109,7 +109,7 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
                     padding: const EdgeInsets.all(16),
                     child: ElevatedButton(
                       onPressed: () {
-                        log(_newAssessment.assessmentVariablesFlights1.toString());
+                        // log(_newAssessment.assessmentVariablesFlights1.toString());
                         if(_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
                           log(_newAssessment.toString());
@@ -339,7 +339,7 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
     if(assessmentVariable.typeOfAssessment == AssessmentVariables.keySatisfactory) {
       // assessment dropdown
       dropdown1 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].isNotApplicable ? null : _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentSatisfactory,
         padding: const EdgeInsets.all(0),
         isExpanded: true,
         isDense: true,
@@ -351,9 +351,9 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
+          setState(() {
             _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentSatisfactory = value as String;
-          // });
+          });
         },
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
@@ -375,7 +375,7 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
       );
       // markers dropdown
       dropdown2 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -384,9 +384,9 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
+          setState(() {
             _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentMarkers = value!;
-          // });
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -412,7 +412,7 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
     else {
       // pilot flying markers dropdown
       dropdown1 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].pilotFlyingMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -421,9 +421,9 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
+          setState(() {
             _newAssessment.assessmentVariablesFlights1[indexOfVariable].pilotFlyingMarkers = value!;
-          // });
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -447,7 +447,7 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
       );
       // pilot monitoring markers dropdown
       dropdown2 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].pilotMonitoringMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -456,9 +456,9 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
+          setState(() {
             _newAssessment.assessmentVariablesFlights1[indexOfVariable].pilotMonitoringMarkers = value!;
-          // });
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -516,7 +516,7 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
     if(assessmentVariable.typeOfAssessment == AssessmentVariables.keySatisfactory) {
       // assessment dropdown
       dropdown1 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlights2[indexOfVariable].assessmentSatisfactory,
         padding: const EdgeInsets.all(0),
         isExpanded: false,
         isDense: true,
@@ -528,9 +528,9 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
+          setState(() {
             _newAssessment.assessmentVariablesFlights2[indexOfVariable].assessmentSatisfactory = value as String;
-          // });
+          });
         },
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
@@ -552,7 +552,7 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
       );
       // markers dropdown
       dropdown2 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlights2[indexOfVariable].assessmentMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -561,9 +561,9 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
+          setState(() {
             _newAssessment.assessmentVariablesFlights2[indexOfVariable].assessmentMarkers = value!;
-          // });
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -589,7 +589,7 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
     else {
       // pilot flying markers dropdown
       dropdown1 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlights2[indexOfVariable].pilotFlyingMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -598,9 +598,9 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
+          setState(() {
             _newAssessment.assessmentVariablesFlights2[indexOfVariable].pilotFlyingMarkers = value!;
-          // });
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -624,7 +624,7 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
       );
       // pilot monitoring markers dropdown
       dropdown2 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlights1[indexOfVariable].pilotMonitoringMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -633,9 +633,9 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
+          setState(() {
             _newAssessment.assessmentVariablesFlights2[indexOfVariable].pilotMonitoringMarkers = value!;
-          // });
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),

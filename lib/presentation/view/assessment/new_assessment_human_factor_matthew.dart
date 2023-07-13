@@ -84,55 +84,73 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
           appBar: AppBar(
             title: const Text("Human Factor"),
           ),
-          body: Column(
-            children: [
-              Expanded(
-                child: model.isLoading
-                    ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-                    : SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: _expansionTilesForNewAssessmentHumanFactorVariables(),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: ElevatedButton(
-                  onPressed: () {
-                    log(_newAssessment.assessmentVariablesFlightsHumanFactor1.toString());
-                    log(_newAssessment.assessmentVariablesFlightsHumanFactor1.toString());
-                    log(_newAssessment.setOverallPerformance1().toString());
-
-                    Navigator.pushNamed(
-                      context,
-                      NamedRoute.newAssessmentOverallPerformance,
-                      arguments: _newAssessment,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                    backgroundColor: TsOneColor.primary,
-                  ),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: 48,
-                    child: const Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Next",
-                        style: TextStyle(color: TsOneColor.secondary),
+          body: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Expanded(
+                  child: model.isLoading
+                      ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                      : SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: _expansionTilesForNewAssessmentHumanFactorVariables(),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if(_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        log(_newAssessment.toString());
+                        Navigator.pushNamed(
+                          context,
+                          NamedRoute.newAssessmentOverallPerformance,
+                          arguments: _newAssessment,
+                        );
+                      }
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text("Please fill all the fields"),
+                            duration: const Duration(milliseconds: 3000),
+                            action: SnackBarAction(
+                              label: 'Close',
+                              onPressed: () {
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                              },
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      backgroundColor: TsOneColor.primary,
+                    ),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: 48,
+                      child: const Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Next",
+                          style: TextStyle(color: TsOneColor.secondary),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -318,7 +336,7 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
     if(assessmentVariable.typeOfAssessment == AssessmentVariables.keySatisfactory) {
       // assessment dropdown
       dropdown1 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].isNotApplicable ? null : _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory,
         padding: const EdgeInsets.all(0),
         isExpanded: true,
         isDense: true,
@@ -330,9 +348,9 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
-          _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory = value as String;
-          // });
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory = value as String;
+          });
         },
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
@@ -354,7 +372,7 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
       );
       // markers dropdown
       dropdown2 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -363,9 +381,9 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
-          _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentMarkers = value!;
-          // });
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentMarkers = value!;
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -391,7 +409,7 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
     else {
       // pilot flying markers dropdown
       dropdown1 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotFlyingMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -400,9 +418,9 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
-          _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotFlyingMarkers = value!;
-          // });
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotFlyingMarkers = value!;
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -426,7 +444,7 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
       );
       // pilot monitoring markers dropdown
       dropdown2 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotMonitoringMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -435,9 +453,9 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
-          _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotMonitoringMarkers = value!;
-          // });
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotMonitoringMarkers = value!;
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -495,7 +513,7 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
     if(assessmentVariable.typeOfAssessment == AssessmentVariables.keySatisfactory) {
       // assessment dropdown
       dropdown1 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].assessmentSatisfactory,
         padding: const EdgeInsets.all(0),
         isExpanded: false,
         isDense: true,
@@ -507,9 +525,9 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
-          _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].assessmentSatisfactory = value as String;
-          // });
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].assessmentSatisfactory = value as String;
+          });
         },
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
@@ -531,7 +549,7 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
       );
       // markers dropdown
       dropdown2 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].assessmentMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -540,9 +558,9 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
-          _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].assessmentMarkers = value!;
-          // });
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].assessmentMarkers = value!;
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -568,7 +586,7 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
     else {
       // pilot flying markers dropdown
       dropdown1 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].pilotFlyingMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -577,9 +595,9 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
-          _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].pilotFlyingMarkers = value!;
-          // });
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].pilotFlyingMarkers = value!;
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -603,7 +621,7 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
       );
       // pilot monitoring markers dropdown
       dropdown2 = DropdownButtonFormField(
-        // value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory,
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotMonitoringMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
@@ -612,9 +630,9 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          // setState(() {
-          _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].pilotMonitoringMarkers = value!;
-          // });
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].pilotMonitoringMarkers = value!;
+          });
         },
         decoration: const InputDecoration(
             border: OutlineInputBorder(),
