@@ -143,22 +143,11 @@ class AssessmentRepoImpl implements AssessmentRepo {
             documentSnapshot.data() as Map<String, dynamic>);
       });
 
-      final flightCategory = [
-        "Flight Preparation",
-        "Takeoff",
-        "Flight Manoeuvres and Procedure",
-        "App. & Missed App. Procedures",
-        "Landing",
-        "LVO Qualification / Checking",
-        "SOP's",
-        "Advance Maneuvers"
-      ];
-
       final documents = await _db!
           .collection(AssessmentVariables.firebaseCollection)
           .where(AssessmentVariables.keyAssessmentPeriodId,
           isEqualTo: assessmentPeriod.id)
-          .where(AssessmentVariables.keyCategory, whereIn: flightCategory)
+          .where(AssessmentVariables.keyCategory, whereIn: AssessmentVariables.flightCategory)
           .get()
           .then((QuerySnapshot querySnapshot) {
         return querySnapshot.docs;
@@ -195,19 +184,11 @@ class AssessmentRepoImpl implements AssessmentRepo {
            documentSnapshot.data() as Map<String, dynamic>);
       });
 
-      final humanFactorCategory = [
-        "Teamwork & Communication",
-        "Leadership & Task Management",
-        "Situational Awareness",
-        "Decision Making",
-        "Customer Focus"
-      ];
-
       final documents = await _db!
         .collection(AssessmentVariables.firebaseCollection)
         .where(AssessmentVariables.keyAssessmentPeriodId,
         isEqualTo: assessmentPeriod.id)
-        .where(AssessmentVariables.keyCategory, whereIn: humanFactorCategory)
+        .where(AssessmentVariables.keyCategory, whereIn: AssessmentVariables.humanFactorCategory)
         .get()
         .then((QuerySnapshot querySnapshot) {
           return querySnapshot.docs;

@@ -10,7 +10,7 @@ class AssessmentVariableResults {
     this.assessmentMarkers,
     this.pilotFlyingMarkers,
     this.pilotMonitoringMarkers,
-    this.isNotApplicable = true,
+    this.isNotApplicable = false,
   });
 
   static const String keyId = "id";
@@ -31,7 +31,7 @@ class AssessmentVariableResults {
   int? assessmentMarkers;
   int? pilotFlyingMarkers;
   int? pilotMonitoringMarkers;
-  bool isNotApplicable = true;
+  bool isNotApplicable = false;
 
   AssessmentVariableResults.fromFirebase(Map<String, dynamic> map) {
     id = map[keyId];
