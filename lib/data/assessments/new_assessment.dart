@@ -123,6 +123,7 @@ class NewAssessment with ChangeNotifier {
         "sessionDetails1: $sessionDetails1, sessionDetails2: $sessionDetails2, "
         "assessmentFlightDetails1: $assessmentFlightDetails1, assessmentFlightDetails2: $assessmentFlightDetails2, "
         "assessmentVariablesFlights1: $assessmentVariablesFlights1, assessmentVariablesFlights2: $assessmentVariablesFlights2, "
-        "assessmentVariablesFlightsHumanFactor1: $assessmentVariablesFlightsHumanFactor1, assessmentVariablesFlightsHumanFactor2: $assessmentVariablesFlightsHumanFactor2";
+        "assessmentVariablesFlightsHumanFactor1: $assessmentVariablesFlightsHumanFactor1, assessmentVariablesFlightsHumanFactor2: $assessmentVariablesFlightsHumanFactor2, "
+        "overallPerformance1: $overallPerformance1, overallPerformance2: $overallPerformance2";
   }
 }
