@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hand_signature/signature.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:signature/signature.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
@@ -24,7 +26,11 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
   late SignatureController signatureController;
   late TabController _tabController;
   late ImagePicker imagePicker;
+  late HandSignatureControl handSignatureControl;
+
+  XFile? _pickedImage;
   File? _image;
+  CroppedFile? _croppedImage;
 
   @override
   void initState() {
@@ -34,6 +40,13 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
     );
     _tabController = TabController(length: 2, vsync: this);
     imagePicker = ImagePicker();
+
+    handSignatureControl = HandSignatureControl(
+      threshold: 0.01,
+      smoothRatio: 0.65,
+      velocityRange: 2.0,
+    );
+
     super.initState();
   }
 
@@ -44,12 +57,50 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
   }
 
   Future getImage() async {
-    final image = await imagePicker.pickImage(source: ImageSource.gallery);
-    if (image == null) return;
-    File? img = File(image.path);
-    setState(() {
-      _image = img;
-    });
+    _pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (_pickedImage == null) return;
+    File? imgTemp;
+
+    if(_pickedImage != null) {
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: _pickedImage!.path,
+        compressFormat: ImageCompressFormat.png,
+        compressQuality: 100,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+            statusBarColor: tsOneColorScheme.onSecondary,
+            toolbarTitle: "Crop Image",
+            toolbarColor: tsOneColorScheme.secondary,
+            toolbarWidgetColor: tsOneColorScheme.onSurface,
+            initAspectRatio: CropAspectRatioPreset.square,
+            activeControlsWidgetColor: tsOneColorScheme.primary,
+            lockAspectRatio: true,
+          ),
+          IOSUiSettings(
+            title: "Crop Image",
+          ),
+          WebUiSettings(
+              context: context
+          ),
+        ],
+      );
+      if (croppedFile != null) {
+        setState(() {
+          _croppedImage = croppedFile;
+          imgTemp = File(_croppedImage!.path);
+          _image = imgTemp;
+        });
+      }
+      else{
+        setState(() {
+          _pickedImage = null;
+          imgTemp = null;
+        });
+      }
+    }
   }
 
   @override
@@ -131,10 +182,21 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                   Stack(children: <Widget>[
                     ClipRRect(
                       child: SizedBox(
-                        child: Signature(
+                        child:
+                        Signature(
                           controller: signatureController,
                           backgroundColor: TsOneColor.primaryFaded,
                         ),
+                        /*
+                        Container(
+                          constraints: BoxConstraints.expand(),
+                          color: Colors.white,
+                          child: HandSignature(
+                            control: handSignatureControl,
+                            type: SignatureDrawType.shape,
+                          ),
+                        )
+                        */
                       ),
                     ),
                     Container(
@@ -147,6 +209,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                         ),
                         onPressed: () {
                           signatureController.clear();
+                          // handSignatureControl.clear();
                         },
                       ),
                     ),

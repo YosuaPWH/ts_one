@@ -535,11 +535,13 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                   onPressed: () {
                     print("pada $_newAssessment");
                     if (_formKey.currentState!.validate()) {
-                      Navigator.pushNamed(
-                        context,
-                        NamedRoute.newAssessmentFlightDetails,
-                        arguments: _newAssessment,
-                      );
+                      // TODO activate this letter
+                      // Navigator.pushNamed(
+                      //   context,
+                      //   NamedRoute.newAssessmentFlightDetails,
+                      //   arguments: _newAssessment,
+                      // );
+                      Navigator.pushNamed(context, NamedRoute.newAssessmentDeclaration, arguments: _newAssessment);
                     }
                   },
                   style: ElevatedButton.styleFrom(
