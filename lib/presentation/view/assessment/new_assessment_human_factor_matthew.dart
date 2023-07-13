@@ -193,6 +193,8 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
                 side: BorderSide(color: TsOneColor.primary.withOpacity(0.5)),
                 borderRadius: BorderRadius.circular(5.0),
               ),
+              // keep the expansion tile open when user tap on it
+              maintainState: true,
               children: [
                 Container(
                   decoration: const BoxDecoration(
