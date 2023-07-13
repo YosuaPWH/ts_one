@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:ts_one/util/util.dart';
 
-class AssessmentVariableResults {
+class AssessmentVariableResults with ChangeNotifier {
   AssessmentVariableResults({
     this.id = Util.defaultStringIfNull,
     this.assessmentResultsId = Util.defaultStringIfNull,
@@ -32,6 +33,7 @@ class AssessmentVariableResults {
   int? pilotFlyingMarkers;
   int? pilotMonitoringMarkers;
   bool isNotApplicable = false;
+  ValueNotifier<bool> isNotApplicableNotifier = ValueNotifier<bool>(false);
 
   AssessmentVariableResults.fromFirebase(Map<String, dynamic> map) {
     id = map[keyId];
@@ -62,6 +64,11 @@ class AssessmentVariableResults {
     assessmentMarkers = null;
     pilotFlyingMarkers = null;
     pilotMonitoringMarkers = null;
+  }
+
+  void toggleIsNotApplicable() {
+    isNotApplicable = !isNotApplicable;
+    isNotApplicableNotifier.value = isNotApplicable;
   }
 
   @override

@@ -52,6 +52,11 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
   }
 
   void getAllAssessment() async {
+    assessmentVariables.clear();
+    assessmentCategories.clear();
+    _newAssessment.assessmentVariablesFlights1.clear();
+    _newAssessment.assessmentVariablesFlights2.clear();
+
     dataAssessmentPeriod = await viewModel.getAllFlightAssessmentVariablesFromLastPeriod();
 
     for (var assessmentVariable in dataAssessmentPeriod.assessmentVariables) {
@@ -107,11 +112,17 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
                         log(_newAssessment.assessmentVariablesFlights1.toString());
                         if(_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
+                          log(_newAssessment.toString());
+                          Navigator.pushNamed(
+                            context,
+                            NamedRoute.newAssessmentHumanFactorVariables,
+                            arguments: _newAssessment,
+                          );
                         }
                         else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text("Please fill all the fields"),
+                              content: const Text("Please fill all the fields"),
                               duration: const Duration(milliseconds: 3000),
                               action: SnackBarAction(
                                 label: 'Close',
@@ -123,11 +134,6 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
                             ),
                           );
                         }
-                        // Navigator.pushNamed(
-                        //   context,
-                        //   NamedRoute.newAssessmentHumanFactorVariables,
-                        //   arguments: _newAssessment,
-                        // );
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -155,6 +161,8 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
   }
 
   List<Widget> _expansionTilesForNewAssessmentVariables() {
+    inputs1.clear();
+    inputs2.clear();
     List<Widget> expansionTiles = [];
     int indexOfVariable = 0;
     int startingIndexForInputsList = 0;
@@ -212,69 +220,80 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
                               style: tsOneTextTheme.headlineMedium,
                             ),
                             const Text("Crew 1"),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Flexible(
-                                  flex: 3,
-                                  child: ListTileTheme(
-                                    horizontalTitleGap: 0.0,
-                                    contentPadding: EdgeInsets.zero,
-                                    child: inputs1[i]["checkbox"],
-                                  ),
-                                ),
-                                // !_newAssessment.assessmentVariablesFlights1[i].isNotApplicable
-                                Flexible(
-                                  flex: 7,
-                                  child: Row(
-                                    children: [
-                                      Flexible(
-                                          flex: 5,
-                                          child: inputs1[i]["dropdown1"]
+                            ValueListenableBuilder<bool>(
+                              valueListenable: _newAssessment.assessmentVariablesFlights1[i].isNotApplicableNotifier,
+                              builder: (context, value, child) {
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      flex: 3,
+                                      child: ListTileTheme(
+                                        horizontalTitleGap: 0.0,
+                                        contentPadding: EdgeInsets.zero,
+                                        child: inputs1[i]["checkbox"],
                                       ),
-                                      const SizedBox(
-                                        width: 3,
-                                      ),
-                                      Flexible(
-                                          flex: 3, child: inputs1[i]["dropdown2"]
-                                      ),
-                                    ],
-                                  )
-                                )
-                              ],
+                                    ),
+                                    !value
+                                    ? Flexible(
+                                        flex: 7,
+                                        child: Row(
+                                          children: [
+                                            Flexible(
+                                                flex: 5,
+                                                child: inputs1[i]["dropdown1"]
+                                            ),
+                                            const SizedBox(
+                                              width: 3,
+                                            ),
+                                            Flexible(
+                                                flex: 3, child: inputs1[i]["dropdown2"]
+                                            ),
+                                          ],
+                                        )
+                                    )
+                                    : const SizedBox.shrink()
+                                  ],
+                                );
+                              },
                             ),
                             const Text("Crew 2"),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Flexible(
-                                  flex: 3,
-                                  child: ListTileTheme(
-                                    horizontalTitleGap: 0.0,
-                                    contentPadding: EdgeInsets.zero,
-                                    child: inputs2[i]["checkbox"],
-                                  ),
-                                ),
-                                // TODO handle isNotApplicable
-                                // !_newAssessment.assessmentVariablesFlights2[i].isNotApplicable
-                                Flexible(
-                                    flex: 7,
-                                    child: Row(
-                                      children: [
-                                        Flexible(
-                                            flex: 5,
-                                            child: inputs2[i]["dropdown1"]
-                                        ),
-                                        const SizedBox(
-                                          width: 3,
-                                        ),
-                                        Flexible(
-                                            flex: 3, child: inputs2[i]["dropdown2"]
-                                        ),
-                                      ],
+                            ValueListenableBuilder(
+                              valueListenable: _newAssessment.assessmentVariablesFlights2[i].isNotApplicableNotifier,
+                              builder: (context, value, child) {
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      flex: 3,
+                                      child: ListTileTheme(
+                                        horizontalTitleGap: 0.0,
+                                        contentPadding: EdgeInsets.zero,
+                                        child: inputs2[i]["checkbox"],
+                                      ),
+                                    ),
+                                    !value
+                                    ? Flexible(
+                                        flex: 7,
+                                        child: Row(
+                                          children: [
+                                            Flexible(
+                                                flex: 5,
+                                                child: inputs2[i]["dropdown1"]
+                                            ),
+                                            const SizedBox(
+                                              width: 3,
+                                            ),
+                                            Flexible(
+                                                flex: 3, child: inputs2[i]["dropdown2"]
+                                            ),
+                                          ],
+                                        )
                                     )
-                                )
-                              ],
+                                    : const SizedBox.shrink()
+                                  ],
+                                );
+                              },
                             ),
                             const Divider(
                               color: TsOneColor.onSecondary,
@@ -305,8 +324,9 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
           dense: true,
           onChanged: (value) {
             setState(() {
-              _newAssessment.assessmentVariablesFlights1[indexOfVariable].isNotApplicable = value!;
-              _newAssessment.assessmentVariablesFlights1[indexOfVariable].reset();
+              // _newAssessment.assessmentVariablesFlights1[indexOfVariable].isNotApplicable = value!;
+              // _newAssessment.assessmentVariablesFlights1[indexOfVariable].reset();
+              _newAssessment.assessmentVariablesFlights1[indexOfVariable].toggleIsNotApplicable();
             });
           },
         );
@@ -481,8 +501,9 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
             dense: true,
             onChanged: (value) {
               setState(() {
-                _newAssessment.assessmentVariablesFlights2[indexOfVariable].isNotApplicable = value!;
-                _newAssessment.assessmentVariablesFlights2[indexOfVariable].reset();
+                // _newAssessment.assessmentVariablesFlights2[indexOfVariable].isNotApplicable = value!;
+                // _newAssessment.assessmentVariablesFlights2[indexOfVariable].reset();
+                _newAssessment.assessmentVariablesFlights2[indexOfVariable].toggleIsNotApplicable();
               });
             },
           );

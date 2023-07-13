@@ -70,7 +70,7 @@ class _NewAssessmentSimulatorFlightViewState extends State<NewAssessmentSimulato
                                 ),
                               ),
                               Text(
-                                'Simulator',
+                                'Simulator TS-1',
                                 style: tsOneTextTheme.bodyLarge
                               ),
                             ],
@@ -115,7 +115,7 @@ class _NewAssessmentSimulatorFlightViewState extends State<NewAssessmentSimulato
                                     ),
                                   ),
                                   Text(
-                                      'Flight',
+                                      'Flight TS-1',
                                       style: tsOneTextTheme.bodyLarge
                                   ),
                                 ],
