@@ -623,7 +623,7 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
       );
       // pilot monitoring markers dropdown
       dropdown2 = DropdownButtonFormField(
-        value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotMonitoringMarkers,
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].pilotMonitoringMarkers,
         validator: (value) {
           if (value == null) {
             return "Please select an option";
