@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:hand_signature/signature.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
+import 'package:ts_one/data/users/user_signatures.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
+import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 
 class NewAssessmentDeclaration extends StatefulWidget {
   const NewAssessmentDeclaration
@@ -23,6 +26,8 @@ class NewAssessmentDeclaration extends StatefulWidget {
 
 class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> with SingleTickerProviderStateMixin {
   bool _isConfirmed = false;
+  late UserViewModel _userViewModel;
+  late UserSignatures _userSignatures;
   late NewAssessment _newAssessment;
   late SignatureController signatureController;
   late TabController _tabController;
@@ -36,6 +41,8 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
 
   @override
   void initState() {
+    _userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    _userSignatures = UserSignatures();
     _newAssessment = widget.newAssessment;
     signatureController = SignatureController(
       penStrokeWidth: 3,
@@ -60,7 +67,10 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
   }
 
   Future getImage() async {
-    _pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+    _pickedImage = await imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 50,
+    );
     if (_pickedImage == null) return;
     File? imgTemp;
 
@@ -96,6 +106,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
           imgTemp = File(_croppedImage!.path);
           _image = imgTemp;
         });
+        // print("HALOOOO image: ${_image!.path}");
       }
       else{
         setState(() {
@@ -478,7 +489,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                         return;
                       }
                       // get signature
-                      _newAssessment.signature = await signatureController.toPngBytes();
+                      _newAssessment.signatureBytes = await signatureController.toPngBytes();
                     }
                     // tab image active
                     else {
@@ -500,17 +511,21 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                         return;
                       }
                       // get image
-                      _newAssessment.signature = await _image!.readAsBytes();
+                      _newAssessment.signatureBytes = await _image!.readAsBytes();
                     }
 
-                    print(_newAssessment.signature);
+                    print(_newAssessment.signatureBytes);
 
                     if(_formKey.currentState!.validate()) {
-                      Navigator.pushNamed(
-                        context,
-                        NamedRoute.newAssessmentSuccess,
-                        arguments: _newAssessment
+                      String signatureUrl = await _userViewModel.uploadSignature(_newAssessment);
+                      _newAssessment.signatureUrl = signatureUrl;
+
+                      // store UserSignatures in remote to be used later in the app
+                      _userSignatures = UserSignatures(
+                        urlSignature: signatureUrl,
+                        staffId: _newAssessment.idNoInstructor,
                       );
+                      _userSignatures = await _userViewModel.addSignature(_userSignatures);
                     }
                   },
                   style: ElevatedButton.styleFrom(

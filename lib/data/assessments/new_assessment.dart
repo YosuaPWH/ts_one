@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
+import 'package:ts_one/data/users/user_signatures.dart';
 import 'package:ts_one/util/util.dart';
 
 class NewAssessment with ChangeNotifier {
@@ -55,7 +56,8 @@ class NewAssessment with ChangeNotifier {
 
   // instructor
   int idNoInstructor = Util.defaultIntIfNull;
-  Uint8List? signature;
+  Uint8List? signatureBytes;
+  String signatureUrl = Util.defaultStringIfNull;
 
   // Flight Crew 1
   int idNo1 = Util.defaultIntIfNull;

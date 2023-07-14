@@ -1,7 +1,14 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:ts_one/data/assessments/new_assessment.dart';
+import 'package:ts_one/data/users/user_signatures.dart';
 import 'package:ts_one/data/users/users.dart';
+import 'package:ts_one/util/util.dart';
 
 abstract class UserRepo {
   Future<UserAuth> login(String email, String password);
@@ -24,15 +31,23 @@ abstract class UserRepo {
   Future<UserModel> updateUser(String userEmail, UserModel userModel);
 
   Future<void> deleteUserByEmail(String email);
+
+  Future<String> uploadSignature(NewAssessment newAssessment);
+
+  Future<UserSignatures> addSignature(UserSignatures userSignatures);
+
+  Future<UserSignatures> getSignature(int id);
 }
 
 class UserRepoImpl implements UserRepo {
-  UserRepoImpl({FirebaseFirestore? db, FirebaseAuth? auth})
+  UserRepoImpl({FirebaseFirestore? db, FirebaseAuth? auth, FirebaseStorage? storage})
       : _db = db,
-        _auth = auth;
+        _auth = auth,
+        _storage = storage;
 
   final FirebaseFirestore? _db;
   final FirebaseAuth? _auth;
+  final FirebaseStorage? _storage;
 
   @override
   Future<UserAuth> login(String email, String password) async {
@@ -309,5 +324,69 @@ class UserRepoImpl implements UserRepo {
   Future<void> deleteUserByEmail(String email) async {
     /** delete the user */
     await _db!.collection(UserModel.firebaseCollection).doc(email).delete();
+  }
+
+  @override
+  Future<String> uploadSignature(NewAssessment newAssessment) async {
+    String downloadURL = "";
+    try {
+      Directory tempDir = await getTemporaryDirectory();
+      String tempPath = tempDir.path;
+
+      String fileName = "Signature-${newAssessment.idNoInstructor}"
+          "-${Util.convertDateTimeDisplay(newAssessment.assessmentDate.toString())}"
+          "-${DateTime.now().millisecondsSinceEpoch.toString()}.png";
+      String filePath = "$tempPath/$fileName";
+
+      File fileToUpload = await File(filePath).writeAsBytes(newAssessment.signatureBytes!);
+
+      final ref = _storage!.ref().child('signatures/$fileName');
+      final uploadTask = ref.putFile(fileToUpload);
+
+      final snapshot = await uploadTask.whenComplete(() {});
+      downloadURL = await snapshot.ref.getDownloadURL();
+    }
+    catch (e) {
+      print("Exepction on UserRepo: ${e.toString()}");
+    }
+    print("Message from UserRepo: $downloadURL");
+    return downloadURL;
+  }
+
+  @override
+  Future<UserSignatures> addSignature(UserSignatures userSignatures) async {
+    UserSignatures newUserSignatures = UserSignatures();
+    try {
+      await _db!
+          .collection(UserSignatures.firebaseCollection)
+          .doc()
+          .set(userSignatures.toFirebase());
+
+      newUserSignatures = userSignatures;
+    }
+    catch (e) {
+      print(e.toString());
+    }
+
+    return newUserSignatures;
+  }
+
+  @override
+  Future<UserSignatures> getSignature(int staffIDNo) async {
+    UserSignatures userSignatures = UserSignatures();
+    try {
+      final snapshot = await _db!
+          .collection(UserSignatures.firebaseCollection)
+          .where(UserSignatures.keyStaffId, isEqualTo: staffIDNo)
+          .orderBy(UserSignatures.keyDateUploaded, descending: true)
+          .get();
+
+      // get the first signature
+      userSignatures = UserSignatures.fromFirebase(snapshot.docs.first.data());
+    }
+    catch (e) {
+      print(e.toString());
+    }
+    return userSignatures;
   }
 }

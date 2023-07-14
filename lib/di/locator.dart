@@ -27,6 +27,7 @@ void setupLocator() {
           () => UserRepoImpl(
             auth: getItLocator<FirebaseAuth>(),
             db: getItLocator<FirebaseFirestore>(),
+            storage: getItLocator<FirebaseStorage>(),
           )
   );
 

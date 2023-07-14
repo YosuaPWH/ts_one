@@ -22,7 +22,7 @@ class _NewAssessmentSuccessState extends State<NewAssessmentSuccess> {
     _newAssessment = widget.newAssessment;
 
     super.initState();
-    // return backToHome(); // TODO: Uncomment this line to enable auto back to home
+    return backToHome();
   }
 
   void backToHome() {
