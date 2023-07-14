@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
@@ -23,8 +25,37 @@ class NewAssessment with ChangeNotifier {
   static const String keySessionDetailsCheck = "Checking";
   static const String keySessionDetailsRetraining = "Re-training";
 
+  static const String keyMessageDeclaration = "I, the undersigned, being a person "
+      "authorized by the Company and/or DGCA to conduct such training and or check "
+      "as indicated, have supervised the required flight/session in accordance to "
+      "the published syllabus and assessed the performance of the candidate as";
+
+  static const String keyForTrainingSatisfactory = "Satisfactory";
+  static const String keyForTrainingFurtherTraining = "Further Training Required";
+  static const String keyForClearedForCheck = "Cleared for Check";
+  static const String keyStopTraining = "Stop Training, TS7 Rised";
+
+  static const String keyForCheckPass = "Pass";
+  static const String keyForCheckFail = "Fail";
+
+  static List<String> forTrainingDeclaration = [
+    keyForTrainingSatisfactory,
+    keyForTrainingFurtherTraining,
+    keyForClearedForCheck,
+    keyStopTraining,
+  ];
+
+  static List<String> forCheckDeclaration = [
+    keyForCheckPass,
+    keyForCheckFail,
+  ];
+
   String typeOfAssessment = "";
   DateTime assessmentDate = DateTime.now();
+
+  // instructor
+  int idNoInstructor = Util.defaultIntIfNull;
+  Uint8List? signature;
 
   // Flight Crew 1
   int idNo1 = Util.defaultIntIfNull;
@@ -34,6 +65,7 @@ class NewAssessment with ChangeNotifier {
   List<AssessmentVariableResults> assessmentVariablesFlights1 = [];
   List<AssessmentVariableResults> assessmentVariablesFlightsHumanFactor1 = [];
   double overallPerformance1 = 0.0;
+  String declaration1 = "";
 
   // Flight Crew 2
   int idNo2 = Util.defaultIntIfNull;
@@ -43,6 +75,7 @@ class NewAssessment with ChangeNotifier {
   List<AssessmentVariableResults> assessmentVariablesFlights2 = [];
   List<AssessmentVariableResults> assessmentVariablesFlightsHumanFactor2 = [];
   double overallPerformance2 = 0.0;
+  String declaration2 = "";
 
   String aircraftType = "";
   String airportAndRoute = "";

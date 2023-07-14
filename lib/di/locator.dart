@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
@@ -15,6 +16,10 @@ void setupLocator() {
   );
   getItLocator.registerFactory<FirebaseFirestore>(
           () => FirebaseFirestore.instance
+  );
+  // FirebaseStorage
+  getItLocator.registerFactory<FirebaseStorage>(
+          () => FirebaseStorage.instance
   );
 
   // UserRepoImpl has dependencies on FirebaseAuth and FirebaseFirestore
