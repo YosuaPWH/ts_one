@@ -31,18 +31,7 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
     viewModel = Provider.of<AssessmentViewModel>(context, listen: false);
     _newAssessment = widget.dataCandidate;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      calculateOverallPerformance();
-    });
-
     super.initState();
-  }
-
-  void calculateOverallPerformance() {
-    _newAssessment.setOverallPerformance1();
-    _newAssessment.setOverallPerformance2();
-    print("Overall Performance 1: ${_newAssessment.overallPerformance1}");
-    print("Overall Performance 2: ${_newAssessment.overallPerformance2}");
   }
 
   @override
@@ -198,10 +187,11 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      backgroundColor: TsOneColor.primary),
+                    minimumSize: const Size(double.infinity, 40),
+                    backgroundColor: TsOneColor.primary,
+                    foregroundColor: TsOneColor.primaryContainer,
+                    surfaceTintColor: TsOneColor.primaryContainer,
+                  ),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: 48,

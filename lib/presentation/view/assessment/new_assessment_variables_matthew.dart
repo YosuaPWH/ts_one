@@ -136,8 +136,10 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                        minimumSize: const Size(double.infinity, 40),
                         backgroundColor: TsOneColor.primary,
+                        foregroundColor: TsOneColor.primaryContainer,
+                        surfaceTintColor: TsOneColor.primaryContainer,
                       ),
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width,

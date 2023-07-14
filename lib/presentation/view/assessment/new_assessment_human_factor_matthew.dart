@@ -76,6 +76,13 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
     }
   }
 
+  void calculateOverallPerformance() {
+    _newAssessment.setOverallPerformance1();
+    _newAssessment.setOverallPerformance2();
+    print("Overall Performance 1: ${_newAssessment.overallPerformance1}");
+    print("Overall Performance 2: ${_newAssessment.overallPerformance2}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AssessmentViewModel>(
@@ -109,7 +116,7 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
                     onPressed: () {
                       if(_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        log(_newAssessment.toString());
+                        calculateOverallPerformance();
                         Navigator.pushNamed(
                           context,
                           NamedRoute.newAssessmentOverallPerformance,
@@ -133,8 +140,10 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      minimumSize: const Size(double.infinity, 40),
                       backgroundColor: TsOneColor.primary,
+                      foregroundColor: TsOneColor.primaryContainer,
+                      surfaceTintColor: TsOneColor.primaryContainer,
                     ),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
