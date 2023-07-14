@@ -57,7 +57,7 @@ class NewAssessment with ChangeNotifier {
   // instructor
   int idNoInstructor = Util.defaultIntIfNull;
   Uint8List? signatureBytes;
-  String signatureUrl = Util.defaultStringIfNull;
+  String instructorSignatureUrl = Util.defaultStringIfNull;
 
   // Flight Crew 1
   int idNo1 = Util.defaultIntIfNull;
@@ -67,6 +67,7 @@ class NewAssessment with ChangeNotifier {
   List<AssessmentVariableResults> assessmentVariablesFlights1 = [];
   List<AssessmentVariableResults> assessmentVariablesFlightsHumanFactor1 = [];
   double overallPerformance1 = 0.0;
+  String notes1 = "";
   String declaration1 = "";
 
   // Flight Crew 2
@@ -77,6 +78,7 @@ class NewAssessment with ChangeNotifier {
   List<AssessmentVariableResults> assessmentVariablesFlights2 = [];
   List<AssessmentVariableResults> assessmentVariablesFlightsHumanFactor2 = [];
   double overallPerformance2 = 0.0;
+  String notes2 = "";
   String declaration2 = "";
 
   String aircraftType = "";

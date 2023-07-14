@@ -17,6 +17,9 @@ class Util{
 
   // this is used to set the default int if the int is null
   static const int defaultIntIfNull = 0;
+
+  // this is used to set the default double if the double is null
+  static const double defaultDoubleIfNull = 0.0;
 }
 
 extension StringCasingExtension on String {

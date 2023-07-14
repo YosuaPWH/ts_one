@@ -149,8 +149,8 @@ class AppRoutes {
 
       case NamedRoute.newAssessmentSuccess:
         return MaterialPageRoute<void>(
-          builder: (context) => NewAssessmentSuccess(
-            newAssessment: settings.arguments as NewAssessment,
+          builder: (context) => const NewAssessmentSuccess(
+            // newAssessment: settings.arguments as NewAssessment,
           ),
           settings: settings
         );

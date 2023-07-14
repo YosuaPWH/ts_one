@@ -7,11 +7,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
+import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/data/users/user_signatures.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
+import 'package:ts_one/presentation/view_model/assessment_results_viewmodel.dart';
 import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 
@@ -29,12 +31,12 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
   bool _isConfirmed = false;
   late UserViewModel _userViewModel;
   late UserSignatures _userSignatures;
-  late AssessmentViewModel _assessmentViewModel;
   late NewAssessment _newAssessment;
   late SignatureController signatureController;
   late TabController _tabController;
   late ImagePicker imagePicker;
   late HandSignatureControl handSignatureControl;
+  late List<AssessmentResults> _assessmentResults;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   XFile? _pickedImage;
@@ -45,7 +47,6 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
   void initState() {
     _userViewModel = Provider.of<UserViewModel>(context, listen: false);
     _userSignatures = UserSignatures();
-    _assessmentViewModel = Provider.of<AssessmentViewModel>(context, listen: false);
     _newAssessment = widget.newAssessment;
     signatureController = SignatureController(
       penStrokeWidth: 3,
@@ -59,6 +60,13 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
       smoothRatio: 0.65,
       velocityRange: 2.0,
     );
+
+    _assessmentResults = [
+      // assessment results for flight crew 1
+      AssessmentResults(),
+      // assessment results for flight crew 2
+      AssessmentResults(),
+    ];
 
     super.initState();
   }
@@ -124,8 +132,8 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
   Widget build(BuildContext context) {
     debugPrint("dataCandidate: ${widget.newAssessment}");
 
-    return Consumer<AssessmentViewModel>(
-      builder: (_, assessmentViewModel, child) {
+    return Consumer<AssessmentResultsViewModel>(
+      builder: (_, assessmentResultsViewModel, child) {
         return Consumer<UserViewModel>(
           builder: (_, userViewModel, child) {
             return Scaffold(
@@ -137,8 +145,17 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                 padding: const EdgeInsets.all(16),
                 child: Form(
                   key: _formKey,
-                  child: userViewModel.isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                  child: userViewModel.isLoading || assessmentResultsViewModel.isLoading
+                    ? const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 16),
+                          Text("This will take a while. You will see a confirmation screen when it's done."),
+                        ],
+                      )
+                    )
                     : Column(
                     children: [
                       ListTileTheme(
@@ -527,7 +544,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
 
                             if(_formKey.currentState!.validate()) {
                               String signatureUrl = await _userViewModel.uploadSignature(_newAssessment);
-                              _newAssessment.signatureUrl = signatureUrl;
+                              _newAssessment.instructorSignatureUrl = signatureUrl;
 
                               // store UserSignatures in remote to be used later in the app
                               _userSignatures = UserSignatures(
@@ -535,6 +552,12 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                                 staffId: _newAssessment.idNoInstructor,
                               );
                               _userSignatures = await _userViewModel.addSignature(_userSignatures);
+
+                              // push the data to the database
+                              await assessmentResultsViewModel.addAssessmentResults(_assessmentResults, _newAssessment);
+
+                              // push to success screen
+                              toSuccessScreen(context);
                             }
                           },
                           style: ElevatedButton.styleFrom(

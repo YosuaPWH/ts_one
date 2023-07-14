@@ -7,6 +7,7 @@ class AssessmentVariableResults with ChangeNotifier {
     this.assessmentResultsId = Util.defaultStringIfNull,
     this.assessmentVariableId = Util.defaultStringIfNull,
     this.assessmentVariableName = Util.defaultStringIfNull,
+    this.assessmentType = Util.defaultStringIfNull,
     this.assessmentSatisfactory,
     this.assessmentMarkers,
     this.pilotFlyingMarkers,
@@ -14,10 +15,13 @@ class AssessmentVariableResults with ChangeNotifier {
     this.isNotApplicable = false,
   });
 
+  static const String firebaseCollection = "assessment-variable-results";
+
   static const String keyId = "id";
   static const String keyAssessmentResultsId = "assessment-results-id";
   static const String keyAssessmentVariableId = "assessment-variable-id";
   static const String keyAssessmentVariableName = "assessment-variable-name";
+  static const String keyAssessmentType = "assessment-type";
   static const String keyAssessmentSatisfactory = "assessment-satisfactory";
   static const String keyAssessmentMarkers = "assessment-markers";
   static const String keyPilotFlyingMarkers = "pilot-flying-markers";
@@ -28,6 +32,7 @@ class AssessmentVariableResults with ChangeNotifier {
   String assessmentResultsId = Util.defaultStringIfNull;
   String assessmentVariableId = Util.defaultStringIfNull;
   String assessmentVariableName = Util.defaultStringIfNull;
+  String assessmentType = Util.defaultStringIfNull;
   String? assessmentSatisfactory;
   int? assessmentMarkers;
   int? pilotFlyingMarkers;
