@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
+import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/domain/assessment_repo.dart';
 import 'package:ts_one/presentation/view_model/loading_viewmodel.dart';
@@ -125,5 +126,18 @@ class AssessmentViewModel extends LoadingViewModel {
       print("Exception on AssessmentViewModel: $e");
       isLoading = false;
     }
+  }
+
+  Future<List<AssessmentVariableResults>> getAssessmentVariableResultNotConfirmedByExamine() async {
+    isLoading = true;
+    List<AssessmentVariableResults> assessmentVariableResult = [];
+    try {
+      assessmentVariableResult = await repo.getAssessmentVariablesResultNotConfirmedByExamine();
+      isLoading = false;
+    } catch (e) {
+      print("Exception on AssessmentViewModel: $e");
+      isLoading = false;
+    }
+    return assessmentVariableResult;
   }
 }

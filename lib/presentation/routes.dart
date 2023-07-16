@@ -19,6 +19,8 @@ import 'package:ts_one/presentation/view/assessment/new_assessment_success.dart'
 import 'package:ts_one/presentation/view/assessment/new_assessment_simulator_flight.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables_second.dart';
+import 'package:ts_one/presentation/view/assessment/result_assessment_overall.dart';
+import 'package:ts_one/presentation/view/assessment/result_assessment_variables.dart';
 import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
 import 'package:ts_one/presentation/view/users/add_user.dart';
 import 'package:ts_one/presentation/view/users/all_users.dart';
@@ -133,16 +135,11 @@ class AppRoutes {
         );
 
       case NamedRoute.newAssessmentDeclaration:
-        final arguments = settings.arguments as Map<String, dynamic>;
-        final dataAssessmentCandidate = arguments['dataAssessmentCandidate'] as NewAssessment;
-        final dataAssessmentFlightDetails = arguments['dataAssessmentFlightDetails'] as AssessmentFlightDetails;
-        final dataAssessmentVariablesFirst = arguments['dataAssessmentVariablesFirst'] as Map<AssessmentVariables, Map<String, String>>;
-
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentDeclaration(
-            dataAssessmentCandidate: dataAssessmentCandidate,
-            dataAssessmentFlightDetails: dataAssessmentFlightDetails,
-            dataAssessmentVariablesFirst: dataAssessmentVariablesFirst,
+            dataAssessmentCandidate: settings.arguments as NewAssessment,
+            // dataAssessmentFlightDetails: dataAssessmentFlightDetails,
+            // dataAssessmentVariablesFirst: dataAssessmentVariablesFirst,
           ),
           settings: settings,
         );
@@ -178,6 +175,18 @@ class AppRoutes {
         return MaterialPageRoute<void>(
           builder: (context) => UpdateAssessmentPeriodView(
               assessmentPeriodId: settings.arguments as String),
+          settings: settings,
+        );
+
+      case NamedRoute.resultAssessmentVariables:
+        return MaterialPageRoute<void>(
+          builder: (context) => const ResultAssessmentVariables(),
+          settings: settings,
+        );
+
+      case NamedRoute.resultAssessmentOverall:
+        return MaterialPageRoute<void>(
+          builder: (context) => const ResultAssessmentOverall(),
           settings: settings,
         );
 
@@ -230,4 +239,7 @@ class NamedRoute {
   static const String detailAssessmentPeriod = '/detailAssessmentPeriod';
   static const String addAssessmentPeriod = '/addAssessmentPeriod';
   static const String updateAssessmentPeriod = '/updateAssessmentPeriod';
+
+  static const String resultAssessmentVariables = '/resultAssessmentVariables';
+  static const String resultAssessmentOverall = '/resultAssessmentOverall';
 }

@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
+import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
+import 'package:ts_one/domain/dummy.dart';
 
 abstract class AssessmentRepo {
   // assessment period
@@ -45,6 +47,9 @@ abstract class AssessmentRepo {
       AssessmentFlightDetails assessmentFlightDetailsModel);
 
   Future<void> deleteAssessmentFlightDetails(String nameFlightDetails);
+
+  // assessment variable results
+  Future<List<AssessmentVariableResults>> getAssessmentVariablesResultNotConfirmedByExamine();
 }
 
 class AssessmentRepoImpl implements AssessmentRepo {
@@ -493,5 +498,19 @@ class AssessmentRepoImpl implements AssessmentRepo {
       AssessmentFlightDetails assessmentFlightDetailsModel) {
     // TODO: implement updateAssessmentFlightDetails
     throw UnimplementedError();
+  }
+
+
+  @override
+  Future<List<AssessmentVariableResults>> getAssessmentVariablesResultNotConfirmedByExamine() async {
+    List<AssessmentVariableResults> assessmentVariableResults = [];
+    try {
+
+      assessmentVariableResults = dummy;
+
+    } catch (e) {
+      log("Exception in AssessmentRepo on getAssessmentVariableResultsById: $e");
+    }
+    return assessmentVariableResults;
   }
 }

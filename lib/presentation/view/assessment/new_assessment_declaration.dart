@@ -11,11 +11,9 @@ import 'package:ts_one/presentation/theme.dart';
 
 class NewAssessmentDeclaration extends StatefulWidget {
   const NewAssessmentDeclaration(
-      {super.key, required this.dataAssessmentCandidate, required this.dataAssessmentFlightDetails, required this.dataAssessmentVariablesFirst});
+      {super.key, required this.dataAssessmentCandidate});
 
   final NewAssessment dataAssessmentCandidate;
-  final AssessmentFlightDetails dataAssessmentFlightDetails;
-  final Map<AssessmentVariables, Map<String, String>> dataAssessmentVariablesFirst;
 
   @override
   State<NewAssessmentDeclaration> createState() => _NewAssessmentDeclarationState();
@@ -56,9 +54,9 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("dataCandidate: ${widget.dataAssessmentCandidate}");
-    debugPrint("dataFlightDetails: ${widget.dataAssessmentFlightDetails}");
-    debugPrint("dataVariables: ${widget.dataAssessmentVariablesFirst}");
+    // debugPrint("dataCandidate: ${widget.dataAssessmentCandidate}");
+    // debugPrint("dataFlightDetails: ${widget.dataAssessmentFlightDetails}");
+    // debugPrint("dataVariables: ${widget.dataAssessmentVariablesFirst}");
 
     return Scaffold(
       appBar: AppBar(
