@@ -553,7 +553,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                               );
                               _userSignatures = await _userViewModel.addSignature(_userSignatures);
 
-                              // push the data to the database
+                              /// push the data to the database
                               await assessmentResultsViewModel.addAssessmentResults(_assessmentResults, _newAssessment);
 
                               // push to success screen

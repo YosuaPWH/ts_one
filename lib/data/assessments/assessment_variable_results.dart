@@ -7,6 +7,7 @@ class AssessmentVariableResults with ChangeNotifier {
     this.assessmentResultsId = Util.defaultStringIfNull,
     this.assessmentVariableId = Util.defaultStringIfNull,
     this.assessmentVariableName = Util.defaultStringIfNull,
+    this.assessmentVariableCategory = Util.defaultStringIfNull,
     this.assessmentType = Util.defaultStringIfNull,
     this.assessmentSatisfactory,
     this.assessmentMarkers,
@@ -21,6 +22,7 @@ class AssessmentVariableResults with ChangeNotifier {
   static const String keyAssessmentResultsId = "assessment-results-id";
   static const String keyAssessmentVariableId = "assessment-variable-id";
   static const String keyAssessmentVariableName = "assessment-variable-name";
+  static const String keyAssessmentVariableCategory = "assessment-variable-category";
   static const String keyAssessmentType = "assessment-type";
   static const String keyAssessmentSatisfactory = "assessment-satisfactory";
   static const String keyAssessmentMarkers = "assessment-markers";
@@ -32,6 +34,7 @@ class AssessmentVariableResults with ChangeNotifier {
   String assessmentResultsId = Util.defaultStringIfNull;
   String assessmentVariableId = Util.defaultStringIfNull;
   String assessmentVariableName = Util.defaultStringIfNull;
+  String assessmentVariableCategory = Util.defaultStringIfNull;
   String assessmentType = Util.defaultStringIfNull;
   String? assessmentSatisfactory;
   int? assessmentMarkers;
@@ -44,6 +47,9 @@ class AssessmentVariableResults with ChangeNotifier {
     id = map[keyId];
     assessmentResultsId = map[keyAssessmentResultsId];
     assessmentVariableId = map[keyAssessmentVariableId];
+    assessmentVariableName = map[keyAssessmentVariableName];
+    assessmentVariableCategory = map[keyAssessmentVariableCategory];
+    assessmentType = map[keyAssessmentType];
     assessmentSatisfactory = map[keyAssessmentSatisfactory];
     assessmentMarkers = map[keyAssessmentMarkers];
     pilotFlyingMarkers = map[keyPilotFlyingMarkers];
@@ -56,6 +62,9 @@ class AssessmentVariableResults with ChangeNotifier {
       keyId: id,
       keyAssessmentResultsId: assessmentResultsId,
       keyAssessmentVariableId: assessmentVariableId,
+      keyAssessmentVariableName: assessmentVariableName,
+      keyAssessmentVariableCategory: assessmentVariableCategory,
+      keyAssessmentType: assessmentType,
       keyAssessmentSatisfactory: assessmentSatisfactory,
       keyAssessmentMarkers: assessmentMarkers,
       keyPilotFlyingMarkers: pilotFlyingMarkers,

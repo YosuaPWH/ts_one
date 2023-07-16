@@ -68,10 +68,14 @@ class _NewAssessmentHumanFactorMatthewState extends State<NewAssessmentHumanFact
       _newAssessment.assessmentVariablesFlightsHumanFactor1.add(AssessmentVariableResults(
         assessmentVariableId: assessmentVariable.id,
         assessmentVariableName: assessmentVariable.name,
+        assessmentVariableCategory: assessmentVariable.category,
+        assessmentType: assessmentVariable.typeOfAssessment,
       ));
       _newAssessment.assessmentVariablesFlightsHumanFactor2.add(AssessmentVariableResults(
         assessmentVariableId: assessmentVariable.id,
         assessmentVariableName: assessmentVariable.name,
+        assessmentVariableCategory: assessmentVariable.category,
+        assessmentType: assessmentVariable.typeOfAssessment,
       ));
     }
   }

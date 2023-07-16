@@ -68,11 +68,13 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
       _newAssessment.assessmentVariablesFlights1.add(AssessmentVariableResults(
         assessmentVariableId: assessmentVariable.id,
         assessmentVariableName: assessmentVariable.name,
+        assessmentVariableCategory: assessmentVariable.category,
         assessmentType: assessmentVariable.typeOfAssessment,
       ));
       _newAssessment.assessmentVariablesFlights2.add(AssessmentVariableResults(
         assessmentVariableId: assessmentVariable.id,
         assessmentVariableName: assessmentVariable.name,
+        assessmentVariableCategory: assessmentVariable.category,
         assessmentType: assessmentVariable.typeOfAssessment,
       ));
     }
