@@ -570,7 +570,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
       // take only date
       initialDate: _newAssessment.assessmentDate,
       firstDate: DateTime(2006),
-      lastDate: DateTime(2099),
+      lastDate: Util.getCurrentDateWithoutTime(),
       helpText: "Select assessment date",
     );
     if (picked != null && picked != _newAssessment.assessmentDate) {

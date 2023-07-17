@@ -7,6 +7,8 @@ import 'package:ts_one/util/util.dart';
 abstract class AssessmentResultsRepo{
   Future<List<AssessmentResults>> addAssessmentResults(List<AssessmentResults> assessmentResults, NewAssessment newAssessment);
 
+  Future<List<AssessmentResults>> getAllAssessmentResults();
+
   Future<List<AssessmentResults>> getAssessmentResultsFilteredByDate(DateTime startDate, DateTime endDate);
 }
 
@@ -46,6 +48,33 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   }
 
   @override
+  Future<List<AssessmentResults>> getAllAssessmentResults() async {
+    List<AssessmentResults> assessmentResultsList = [];
+    try{
+      QuerySnapshot querySnapshot = await _db!
+          .collection(AssessmentResults.firebaseCollection)
+          .get();
+
+      for(var doc in querySnapshot.docs){
+        AssessmentResults assessmentResults = AssessmentResults.fromFirebase(doc.data() as Map<String, dynamic>);
+        QuerySnapshot querySnapshot2 = await _db!
+            .collection(AssessmentVariableResults.firebaseCollection)
+            .where(AssessmentVariableResults.keyAssessmentResultsId, isEqualTo: assessmentResults.id)
+            .get();
+        for(var doc2 in querySnapshot2.docs){
+          AssessmentVariableResults assessmentVariableResults = AssessmentVariableResults.fromFirebase(doc2.data() as Map<String, dynamic>);
+          assessmentResults.variableResults.add(assessmentVariableResults);
+        }
+        assessmentResultsList.add(assessmentResults);
+      }
+    }
+    catch(e){
+      print(e.toString());
+    }
+    return assessmentResultsList;
+  }
+
+  @override
   Future<List<AssessmentResults>> getAssessmentResultsFilteredByDate(DateTime startDate, DateTime endDate) async {
     List<AssessmentResults> assessmentResultsList = [];
     try{
@@ -71,7 +100,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     catch(e){
       print(e.toString());
     }
-    print(assessmentResultsList);
     return assessmentResultsList;
   }
 }
