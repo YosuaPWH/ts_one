@@ -567,7 +567,8 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
   void _showSelectDatePicker(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      // take only date
+      initialDate: _newAssessment.assessmentDate,
       firstDate: DateTime(2006),
       lastDate: DateTime(2099),
       helpText: "Select assessment date",

@@ -10,7 +10,7 @@ class Util{
   }
 
   // this is used to set the default date if the date is null
-  static DateTime defaultDateIfNull = DateTime(1999, 9, 9, 9, 9, 9, 9, 9);
+  static DateTime defaultDateIfNull = DateTime(1993, 12, 20, 9, 9, 9, 9, 9);
 
   // this is used to set the default string if the string is null
   static const String defaultStringIfNull = "";
@@ -20,6 +20,11 @@ class Util{
 
   // this is used to set the default double if the double is null
   static const double defaultDoubleIfNull = 0.0;
+
+  static DateTime getCurrentDateWithoutTime() {
+    DateTime now = DateTime.now();
+    return DateTime(now.year, now.month, now.day);
+  }
 }
 
 extension StringCasingExtension on String {

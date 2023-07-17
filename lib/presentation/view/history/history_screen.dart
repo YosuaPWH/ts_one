@@ -5,6 +5,7 @@ import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/shared_components/card_user.dart';
 import 'package:ts_one/presentation/shared_components/search_component.dart';
+import 'package:ts_one/presentation/theme.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -27,18 +28,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   "Assessment History",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+                  style: tsOneTextTheme.headlineLarge
                 ),
                 userPreferences.getPrivileges().contains(UserModel.keyPrivilegeManageFormAssessment) ?
                 Row(
