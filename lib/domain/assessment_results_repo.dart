@@ -28,6 +28,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
         for(var assessmentVariableResult in assessmentResult.variableResults) {
           assessmentVariableResult.id = "assessment-variable-result-${assessmentVariableResult.assessmentVariableId}-${assessmentResult.examinerStaffIDNo}-${assessmentResult.date}";
+          assessmentVariableResult.assessmentResultsId = assessmentResult.id;
           await _db!
               .collection(AssessmentVariableResults.firebaseCollection)
               .doc(assessmentVariableResult.id)
