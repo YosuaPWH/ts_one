@@ -20,7 +20,7 @@ class _MainViewState extends State<MainView> {
     });
   }
 
-  final screens = [
+  final _screens = [
     const HomeScreen(),
     const HistoryScreen(),
     const ProfileScreen()
@@ -31,10 +31,14 @@ class _MainViewState extends State<MainView> {
     int backPressTime = 0;
     return WillPopScope(
       onWillPop: () async {
-        if (backPressTime + 300 > DateTime.now().millisecondsSinceEpoch) {
+        if (backPressTime + 300 > DateTime
+            .now()
+            .millisecondsSinceEpoch) {
           return true;
         } else {
-          backPressTime = DateTime.now().millisecondsSinceEpoch;
+          backPressTime = DateTime
+              .now()
+              .millisecondsSinceEpoch;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text(
               "Ulangi lagi untuk keluar dari aplikasi",
@@ -46,7 +50,7 @@ class _MainViewState extends State<MainView> {
       child: Scaffold(
         body: IndexedStack(
           index: _selectedNav,
-          children: screens,
+          children: _screens,
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[

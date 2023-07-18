@@ -56,6 +56,7 @@ void setupLocator() {
   getItLocator.registerFactory<AssessmentResultsRepo>(
           () => AssessmentResultsRepoImpl(
             db: getItLocator<FirebaseFirestore>(),
+            userPreferences: getItLocator<UserPreferences>(),
           ),
   );
 }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
@@ -153,11 +155,11 @@ class UserViewModel extends LoadingViewModel {
     }
   }
 
-  Future<String> uploadSignature(NewAssessment newAssessment) async {
+  Future<String> uploadSignature(int idUser, DateTime assessmentDate, Uint8List? signatureBytes) async {
     isLoading = true;
     String downloadURL = "";
     try {
-      downloadURL = await repo.uploadSignature(newAssessment);
+      downloadURL = await repo.uploadSignature(idUser, assessmentDate, signatureBytes);
       isLoading = false;
     } catch (e) {
       print(e.toString());

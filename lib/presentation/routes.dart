@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
+import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/main.dart';
@@ -14,13 +15,14 @@ import 'package:ts_one/presentation/view/assessment/new_assessment_candidate.dar
 import 'package:ts_one/presentation/view/assessment/new_assessment_declaration.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_flight_details.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_human_factor.dart';
-import 'package:ts_one/presentation/view/assessment/new_assessment_human_factor_matthew.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_overall_performance.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_success.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_simulator_flight.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
-import 'package:ts_one/presentation/view/assessment/new_assessment_variables_matthew.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables_second.dart';
+import 'package:ts_one/presentation/view/assessment/result_assessment_declaration.dart';
+import 'package:ts_one/presentation/view/assessment/result_assessment_overall.dart';
+import 'package:ts_one/presentation/view/assessment/result_assessment_variables.dart';
 import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
 import 'package:ts_one/presentation/view/users/add_user.dart';
 import 'package:ts_one/presentation/view/users/all_users.dart';
@@ -59,15 +61,13 @@ class AppRoutes {
 
       case NamedRoute.detailUser:
         return MaterialPageRoute<void>(
-          builder: (context) => DetailUserView(
-              userIDNo: settings.arguments as String),
+          builder: (context) => DetailUserView(userIDNo: settings.arguments as String),
           settings: settings,
         );
 
       case NamedRoute.updateUser:
         return MaterialPageRoute<void>(
-          builder: (context) => UpdateUserView(
-              userEmail: settings.arguments as String),
+          builder: (context) => UpdateUserView(userEmail: settings.arguments as String),
           settings: settings,
         );
 
@@ -87,15 +87,13 @@ class AppRoutes {
 
       case NamedRoute.newAssessmentFlightDetails:
         return MaterialPageRoute<void>(
-          builder: (context) => NewAssessmentFlightDetails(
-              dataCandidate: settings.arguments as NewAssessment
-          ),
+          builder: (context) => NewAssessmentFlightDetails(dataCandidate: settings.arguments as NewAssessment),
           settings: settings,
         );
 
       case NamedRoute.newAssessmentVariables:
         return MaterialPageRoute<void>(
-          builder: (context) => NewAssessmentVariablesMatthew(
+          builder: (context) => NewAssessmentVariables(
             dataCandidate: settings.arguments as NewAssessment,
           ),
           settings: settings,
@@ -104,10 +102,8 @@ class AppRoutes {
       case NamedRoute.newAssessmentVariablesSecond:
         final arguments = settings.arguments as Map<String, dynamic>;
         final dataCandidate = arguments['dataCandidate'] as NewAssessment;
-        final dataFlightDetails =
-            arguments['dataFlightDetails'] as AssessmentFlightDetails;
-        final dataVariablesFirst = arguments['dataVariablesFirst']
-            as Map<AssessmentVariables, Map<String, String>>;
+        final dataFlightDetails = arguments['dataFlightDetails'] as AssessmentFlightDetails;
+        final dataVariablesFirst = arguments['dataVariablesFirst'] as Map<AssessmentVariables, Map<String, String>>;
 
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentVariablesSecond(
@@ -120,11 +116,10 @@ class AppRoutes {
 
       case NamedRoute.newAssessmentHumanFactorVariables:
         return MaterialPageRoute<void>(
-          builder: (context) => NewAssessmentHumanFactorMatthew(
-            dataCandidate: settings.arguments as NewAssessment,
-          ),
-          settings: settings
-        );
+            builder: (context) => NewAssessmentHumanFactor(
+                  dataCandidate: settings.arguments as NewAssessment,
+                ),
+            settings: settings);
 
       case NamedRoute.newAssessmentOverallPerformance:
         return MaterialPageRoute<void>(
@@ -135,11 +130,6 @@ class AppRoutes {
         );
 
       case NamedRoute.newAssessmentDeclaration:
-        // final arguments = settings.arguments as Map<String, dynamic>;
-        // final dataAssessmentCandidate = arguments['dataAssessmentCandidate'] as NewAssessment;
-        // final dataAssessmentFlightDetails = arguments['dataAssessmentFlightDetails'] as AssessmentFlightDetails;
-        // final dataAssessmentVariablesFirst = arguments['dataAssessmentVariablesFirst'] as Map<AssessmentVariables, Map<String, String>>;
-
         return MaterialPageRoute<void>(
           builder: (context) => NewAssessmentDeclaration(
             newAssessment: settings.arguments as NewAssessment,
@@ -148,12 +138,7 @@ class AppRoutes {
         );
 
       case NamedRoute.newAssessmentSuccess:
-        return MaterialPageRoute<void>(
-          builder: (context) => const NewAssessmentSuccess(
-            // newAssessment: settings.arguments as NewAssessment,
-          ),
-          settings: settings
-        );
+        return MaterialPageRoute<void>(builder: (context) => const NewAssessmentSuccess(), settings: settings);
 
       // =============================================================================
 
@@ -165,8 +150,7 @@ class AppRoutes {
 
       case NamedRoute.detailAssessmentPeriod:
         return MaterialPageRoute<void>(
-          builder: (context) => DetailAssessmentPeriodView(
-              assessmentPeriodId: settings.arguments as String),
+          builder: (context) => DetailAssessmentPeriodView(assessmentPeriodId: settings.arguments as String),
           settings: settings,
         );
 
@@ -178,8 +162,31 @@ class AppRoutes {
 
       case NamedRoute.updateAssessmentPeriod:
         return MaterialPageRoute<void>(
-          builder: (context) => UpdateAssessmentPeriodView(
-              assessmentPeriodId: settings.arguments as String),
+          builder: (context) => UpdateAssessmentPeriodView(assessmentPeriodId: settings.arguments as String),
+          settings: settings,
+        );
+
+      case NamedRoute.resultAssessmentVariables:
+        return MaterialPageRoute<void>(
+          builder: (context) => ResultAssessmentVariables(
+            assessmentResults: settings.arguments as AssessmentResults,
+          ),
+          settings: settings,
+        );
+
+      case NamedRoute.resultAssessmentOverall:
+        return MaterialPageRoute<void>(
+          builder: (context) => ResultAssessmentOverall(
+            assessmentResults: settings.arguments as AssessmentResults,
+          ),
+          settings: settings,
+        );
+
+      case NamedRoute.resultAssessmentDeclaration:
+        return MaterialPageRoute<void>(
+          builder: (context) => ResultAssessmentDeclaration(
+            assessmentResults: settings.arguments as AssessmentResults,
+          ),
           settings: settings,
         );
 
@@ -232,4 +239,8 @@ class NamedRoute {
   static const String detailAssessmentPeriod = '/detailAssessmentPeriod';
   static const String addAssessmentPeriod = '/addAssessmentPeriod';
   static const String updateAssessmentPeriod = '/updateAssessmentPeriod';
+
+  static const String resultAssessmentVariables = '/resultAssessmentVariables';
+  static const String resultAssessmentOverall = '/resultAssessmentOverall';
+  static const String resultAssessmentDeclaration = '/resultAssessmentDeclaration';
 }

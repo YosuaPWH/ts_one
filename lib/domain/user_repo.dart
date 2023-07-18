@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,7 +33,7 @@ abstract class UserRepo {
 
   Future<void> deleteUserByEmail(String email);
 
-  Future<String> uploadSignature(NewAssessment newAssessment);
+  Future<String> uploadSignature(int idUser, DateTime assessmentDate, Uint8List? signatureBytes);
 
   Future<UserSignatures> addSignature(UserSignatures userSignatures);
 
@@ -327,18 +328,22 @@ class UserRepoImpl implements UserRepo {
   }
 
   @override
-  Future<String> uploadSignature(NewAssessment newAssessment) async {
+  Future<String> uploadSignature(int idUser, DateTime assessmentDate, Uint8List? signatureBytes) async {
     String downloadURL = "";
     try {
       Directory tempDir = await getTemporaryDirectory();
       String tempPath = tempDir.path;
 
-      String fileName = "Signature-${newAssessment.idNoInstructor}"
-          "-${Util.convertDateTimeDisplay(newAssessment.assessmentDate.toString())}"
+      // String fileName = "Signature-${newAssessment.idNoInstructor}"
+      //     "-${Util.convertDateTimeDisplay(newAssessment.assessmentDate.toString())}"
+      //     "-${DateTime.now().millisecondsSinceEpoch.toString()}.png";
+      String fileName = "Signature-$idUser"
+          "-${Util.convertDateTimeDisplay(assessmentDate.toString())}"
           "-${DateTime.now().millisecondsSinceEpoch.toString()}.png";
       String filePath = "$tempPath/$fileName";
 
-      File fileToUpload = await File(filePath).writeAsBytes(newAssessment.signatureBytes!);
+      // File fileToUpload = await File(filePath).writeAsBytes(newAssessment.signatureBytes!);
+      File fileToUpload = await File(filePath).writeAsBytes(signatureBytes!);
 
       final ref = _storage!.ref().child('signatures/$fileName');
       final uploadTask = ref.putFile(fileToUpload);
@@ -347,7 +352,7 @@ class UserRepoImpl implements UserRepo {
       downloadURL = await snapshot.ref.getDownloadURL();
     }
     catch (e) {
-      print("Exepction on UserRepo: ${e.toString()}");
+      print("Exception on UserRepo: ${e.toString()}");
     }
     print("Message from UserRepo: $downloadURL");
     return downloadURL;

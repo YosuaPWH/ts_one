@@ -45,29 +45,12 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
 
   @override
   void initState() {
-    _userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    _userSignatures = UserSignatures();
-    _newAssessment = widget.newAssessment;
     signatureController = SignatureController(
       penStrokeWidth: 3,
       penColor: tsOneColorScheme.onSecondary,
     );
     _tabController = TabController(length: 2, vsync: this);
     imagePicker = ImagePicker();
-
-    handSignatureControl = HandSignatureControl(
-      threshold: 0.01,
-      smoothRatio: 0.65,
-      velocityRange: 2.0,
-    );
-
-    _assessmentResults = [
-      // assessment results for flight crew 1
-      AssessmentResults(),
-      // assessment results for flight crew 2
-      AssessmentResults(),
-    ];
-
     super.initState();
   }
 
@@ -543,7 +526,10 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                             print(_newAssessment.signatureBytes);
 
                             if(_formKey.currentState!.validate()) {
-                              String signatureUrl = await _userViewModel.uploadSignature(_newAssessment);
+                              String signatureUrl = await _userViewModel.uploadSignature(
+                                  _newAssessment.idNoInstructor,
+                                  _newAssessment.assessmentDate,
+                                  _newAssessment.signatureBytes);
                               _newAssessment.instructorSignatureUrl = signatureUrl;
 
                               // store UserSignatures in remote to be used later in the app
@@ -552,6 +538,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                                 staffId: _newAssessment.idNoInstructor,
                               );
                               _userSignatures = await _userViewModel.addSignature(_userSignatures);
+
 
                               /// push the data to the database
                               await assessmentResultsViewModel.addAssessmentResults(_assessmentResults, _newAssessment);

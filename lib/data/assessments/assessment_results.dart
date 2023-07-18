@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/util/util.dart';
@@ -44,6 +46,8 @@ class AssessmentResults{
   static const String keyOverallPerformance = "overall-performance";
   static const String keyNotes = "notes";
   static const String keyDeclaration = "declaration";
+
+  Uint8List? signatureBytes;
 
   String id = Util.defaultStringIfNull;
   String typeOfAssessment = Util.defaultStringIfNull;
