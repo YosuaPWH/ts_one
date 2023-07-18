@@ -1,5 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
+import 'package:ts_one/data/users/user_signatures.dart';
 import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/domain/user_repo.dart';
 import 'package:ts_one/presentation/view_model/loading_viewmodel.dart';
@@ -149,6 +153,45 @@ class UserViewModel extends LoadingViewModel {
       print(e.toString());
       isLoading = false;
     }
+  }
+
+  Future<String> uploadSignature(int idUser, DateTime assessmentDate, Uint8List? signatureBytes) async {
+    isLoading = true;
+    String downloadURL = "";
+    try {
+      downloadURL = await repo.uploadSignature(idUser, assessmentDate, signatureBytes);
+      isLoading = false;
+    } catch (e) {
+      print(e.toString());
+      isLoading = false;
+    }
+    return downloadURL;
+  }
+
+  Future<UserSignatures> addSignature(UserSignatures userSignatures) async {
+    isLoading = true;
+    UserSignatures newUserSignatures = UserSignatures();
+    try {
+      newUserSignatures = await repo.addSignature(userSignatures);
+      isLoading = false;
+    } catch (e) {
+      print(e.toString());
+      isLoading = false;
+    }
+    return newUserSignatures;
+  }
+
+  Future<UserSignatures> getSignature(int staffIDNo) async {
+    isLoading = true;
+    UserSignatures userSignature = UserSignatures();
+    try {
+      userSignature = await repo.getSignature(staffIDNo);
+      isLoading = false;
+    } catch (e) {
+      print(e.toString());
+      isLoading = false;
+    }
+    return userSignature;
   }
 
   void reset() {

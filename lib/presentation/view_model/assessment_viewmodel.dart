@@ -127,17 +127,4 @@ class AssessmentViewModel extends LoadingViewModel {
       isLoading = false;
     }
   }
-
-  Future<List<AssessmentVariableResults>> getAssessmentVariableResultNotConfirmedByExamine() async {
-    isLoading = true;
-    List<AssessmentVariableResults> assessmentVariableResult = [];
-    try {
-      assessmentVariableResult = await repo.getAssessmentVariablesResultNotConfirmedByExamine();
-      isLoading = false;
-    } catch (e) {
-      print("Exception on AssessmentViewModel: $e");
-      isLoading = false;
-    }
-    return assessmentVariableResult;
-  }
 }

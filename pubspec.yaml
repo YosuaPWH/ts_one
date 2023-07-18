@@ -67,6 +67,10 @@ dependencies:
   flutter_profile_picture: ^2.0.0
   googleapis: ^11.2.0
   flutter_typeahead: ^4.6.2
+  hand_signature: ^3.0.1
+  image_cropper: ^5.0.0
+  firebase_storage: ^11.2.4
+  path_provider: ^2.0.15
 
 dev_dependencies:
   flutter_test:

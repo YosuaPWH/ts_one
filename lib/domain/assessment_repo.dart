@@ -5,7 +5,6 @@ import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
-import 'package:ts_one/domain/dummy.dart';
 
 abstract class AssessmentRepo {
   // assessment period
@@ -48,8 +47,6 @@ abstract class AssessmentRepo {
 
   Future<void> deleteAssessmentFlightDetails(String nameFlightDetails);
 
-  // assessment variable results
-  Future<List<AssessmentVariableResults>> getAssessmentVariablesResultNotConfirmedByExamine();
 }
 
 class AssessmentRepoImpl implements AssessmentRepo {
@@ -148,22 +145,11 @@ class AssessmentRepoImpl implements AssessmentRepo {
             documentSnapshot.data() as Map<String, dynamic>);
       });
 
-      final flightCategory = [
-        "Flight Preparation",
-        "Takeoff",
-        "Flight Manoeuvres and Procedure",
-        "App. & Missed App. Procedures",
-        "Landing",
-        "LVO Qualification / Checking",
-        "SOP's",
-        "Advance Maneuvers"
-      ];
-
       final documents = await _db!
           .collection(AssessmentVariables.firebaseCollection)
           .where(AssessmentVariables.keyAssessmentPeriodId,
           isEqualTo: assessmentPeriod.id)
-          .where(AssessmentVariables.keyCategory, whereIn: flightCategory)
+          .where(AssessmentVariables.keyCategory, whereIn: AssessmentVariables.flightCategory)
           .get()
           .then((QuerySnapshot querySnapshot) {
         return querySnapshot.docs;
@@ -200,19 +186,11 @@ class AssessmentRepoImpl implements AssessmentRepo {
            documentSnapshot.data() as Map<String, dynamic>);
       });
 
-      final humanFactorCategory = [
-        "Teamwork & Communication",
-        "Leadership & Task Management",
-        "Situational Awareness",
-        "Decision Making",
-        "Customer Focus"
-      ];
-
       final documents = await _db!
         .collection(AssessmentVariables.firebaseCollection)
         .where(AssessmentVariables.keyAssessmentPeriodId,
         isEqualTo: assessmentPeriod.id)
-        .where(AssessmentVariables.keyCategory, whereIn: humanFactorCategory)
+        .where(AssessmentVariables.keyCategory, whereIn: AssessmentVariables.humanFactorCategory)
         .get()
         .then((QuerySnapshot querySnapshot) {
           return querySnapshot.docs;
@@ -498,19 +476,5 @@ class AssessmentRepoImpl implements AssessmentRepo {
       AssessmentFlightDetails assessmentFlightDetailsModel) {
     // TODO: implement updateAssessmentFlightDetails
     throw UnimplementedError();
-  }
-
-
-  @override
-  Future<List<AssessmentVariableResults>> getAssessmentVariablesResultNotConfirmedByExamine() async {
-    List<AssessmentVariableResults> assessmentVariableResults = [];
-    try {
-
-      assessmentVariableResults = dummy;
-
-    } catch (e) {
-      log("Exception in AssessmentRepo on getAssessmentVariableResultsById: $e");
-    }
-    return assessmentVariableResults;
   }
 }

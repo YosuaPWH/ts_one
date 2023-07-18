@@ -1,9 +1,10 @@
-import 'dart:ffi';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
+import 'package:ts_one/data/users/user_signatures.dart';
 import 'package:ts_one/util/util.dart';
 
 class NewAssessment with ChangeNotifier {
@@ -25,8 +26,38 @@ class NewAssessment with ChangeNotifier {
   static const String keySessionDetailsCheck = "Checking";
   static const String keySessionDetailsRetraining = "Re-training";
 
+  static const String keyMessageDeclaration = "I, the undersigned, being a person "
+      "authorized by the Company and/or DGCA to conduct such training and or check "
+      "as indicated, have supervised the required flight/session in accordance to "
+      "the published syllabus and assessed the performance of the candidate as";
+
+  static const String keyForTrainingSatisfactory = "Satisfactory";
+  static const String keyForTrainingFurtherTraining = "Further Training Required";
+  static const String keyForClearedForCheck = "Cleared for Check";
+  static const String keyStopTraining = "Stop Training, TS7 Rised";
+
+  static const String keyForCheckPass = "Pass";
+  static const String keyForCheckFail = "Fail";
+
+  static List<String> forTrainingDeclaration = [
+    keyForTrainingSatisfactory,
+    keyForTrainingFurtherTraining,
+    keyForClearedForCheck,
+    keyStopTraining,
+  ];
+
+  static List<String> forCheckDeclaration = [
+    keyForCheckPass,
+    keyForCheckFail,
+  ];
+
   String typeOfAssessment = "";
   DateTime assessmentDate = DateTime.now();
+
+  // instructor
+  int idNoInstructor = Util.defaultIntIfNull;
+  Uint8List? signatureBytes;
+  String instructorSignatureUrl = Util.defaultStringIfNull;
 
   // Flight Crew 1
   int idNo1 = Util.defaultIntIfNull;
@@ -36,6 +67,8 @@ class NewAssessment with ChangeNotifier {
   List<AssessmentVariableResults> assessmentVariablesFlights1 = [];
   List<AssessmentVariableResults> assessmentVariablesFlightsHumanFactor1 = [];
   double overallPerformance1 = 0.0;
+  String notes1 = "";
+  String declaration1 = "";
 
   // Flight Crew 2
   int idNo2 = Util.defaultIntIfNull;
@@ -45,6 +78,8 @@ class NewAssessment with ChangeNotifier {
   List<AssessmentVariableResults> assessmentVariablesFlights2 = [];
   List<AssessmentVariableResults> assessmentVariablesFlightsHumanFactor2 = [];
   double overallPerformance2 = 0.0;
+  String notes2 = "";
+  String declaration2 = "";
 
   String aircraftType = "";
   String airportAndRoute = "";
@@ -125,6 +160,7 @@ class NewAssessment with ChangeNotifier {
         "sessionDetails1: $sessionDetails1, sessionDetails2: $sessionDetails2, "
         "assessmentFlightDetails1: $assessmentFlightDetails1, assessmentFlightDetails2: $assessmentFlightDetails2, "
         "assessmentVariablesFlights1: $assessmentVariablesFlights1, assessmentVariablesFlights2: $assessmentVariablesFlights2, "
-        "assessmentVariablesFlightsHumanFactor1: $assessmentVariablesFlightsHumanFactor1, assessmentVariablesFlightsHumanFactor2: $assessmentVariablesFlightsHumanFactor2";
+        "assessmentVariablesFlightsHumanFactor1: $assessmentVariablesFlightsHumanFactor1, assessmentVariablesFlightsHumanFactor2: $assessmentVariablesFlightsHumanFactor2, "
+        "overallPerformance1: $overallPerformance1, overallPerformance2: $overallPerformance2";
   }
 }

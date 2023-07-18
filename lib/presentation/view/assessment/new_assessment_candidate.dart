@@ -3,7 +3,9 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:googleapis/transcoder/v1.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
+import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/data/users/users.dart';
+import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
@@ -22,6 +24,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
   late NewAssessment _newAssessment;
   late UserViewModel _userViewModel;
   late List<UserModel> _usersSearched;
+  late UserPreferences _userPreferences;
 
   late TextEditingController name1TextController;
   late TextEditingController staffNo1TextController;
@@ -41,6 +44,8 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
     _newAssessment = widget.newAssessment;
     _userViewModel = Provider.of<UserViewModel>(context, listen: false);
     _usersSearched = [];
+    _userPreferences = getItLocator<UserPreferences>();
+    _newAssessment.idNoInstructor = _userPreferences.getIDNo();
 
     name1TextController = TextEditingController();
     staffNo1TextController = TextEditingController(text: _newAssessment.getIDNo1());

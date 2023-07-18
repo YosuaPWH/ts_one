@@ -1,19 +1,28 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/presentation/routes.dart';
 
 class NewAssessmentSuccess extends StatefulWidget {
-  const NewAssessmentSuccess({super.key});
+  const NewAssessmentSuccess({super.key,
+    // required this.newAssessment
+  });
+
+  // final NewAssessment newAssessment;
 
   @override
   State<NewAssessmentSuccess> createState() => _NewAssessmentSuccessState();
 }
 
 class _NewAssessmentSuccessState extends State<NewAssessmentSuccess> {
+  late NewAssessment _newAssessment;
 
   @override
   void initState() {
+    // _newAssessment = widget.newAssessment;
+
     super.initState();
     return backToHome();
   }
@@ -40,7 +49,10 @@ class _NewAssessmentSuccessState extends State<NewAssessmentSuccess> {
                 style: TextStyle(fontSize: 20),
                 textAlign: TextAlign.center,
               ),
-            )
+            ),
+            // Image(
+            //     image: Image.memory(_newAssessment.signature!).image,
+            // )
           ],
         ),
       ),
