@@ -19,6 +19,7 @@ import 'package:ts_one/presentation/view/assessment/new_assessment_overall_perfo
 import 'package:ts_one/presentation/view/assessment/new_assessment_success.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_simulator_flight.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
+import 'package:ts_one/presentation/view/assessment/new_assessment_variables_matthew.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables_second.dart';
 import 'package:ts_one/presentation/view/assessment/result_assessment_declaration.dart';
 import 'package:ts_one/presentation/view/assessment/result_assessment_overall.dart';
@@ -87,39 +88,27 @@ class AppRoutes {
 
       case NamedRoute.newAssessmentFlightDetails:
         return MaterialPageRoute<void>(
-          builder: (context) => NewAssessmentFlightDetails(dataCandidate: settings.arguments as NewAssessment),
-          settings: settings,
-        );
-
-      case NamedRoute.newAssessmentVariables:
-        return MaterialPageRoute<void>(
-          builder: (context) => NewAssessmentVariables(
+          builder: (context) => NewAssessmentFlightDetails(
             dataCandidate: settings.arguments as NewAssessment,
           ),
           settings: settings,
         );
 
-      case NamedRoute.newAssessmentVariablesSecond:
-        final arguments = settings.arguments as Map<String, dynamic>;
-        final dataCandidate = arguments['dataCandidate'] as NewAssessment;
-        final dataFlightDetails = arguments['dataFlightDetails'] as AssessmentFlightDetails;
-        final dataVariablesFirst = arguments['dataVariablesFirst'] as Map<AssessmentVariables, Map<String, String>>;
-
+      case NamedRoute.newAssessmentVariables:
         return MaterialPageRoute<void>(
-          builder: (context) => NewAssessmentVariablesSecond(
-            dataAssessmentFlightDetails: dataFlightDetails,
-            dataCandidate: dataCandidate,
-            dataAssessmentVariables: dataVariablesFirst,
+          builder: (context) => NewAssessmentVariablesMatthew(
+            dataCandidate: settings.arguments as NewAssessment,
           ),
           settings: settings,
         );
 
       case NamedRoute.newAssessmentHumanFactorVariables:
         return MaterialPageRoute<void>(
-            builder: (context) => NewAssessmentHumanFactor(
-                  dataCandidate: settings.arguments as NewAssessment,
-                ),
-            settings: settings);
+          builder: (context) => NewAssessmentHumanFactor(
+            dataCandidate: settings.arguments as NewAssessment,
+          ),
+          settings: settings,
+        );
 
       case NamedRoute.newAssessmentOverallPerformance:
         return MaterialPageRoute<void>(

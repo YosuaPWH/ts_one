@@ -20,19 +20,22 @@ class ResultAssessmentVariables extends StatefulWidget {
 
 class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
   late AssessmentResultsViewModel viewModel;
+  late AssessmentResults _assessmentResults;
   late List<AssessmentVariableResults> assessmentVariableResults;
-  late String idAssessment;
+
+  // late String idAssessment;
   late Map<String, dynamic> assessmentCategories;
 
   @override
   void initState() {
     viewModel = Provider.of<AssessmentResultsViewModel>(context, listen: false);
     assessmentVariableResults = [];
-    idAssessment = widget.assessmentResults.id;
+    _assessmentResults = widget.assessmentResults;
+    // idAssessment = widget.assessmentResults.id;
     assessmentCategories = {};
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getAllResultAssessmentVariablesById(idAssessment);
+      getAllResultAssessmentVariablesById(_assessmentResults.id);
     });
 
     super.initState();
@@ -108,6 +111,38 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
   List<Widget> _dataResultAssessment() {
     List<Widget> dataWidgetResult = [];
 
+    // _assessmentResults.sessionDetails
+    // dataWidgetResult.add(
+    //   Align(
+    //     alignment: Alignment.center,
+    //     child: Text(
+    //       _assessmentResults.sessionDetails,
+    //       style: const TextStyle(fontWeight: FontWeight.bold),
+    //     ),
+    //   ),
+    // );
+
+    dataWidgetResult.add(ListTile(
+      title: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          _assessmentResults.sessionDetails,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      subtitle: Column(
+        children: _assessmentResults.trainingCheckingDetails
+            .map(
+              (element) => Text(element),
+            )
+            .toList(),
+      ),
+    ));
+
+    dataWidgetResult.add(const SizedBox(height: 10));
+
     for (var dataCategory in assessmentCategories.keys) {
       List<AssessmentVariableResults> dataAssessmentVariableResults = [];
       for (var dataVariableResult in assessmentVariableResults) {
@@ -117,8 +152,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
       }
 
       if (assessmentCategories[dataCategory] == "Satisfactory") {
-        dataWidgetResult
-            .add(_dataColumnAssessmentVariables(dataCategory, "Assessment", "Markers", dataAssessmentVariableResults));
+        dataWidgetResult.add(_dataColumnAssessmentVariables(dataCategory, "Assessment", "Markers", dataAssessmentVariableResults));
       } else {
         dataWidgetResult.add(_dataColumnAssessmentVariables(dataCategory, "PF", "PM", dataAssessmentVariableResults));
       }
@@ -127,8 +161,8 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     return dataWidgetResult;
   }
 
-  Column _dataColumnAssessmentVariables(String dataCategory, String secondColumnName, String thirdColumnName,
-      List<AssessmentVariableResults> dataAssessmentVariableResults) {
+  Column _dataColumnAssessmentVariables(
+      String dataCategory, String secondColumnName, String thirdColumnName, List<AssessmentVariableResults> dataAssessmentVariableResults) {
     return Column(
       children: [
         Align(
@@ -174,11 +208,9 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     List<DataRow> dataRows = [];
     for (var element in data) {
       if (element.assessmentType == "Satisfactory") {
-        dataRows.add(dada(
-            element.assessmentVariableName, element.assessmentSatisfactory!, element.assessmentMarkers.toString()));
+        dataRows.add(dada(element.assessmentVariableName, element.assessmentSatisfactory!, element.assessmentMarkers.toString()));
       } else {
-        dataRows.add(dada(element.assessmentVariableName, element.pilotFlyingMarkers.toString(),
-            element.pilotMonitoringMarkers.toString()));
+        dataRows.add(dada(element.assessmentVariableName, element.pilotFlyingMarkers.toString(), element.pilotMonitoringMarkers.toString()));
       }
     }
     return dataRows;
