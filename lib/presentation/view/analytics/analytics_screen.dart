@@ -104,6 +104,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       mapOfAssessmentVariableResultsCount.add({
         AssessmentVariables.keyId: assessmentVariable.id,
         AssessmentVariables.keyName: assessmentVariable.name,
+        AssessmentVariables.keyCategory: assessmentVariable.category,
         AssessmentVariables.keyTypeOfAssessment: assessmentVariable.typeOfAssessment,
         'Markers 1': 0,
         'Markers 2': 0,
@@ -342,25 +343,32 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           chartLoading? const Center(
                             child: CircularProgressIndicator(),
                           ) : Padding(
-                            padding: const EdgeInsets.only(top: 32.0),
+                            padding: const EdgeInsets.only(top: 16.0),
                             child: Column(
                               children: [
-                                LegendsListWidget(
-                                  legends: [
-                                    Legend('Markers 1', Colors.red),
-                                    Legend('Markers 2', Colors.yellow),
-                                    Legend('Markers 3', Colors.green),
-                                    Legend('Markers 4', Colors.blue),
-                                    Legend('Markers 5', Colors.purple),
-                                  ],
+                                Text(
+                                  'Main Assessment',
+                                  style: tsOneTextTheme.headlineLarge,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16.0),
+                                  child: LegendsListWidget(
+                                    legends: [
+                                      Legend('Markers 1', Colors.red),
+                                      Legend('Markers 2', Colors.yellow),
+                                      Legend('Markers 3', Colors.green),
+                                      Legend('Markers 4', Colors.blue),
+                                      Legend('Markers 5', Colors.purple),
+                                    ],
+                                  ),
                                 ),
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: SizedBox(
-                                    width: 3200,
-                                    height: 1000,
+                                    width: 4800,
+                                    height: 600,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(top: 120.0, bottom: 96.0),
+                                      padding: const EdgeInsets.only(top: 30.0, bottom: 30.0, left: 60.0),
                                       child: barChartMainAssessment,
                                     ),
                                   ),
@@ -395,14 +403,25 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     return Padding(
                       padding: const EdgeInsets.only(top: 48.0),
                       child: Transform.translate(
-                        offset: const Offset(40, 20),
+                        offset: const Offset(-40, 10),
                         child: Transform.rotate(
-                          angle: -3.14 / 2,
+                          angle: -3.14 / 4,
                           child: SideTitleWidget(
                             axisSide: meta.axisSide,
-                            child: Text(
-                              mapOfAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyName],
-                              softWrap: true,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  mapOfAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyCategory],
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  )
+                                ),
+                                Text(
+                                  mapOfAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyName],
+                                )
+                              ],
                             ),
                           ),
                         )
@@ -423,11 +442,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           ),
         ),
         alignment: BarChartAlignment.center,
-        groupsSpace: 20,
+        groupsSpace: 52,
         barGroups: [
           for (var i = 0; i < mapOfAssessmentVariableResultsCount.length; i++)
             BarChartGroupData(
-              showingTooltipIndicators: mapOfAssessmentVariableResultsCount[i]['Name'],
+              // showingTooltipIndicators: mapOfAssessmentVariableResultsCount[i]['Name'],
               x: i,
               groupVertically: true,
               barRods: [
@@ -505,6 +524,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
             tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+            direction: TooltipDirection.bottom,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               String variableName = mapOfAssessmentVariableResultsCount[group.x.toInt()][AssessmentVariables.keyName];
               String markerName = "";
@@ -520,7 +540,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 markerName = "Markers 5";
               }
               return BarTooltipItem(
-                "$variableName\nTotal of $markerName: ${mapOfAssessmentVariableResultsCount[group.x.toInt()][markerName]}",
+                "$variableName\n$markerName: ${mapOfAssessmentVariableResultsCount[group.x.toInt()][markerName]}",
                 const TextStyle(color: Colors.white),
               );
             },
