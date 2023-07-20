@@ -45,12 +45,16 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
 
   @override
   void initState() {
+    _userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    // _assessmentResults = widget.newAssessment;
     signatureController = SignatureController(
       penStrokeWidth: 3,
       penColor: tsOneColorScheme.onSecondary,
     );
+    _newAssessment = widget.newAssessment;
     _tabController = TabController(length: 2, vsync: this);
     imagePicker = ImagePicker();
+    _assessmentResults = [];
     super.initState();
   }
 

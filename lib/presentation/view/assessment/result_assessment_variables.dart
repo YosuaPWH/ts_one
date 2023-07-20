@@ -123,6 +123,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     // );
 
     dataWidgetResult.add(ListTile(
+      contentPadding: const EdgeInsets.only(left: 0),
       title: Align(
         alignment: Alignment.centerLeft,
         child: Text(
@@ -135,13 +136,20 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
       subtitle: Column(
         children: _assessmentResults.trainingCheckingDetails
             .map(
-              (element) => Text(element),
+              (element) => Align(alignment: Alignment.centerLeft, child: Text(element.trim())),
             )
             .toList(),
       ),
     ));
 
-    dataWidgetResult.add(const SizedBox(height: 10));
+    dataWidgetResult.add(
+      const Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Divider(
+          color: TsOneColor.secondaryContainer,
+        ),
+      ),
+    );
 
     for (var dataCategory in assessmentCategories.keys) {
       List<AssessmentVariableResults> dataAssessmentVariableResults = [];
@@ -208,15 +216,15 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     List<DataRow> dataRows = [];
     for (var element in data) {
       if (element.assessmentType == "Satisfactory") {
-        dataRows.add(dada(element.assessmentVariableName, element.assessmentSatisfactory!, element.assessmentMarkers.toString()));
+        dataRows.add(dataRowAssessment(element.assessmentVariableName, element.assessmentSatisfactory == null ? "N/A" : element.assessmentSatisfactory!, element.assessmentMarkers == null ? "N/A" : element.assessmentMarkers!.toString()));
       } else {
-        dataRows.add(dada(element.assessmentVariableName, element.pilotFlyingMarkers.toString(), element.pilotMonitoringMarkers.toString()));
+        dataRows.add(dataRowAssessment(element.assessmentVariableName, element.pilotFlyingMarkers == null ? "N/A" : element.pilotFlyingMarkers!.toString(), element.pilotMonitoringMarkers == null ? "N/A" : element.pilotMonitoringMarkers!.toString()));
       }
     }
     return dataRows;
   }
 
-  DataRow dada(String assessmentName, String data1, String data2) {
+  DataRow dataRowAssessment(String assessmentName, String data1, String data2) {
     return DataRow(cells: <DataCell>[
       DataCell(SizedBox(
         width: 200,
