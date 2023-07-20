@@ -195,9 +195,13 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                     child: item.split("/").length > 1
                                         ? ExpansionTile(
                                             controlAffinity: ListTileControlAffinity.leading,
-                                            title: Text(
-                                              item,
-                                              style: const TextStyle(fontSize: 14),
+                                            tilePadding: const EdgeInsets.only(left: 9),
+                                            title: Padding(
+                                              padding: const EdgeInsets.only(left: 8),
+                                              child: Text(
+                                                item,
+                                                style: const TextStyle(fontSize: 14),
+                                              ),
                                             ),
                                             children: assessmentFlightDetailsWhichCanBeSelectedAgainS1[item]!
                                                 .keys
@@ -363,9 +367,13 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                               child: item.split("/").length > 1
                                                   ? ExpansionTile(
                                                       controlAffinity: ListTileControlAffinity.leading,
-                                                      title: Text(
-                                                        item,
-                                                        style: const TextStyle(fontSize: 14),
+                                                      tilePadding: const EdgeInsets.only(left: 9),
+                                                      title: Padding(
+                                                        padding: const EdgeInsets.only(left: 8),
+                                                        child: Text(
+                                                          item,
+                                                          style: const TextStyle(fontSize: 14),
+                                                        ),
                                                       ),
                                                       children: assessmentFlightDetailsWhichCanBeSelectedAgainS2[item]!
                                                           .keys

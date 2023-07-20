@@ -120,7 +120,7 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
                           color: TsOneColor.onSecondary,
                         ),
                         controller: TextEditingController(
-                          text: _assessmentResults.overallPerformance.toString()
+                          text: _assessmentResults.overallPerformance.round().toString()
                         ),
                         decoration: const InputDecoration(
                           disabledBorder: OutlineInputBorder(
