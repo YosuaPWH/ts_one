@@ -548,13 +548,20 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(40),
                     backgroundColor: TsOneColor.primary,
-                    foregroundColor: TsOneColor.primaryContainer,
-                    surfaceTintColor: TsOneColor.primaryContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
-                  child: const Text("Next",
-                      style: TextStyle(color: TsOneColor.onPrimary)),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 48,
+                    child: const Align(
+                      alignment: Alignment.center,
+                      child: Text("Next",
+                          style: TextStyle(color: TsOneColor.onPrimary)),
+                    ),
+                  ),
                 ),
               ],
             ),

@@ -55,13 +55,13 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm() async {
     final userPreferences = _userPreferences;
     final userId = userPreferences!.getIDNo();
-    int dummyUserId = 1000851;
+    // int dummyUserId = 1000785;
     List<AssessmentResults> assessmentResults = [];
 
     try {
       await _db!
         .collection(AssessmentResults.firebaseCollection)
-        .where(AssessmentResults.keyExaminerStaffIDNo, isEqualTo: dummyUserId)
+        .where(AssessmentResults.keyExaminerStaffIDNo, isEqualTo: userId)
         .where(AssessmentResults.keyConfirmedByExaminer, isEqualTo: false)
         .get()
         .then((value) {
@@ -116,12 +116,12 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   @override
   Future<void> updateAssessmentResultForExaminee(AssessmentResults assessmentResults) async {
     try {
-      log("BERHASIL: ${assessmentResults.id}");
       await _db!
           .collection(AssessmentResults.firebaseCollection)
           .doc(assessmentResults.id)
           .update(assessmentResults.toFirebase());
-      
+      log("BERHASIL: ${assessmentResults.id}");
+
     } catch (e) {
       log("Exception in AssessmentResultRepo on updateAssessmentResultForExaminee: $e");
     }

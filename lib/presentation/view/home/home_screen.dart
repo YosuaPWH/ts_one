@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Need Confirmations',
-                          style: tsOneTextTheme.headlineSmall,
+                          style: tsOneTextTheme.headlineLarge,
                         ),
                       ),
                     ),

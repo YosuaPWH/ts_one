@@ -84,9 +84,7 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
           IOSUiSettings(
             title: "Crop Image",
           ),
-          WebUiSettings(
-              context: context
-          ),
+          WebUiSettings(context: context),
         ],
       );
       if (croppedFile != null) {
@@ -96,8 +94,7 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
           _image = imgTemp;
         });
         // print("HALOOOO image: ${_image!.path}");
-      }
-      else {
+      } else {
         setState(() {
           _pickedImage = null;
           imgTemp = null;
@@ -105,7 +102,6 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -120,56 +116,55 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
               padding: const EdgeInsets.all(16),
               child: userViewModel.isLoading || assessmentResultsViewModel.isLoading
                   ? const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text("This will take a while. You will see a confirmation screen when it's done."),
-                    ],
-                  ))
-                  : Column(
-                children: [
-                  Expanded(
                       child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(0),
-                            height: 45,
-                            width: 400,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              borderRadius: BorderRadius.circular(25.0),
-                            ),
-                            child: TabBar(
-                              controller: _tabController,
-                              indicator: BoxDecoration(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text("This will take a while. You will see a confirmation screen when it's done."),
+                      ],
+                    ))
+                  : Column(
+                      children: [
+                        Expanded(
+                            child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(0),
+                              height: 45,
+                              width: 400,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
                                 borderRadius: BorderRadius.circular(25.0),
-                                color: TsOneColor.primary,
                               ),
-                              padding: EdgeInsets.zero,
-                              labelColor: TsOneColor.secondary,
-                              unselectedLabelColor: TsOneColor.primary,
-                              tabs: const [
-                                SizedBox.expand(child: Center(child: Text("Draw"))),
-                                SizedBox.expand(child: Center(child: Text("Image"))),
-                              ],
+                              child: TabBar(
+                                controller: _tabController,
+                                indicator: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  color: TsOneColor.primary,
+                                ),
+                                padding: EdgeInsets.zero,
+                                labelColor: TsOneColor.secondary,
+                                unselectedLabelColor: TsOneColor.primary,
+                                tabs: const [
+                                  SizedBox.expand(child: Center(child: Text("Draw"))),
+                                  SizedBox.expand(child: Center(child: Text("Image"))),
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: TabBarView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              controller: _tabController,
-                              children: [
-                                Stack(children: <Widget>[
-                                  ClipRRect(
-                                    child: SizedBox(
-                                      child:
-                                      Signature(
-                                        controller: _signatureController,
-                                        backgroundColor: TsOneColor.primaryFaded,
-                                      ),
-                                      /*
+                            Expanded(
+                              child: TabBarView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                controller: _tabController,
+                                children: [
+                                  Stack(children: <Widget>[
+                                    ClipRRect(
+                                      child: SizedBox(
+                                        child: Signature(
+                                          controller: _signatureController,
+                                          backgroundColor: TsOneColor.primaryFaded,
+                                        ),
+                                        /*
                                       Container(
                                         constraints: BoxConstraints.expand(),
                                         color: Colors.white,
@@ -179,213 +174,201 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
                                         ),
                                       )
                                       */
-                                    ),
-                                  ),
-                                  Container(
-                                    alignment: Alignment.topRight,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.delete_outline_outlined,
-                                        size: 32,
-                                        color: TsOneColor.primary,
                                       ),
-                                      onPressed: () {
-                                        _signatureController.clear();
-                                        // handSignatureControl.clear();
-                                      },
                                     ),
-                                  ),
-                                ]),
-                                if (_image == null)
-                                  InkWell(
-                                    onTap: () {
-                                      getImage();
-                                    },
-                                    child: Ink(
-                                      color: TsOneColor.primaryFaded.withOpacity(0.5),
-                                      child: const Center(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.camera_alt,
-                                              size: 72,
-                                              color: TsOneColor.primaryFaded,
-                                            ),
-                                            Text("Signature")
-                                          ],
+                                    Container(
+                                      alignment: Alignment.topRight,
+                                      child: IconButton(
+                                        icon: const Icon(
+                                          Icons.delete_outline_outlined,
+                                          size: 32,
+                                          color: TsOneColor.primary,
+                                        ),
+                                        onPressed: () {
+                                          _signatureController.clear();
+                                          // handSignatureControl.clear();
+                                        },
+                                      ),
+                                    ),
+                                  ]),
+                                  if (_image == null)
+                                    InkWell(
+                                      onTap: () {
+                                        getImage();
+                                      },
+                                      child: Ink(
+                                        color: TsOneColor.primaryFaded.withOpacity(0.5),
+                                        child: const Center(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.camera_alt,
+                                                size: 72,
+                                                color: TsOneColor.primaryFaded,
+                                              ),
+                                              Text("Signature")
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  )
-                                else
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 5),
-                                    child: Center(
-                                      child: InkWell(
-                                        onTap: () {
-                                          getImage();
-                                        },
-                                        child: Ink(
-                                          color: TsOneColor.primaryFaded.withOpacity(0.5),
-                                          child: Image(
-                                            image: FileImage(_image!),
+                                    )
+                                  else
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 5),
+                                      child: Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            getImage();
+                                          },
+                                          child: Ink(
+                                            color: TsOneColor.primaryFaded.withOpacity(0.5),
+                                            child: Image(
+                                              image: FileImage(_image!),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          ListTileTheme(
-                            horizontalTitleGap: 0.0,
-                            contentPadding: const EdgeInsets.only(bottom: 0),
-                            child: CheckboxListTile(
-                              value: _isConfirmed,
-                              title: const Text("I agree with all of the results above"),
-                              dense: true,
-                              controlAffinity: ListTileControlAffinity.leading,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _isConfirmed = newValue!;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      )
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (!_isConfirmed) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: const Text("Please confirm the results above"),
-                              duration: const Duration(milliseconds: 2000),
-                              action: SnackBarAction(
-                                label: "Close",
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ListTileTheme(
+                              horizontalTitleGap: 0.0,
+                              contentPadding: const EdgeInsets.only(bottom: 0),
+                              child: CheckboxListTile(
+                                value: _isConfirmed,
+                                title: const Text("I agree with all of the results above"),
+                                dense: true,
+                                controlAffinity: ListTileControlAffinity.leading,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    _isConfirmed = newValue!;
+                                  });
                                 },
-                              )
-                          ),
-                        );
-                        return;
-                      }
-
-                      // Check Signature
-
-                      // Tab draw active
-                      if (_tabController.index == 0) {
-                        // Check if signature is empty
-                        if (_signatureController.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: const Text("Please provide your signature"),
-                                duration: const Duration(milliseconds: 2000),
-                                action: SnackBarAction(
-                                  label: "Close",
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                  },
-                                )
+                              ),
                             ),
-                          );
-                          return;
-                        }
+                          ],
+                        )),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (!_isConfirmed) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: const Text("Please confirm the results above"),
+                                    duration: const Duration(milliseconds: 2000),
+                                    action: SnackBarAction(
+                                      label: "Close",
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                      },
+                                    )),
+                              );
+                              return;
+                            }
 
-                        // Save signature
-                        _assessmentResults.signatureBytes = await _signatureController.toPngBytes();
-                      }
+                            // Check Signature
 
-                      // Tab image active
-                      else {
-                        // Check if signature image is empty
-                        if (_image == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: const Text("Please provide signature image"),
-                                duration: const Duration(milliseconds: 2000),
-                                action: SnackBarAction(
-                                  label: "Close",
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                  },
-                                )
-                            ),
-                          );
-                          return;
-                        }
-                        // get image
-                        _assessmentResults.signatureBytes = await _image!.readAsBytes();
-                      }
+                            // Tab draw active
+                            if (_tabController.index == 0) {
+                              // Check if signature is empty
+                              if (_signatureController.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: const Text("Please provide your signature"),
+                                      duration: const Duration(milliseconds: 2000),
+                                      action: SnackBarAction(
+                                        label: "Close",
+                                        onPressed: () {
+                                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                        },
+                                      )),
+                                );
+                                return;
+                              }
 
-                      // Navigator.pushNamed(context, NamedRoute.resultAssessmentOverall, arguments: widget.assessmentResults);
-                      // log("SAAA");
-                      try {
-                        String signatureUrl = await _userViewModel.uploadSignature(
-                            _assessmentResults.examinerStaffIDNo,
-                            _assessmentResults.date,
-                            _assessmentResults.signatureBytes
-                        );
-                        _assessmentResults.examinerSignatureUrl = signatureUrl;
+                              // Save signature
+                              _assessmentResults.signatureBytes = await _signatureController.toPngBytes();
+                            }
 
-                        // Store UserSignature in remote to be used later in the app
-                        _userSignatures = UserSignatures(
-                          urlSignature: signatureUrl,
-                          staffId: _assessmentResults.examinerStaffIDNo,
-                        );
-                        _userSignatures = await _userViewModel.addSignature(_userSignatures);
+                            // Tab image active
+                            else {
+                              // Check if signature image is empty
+                              if (_image == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: const Text("Please provide signature image"),
+                                      duration: const Duration(milliseconds: 2000),
+                                      action: SnackBarAction(
+                                        label: "Close",
+                                        onPressed: () {
+                                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                        },
+                                      )),
+                                );
+                                return;
+                              }
+                              // get image
+                              _assessmentResults.signatureBytes = await _image!.readAsBytes();
+                            }
 
-                        _assessmentResults.confirmedByExaminer = true;
+                            // Navigator.pushNamed(context, NamedRoute.resultAssessmentOverall, arguments: widget.assessmentResults);
+                            // log("SAAA");
+                            try {
+                              String signatureUrl = await _userViewModel.uploadSignature(
+                                  _assessmentResults.examinerStaffIDNo,
+                                  _assessmentResults.date,
+                                  _assessmentResults.signatureBytes);
+                              _assessmentResults.examinerSignatureUrl = signatureUrl;
 
-                        // Update the data
-                        await assessmentResultsViewModel.updateAssessmentResultForExaminee(_assessmentResults);
+                              // Store UserSignature in remote to be used later in the app
+                              _userSignatures = UserSignatures(
+                                urlSignature: signatureUrl,
+                                staffId: _assessmentResults.examinerStaffIDNo,
+                              );
+                              _userSignatures = await _userViewModel.addSignature(_userSignatures);
 
-                        if (!mounted) return;
-                        Navigator.pushNamed(context, NamedRoute.newAssessmentSuccess);
+                              _assessmentResults.confirmedByExaminer = true;
 
-                      } catch (e) {
-                        log(e.toString());
-                        if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: const Text("Failed to confirm your assessment"),
-                              duration: const Duration(milliseconds: 2000),
-                              action: SnackBarAction(
-                                label: "Close",
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                },
-                              )
+                              // Update the data
+                              await assessmentResultsViewModel.updateAssessmentResultForExaminee(_assessmentResults);
+
+                              if (!mounted) return;
+                              Navigator.pushNamed(context, NamedRoute.newAssessmentSuccess);
+                            } catch (e) {
+                              log(e.toString());
+                              if (!mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: const Text("Failed to confirm your assessment"),
+                                    duration: const Duration(milliseconds: 2000),
+                                    action: SnackBarAction(
+                                      label: "Close",
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                      },
+                                    )),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                            backgroundColor: TsOneColor.primary,
                           ),
-                        );
-                      }
-
-
-                      },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                      backgroundColor: TsOneColor.primary,
-                    ),
-                    child: SizedBox(
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
-                      height: 48,
-                      child: const Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Confirm Assessment",
-                          style: TextStyle(color: TsOneColor.secondary),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: 48,
+                            child: const Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Confirm Assessment",
+                                style: TextStyle(color: TsOneColor.secondary),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
           );
         },
