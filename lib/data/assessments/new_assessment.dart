@@ -52,7 +52,7 @@ class NewAssessment with ChangeNotifier {
   ];
 
   String typeOfAssessment = "";
-  DateTime assessmentDate = DateTime.now();
+  DateTime assessmentDate = Util.getCurrentDateWithoutTime();
 
   // instructor
   int idNoInstructor = Util.defaultIntIfNull;

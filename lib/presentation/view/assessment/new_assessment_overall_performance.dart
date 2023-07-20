@@ -101,15 +101,20 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                   },
                 ),
               ),
-              const TextField(
+              TextField(
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 minLines: 10,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Notes / Comment / Recommendations",
                   hintStyle: TextStyle(fontSize: 12),
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    _newAssessment.notes1 = value;
+                  });
+                },
               ),
 
               // flight crew 2
@@ -166,15 +171,20 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                   },
                 ),
               ),
-              const TextField(
+              TextField(
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 minLines: 10,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Notes / Comment / Recommendations",
                   hintStyle: TextStyle(fontSize: 12),
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    _newAssessment.notes2 = value;
+                  });
+                },
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),

@@ -74,6 +74,23 @@ class AssessmentViewModel extends LoadingViewModel {
     return lastAssessmentPeriodData;
   }
 
+  Future<List<AssessmentVariables>> getAllFlightAssessmentVariablesFromLatestPeriod() async {
+    isLoading = true;
+    AssessmentPeriod lastAssessmentPeriodData = AssessmentPeriod();
+    try {
+      List<AssessmentPeriod> assessmentPeriod = await repo.getAllAssessmentPeriods();
+      String lastAssessmentPeriodId = assessmentPeriod.first.id;
+
+      lastAssessmentPeriodData = await repo.getFlightAssessmentPeriodById(lastAssessmentPeriodId);
+      isLoading = false;
+    } catch (e) {
+      log("Exception on getAllAssessmentVariablesFromLastPeriod function on Assessment View Model: $e");
+      isLoading = false;
+    }
+
+    return lastAssessmentPeriodData.assessmentVariables;
+  }
+
   Future<AssessmentPeriod> getAllHumanFactorAssessmentVariablesFromLastPeriod() async {
     isLoading = true;
     AssessmentPeriod lastAssessmentPeriodData = AssessmentPeriod();
@@ -89,6 +106,23 @@ class AssessmentViewModel extends LoadingViewModel {
     }
 
     return lastAssessmentPeriodData;
+  }
+
+  Future<List<AssessmentVariables>> getAllHumanFactorAssessmentVariablesFromLatestPeriod() async {
+    isLoading = true;
+    AssessmentPeriod lastAssessmentPeriodData = AssessmentPeriod();
+    try {
+      List<AssessmentPeriod> assessmentPeriod = await repo.getAllAssessmentPeriods();
+      String lastAssessmentPeriodId = assessmentPeriod.first.id;
+
+      lastAssessmentPeriodData = await repo.getHumanFactorAssessmentPeriodById(lastAssessmentPeriodId);
+      isLoading = false;
+    } catch (e) {
+      debugPrint("Exception on getAllHumanFactorAssessmentVariablesFromLastPeriod function on Assessment ViewModel: $e");
+      isLoading = false;
+    }
+
+    return lastAssessmentPeriodData.assessmentVariables;
   }
 
   Future<AssessmentPeriod> addAssessmentPeriod(AssessmentPeriod assessmentPeriodModel) async {

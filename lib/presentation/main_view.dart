@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ts_one/presentation/view/analytics/analytics_screen.dart';
 
 import 'view/history/history_screen.dart';
 import 'view/home/home_screen.dart';
@@ -23,6 +24,7 @@ class _MainViewState extends State<MainView> {
   final _screens = [
     const HomeScreen(),
     const HistoryScreen(),
+    const AnalyticsScreen(),
     const ProfileScreen()
   ];
 
@@ -63,12 +65,17 @@ class _MainViewState extends State<MainView> {
               label: 'History',
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.analytics_rounded),
+              label: 'Analytics',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: 'Profile',
             ),
           ],
           currentIndex: _selectedNav,
           selectedItemColor: Colors.red,
+          unselectedItemColor: Colors.black,
           showUnselectedLabels: true,
           onTap: _changeSelectedNav,
         ),

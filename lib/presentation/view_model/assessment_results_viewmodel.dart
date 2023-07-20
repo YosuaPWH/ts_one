@@ -1,5 +1,4 @@
 import 'package:ts_one/data/assessments/assessment_results.dart';
-import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/domain/assessment_results_repo.dart';
 import 'package:ts_one/presentation/view_model/loading_viewmodel.dart';
@@ -23,43 +22,31 @@ class AssessmentResultsViewModel extends LoadingViewModel{
     return assessmentResultsList;
   }
 
-  Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm() async {
+  Future<List<AssessmentResults>> getAllAssessmentResults() async {
     isLoading = true;
-    List<AssessmentResults> assessmentResults = [];
-    try {
-      assessmentResults = await repo.getAssessmentResultsByCurrentUserNotConfirm();
+    List<AssessmentResults> assessmentResultsList = [];
+    try{
+      assessmentResultsList = await repo.getAllAssessmentResults();
       isLoading = false;
     }
     catch(e){
       print("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
-    return assessmentResults;
+    return assessmentResultsList;
   }
 
-  Future<List<AssessmentVariableResults>> getAssessmentVariableResult(String idAssessment) async {
+  Future<List<AssessmentResults>> getAssessmentResultsFilteredByDate(DateTime startDate, DateTime endDate) async {
     isLoading = true;
-    List<AssessmentVariableResults> assessmentVariableResults = [];
-    try {
-      assessmentVariableResults = await repo.getAssessmentVariableResult(idAssessment);
+    List<AssessmentResults> assessmentResultsList = [];
+    try{
+      assessmentResultsList = await repo.getAssessmentResultsFilteredByDate(startDate, endDate);
       isLoading = false;
     }
     catch(e){
       print("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
-    return assessmentVariableResults;
-  }
-
-  Future<void> updateAssessmentResultForExaminee(AssessmentResults assessmentResults) async {
-    isLoading = true;
-    try {
-      await repo.updateAssessmentResultForExaminee(assessmentResults);
-      isLoading = false;
-    }
-    catch(e){
-      print("Exception on AssessmentResultsViewModel: $e");
-      isLoading = false;
-    }
+    return assessmentResultsList;
   }
 }

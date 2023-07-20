@@ -51,7 +51,7 @@ class AssessmentResults{
 
   String id = Util.defaultStringIfNull;
   String typeOfAssessment = Util.defaultStringIfNull;
-  DateTime date = DateTime.now();
+  DateTime date = Util.getCurrentDateWithoutTime();
 
   int examinerStaffIDNo = Util.defaultIntIfNull;
   DateTime licenseExpiry = Util.defaultDateIfNull;
