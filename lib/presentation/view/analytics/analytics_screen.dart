@@ -404,15 +404,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         ],
                       ),
                     ),
+                    Text("Currently showing analytics of ${assessmentResultsFilteredByDate.length} assessment results from "
+                        "${Util.convertDateTimeDisplay(startDate.toString(), "dd MMM yyyy")} to "
+                        "${Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy")}."),
                     model.isLoading
                     ? const Center(
                         child: CircularProgressIndicator(),
                       )
                     : Column(
                         children: [
-                          Text("Currently showing analytics of ${assessmentResultsFilteredByDate.length} assessment results from "
-                              "${Util.convertDateTimeDisplay(startDate.toString(), "dd MMM yyyy")} to "
-                              "${Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy")}."),
                           chartLoading? const Center(
                             child: CircularProgressIndicator(),
                           ) : Padding(
@@ -425,7 +425,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                   style: tsOneTextTheme.headlineMedium,
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 16.0),
+                                  padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
                                   child: LegendsListWidget(
                                     legends: [
                                       Legend('Markers 1', Colors.red),
@@ -466,7 +466,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                   style: tsOneTextTheme.headlineMedium,
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 16.0),
+                                  padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
                                   child: LegendsListWidget(
                                     legends: [
                                       Legend('Markers 1', Colors.red),
@@ -507,7 +507,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                   style: tsOneTextTheme.headlineMedium,
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 16.0),
+                                  padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
                                   child: LegendsListWidget(
                                     legends: [
                                       Legend('Markers 1', Colors.red),
