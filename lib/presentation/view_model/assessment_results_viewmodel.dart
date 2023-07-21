@@ -65,6 +65,20 @@ class AssessmentResultsViewModel extends LoadingViewModel{
     return assessmentResults;
   }
 
+  Future<List<AssessmentResults>> getAssessmentResultsNotConfirmByCPTS() async {
+    isLoading = true;
+    List<AssessmentResults> assessmentResults = [];
+    try {
+      assessmentResults = await repo.getAssessmentResultsNotConfirmByCPTS();
+      isLoading = false;
+    }
+    catch(e){
+      print("Exception on AssessmentResultsViewModel: $e");
+      isLoading = false;
+    }
+    return assessmentResults;
+  }
+
   Future<List<AssessmentVariableResults>> getAssessmentVariableResult(String idAssessment) async {
     isLoading = true;
     List<AssessmentVariableResults> assessmentVariableResults = [];

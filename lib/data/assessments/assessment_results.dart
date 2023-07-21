@@ -17,10 +17,10 @@ class AssessmentResults{
   static const String keyTypeOfAssessment = "type-of-assessment";
   static const String keyDate = "date";
 
-  static const String keyExaminerStaffIDNo = "examiner-staff-id-no";
+  static const String keyExaminerStaffIDNo = "examinee-staff-id-no";
   static const String keyLicenseExpiry = "license-expiry";
   static const String keySimIdent = "sim-ident";
-  static const String keyExaminerSignatureUrl = "examiner-signature-url";
+  static const String keyExaminerSignatureUrl = "examinee-signature-url";
   static const String keyConfirmedByExaminer = "confirmed-by-examiner";
 
   static const String keyOtherStaffIDNo = "other-staff-id-no";
