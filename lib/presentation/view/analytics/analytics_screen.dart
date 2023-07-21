@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
+import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/presentation/shared_components/legend_widget.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/assessment_results_viewmodel.dart';
@@ -27,8 +28,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   late DateTime nowWithoutTime;
   late DateTime startDate;
   late DateTime endDate;
+  late String rank;
+  static List<String> rankList = ['All', UserModel.keyPositionCaptain, UserModel.keyPositionFirstOfficer];
 
   late List<AssessmentResults> assessmentResults;
+  late List<AssessmentResults> assessmentResultsFilteredByRank;
   late List<AssessmentResults> assessmentResultsFilteredByDate;
 
   late List<AssessmentVariables> assessmentVariables;
@@ -50,8 +54,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     nowWithoutTime = Util.getCurrentDateWithoutTime();
     startDate = Util.defaultDateIfNull;
     endDate = nowWithoutTime;
+    rank = rankList[1];
 
     assessmentResults = [];
+    assessmentResultsFilteredByRank = [];
     assessmentResultsFilteredByDate = [];
 
     assessmentVariables = [];
@@ -71,12 +77,33 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   void getAllAssessmentResultsFromRemote() async {
     assessmentResults = await assessmentResultsviewModel.getAllAssessmentResults();
-    filterAssessmentResultsByDate();
+    filterAssessmentResults();
   }
 
-  void filterAssessmentResultsByDate() {
+  // filtered by date and/or rank
+  void filterAssessmentResults() {
+    assessmentResultsFilteredByRank.clear();
     assessmentResultsFilteredByDate.clear();
-    for (AssessmentResults assessmentResult in assessmentResults) {
+
+    // filtering by rank first
+    if(rank == rankList[1]) {
+      for (AssessmentResults assessmentResult in assessmentResults) {
+        if (assessmentResult.rank == rankList[1]) {
+          assessmentResultsFilteredByRank.add(assessmentResult);
+        }
+      }
+    } else if(rank == rankList[2]) {
+      for (AssessmentResults assessmentResult in assessmentResults) {
+        if (assessmentResult.rank == rankList[2]) {
+          assessmentResultsFilteredByRank.add(assessmentResult);
+        }
+      }
+    } else {
+      assessmentResultsFilteredByRank = assessmentResults;
+    }
+
+    // after filtering by rank, filter by date
+    for (AssessmentResults assessmentResult in assessmentResultsFilteredByRank) {
       if (assessmentResult.date.isAfter(startDate) &&
           assessmentResult.date.isBefore(endDate) ||
           assessmentResult.date.isAtSameMomentAs(startDate) ||
@@ -92,6 +119,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   void getAllAssessmentVariablesFromTheLatestAssessmentPeriod() async {
+    // get all assessment variables from the latest assessment period
+    // if the chart is not initialized yet
+    // if the chart is already initialized, no need to get the assessment variables again
     if (!isChartInitialized){
       assessmentVariables = await assessmentViewModel
             .getAllFlightAssessmentVariablesFromLatestPeriod();
@@ -301,7 +331,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       setState(() {
         startDate = picked;
       });
-      filterAssessmentResultsByDate();
+      filterAssessmentResults();
     }
   }
 
@@ -317,7 +347,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       setState(() {
         endDate = picked;
       });
-      filterAssessmentResultsByDate();
+      filterAssessmentResults();
     }
   }
 
