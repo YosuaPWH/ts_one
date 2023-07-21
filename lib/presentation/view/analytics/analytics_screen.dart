@@ -612,7 +612,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         children: [
                           Text("Currently showing analytics of ${assessmentResultsFilteredByDate.length} assessment results for "
                               "${isSearchingByUser
-                              ? "${nameTextController.text} "
+                              ? "\"${nameTextController.text}\" "
                               : rank == rankList[0] ? "all ranks " : "the rank of $rank "
                               }"
                               "from ${Util.convertDateTimeDisplay(startDate.toString(), "dd MMM yyyy")} "
@@ -903,7 +903,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 markerName = "Markers 5";
               }
               return BarTooltipItem(
-                "$variableName\n$markerName: ${mapOfAssessmentVariableResultsCount[group.x.toInt()][markerName]}",
+                "$variableName\n$markerName: ${mapOfAssessmentVariableResultsCount[group.x.toInt()][markerName]}%",
                 const TextStyle(color: Colors.white),
               );
             },
@@ -1060,7 +1060,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   markerName = "PF Markers 5";
                 }
                 return BarTooltipItem(
-                  "$variableName\n$markerName: ${mapOfHumanFactorAssessmentVariableResultsCount[group.x.toInt()][markerName]}",
+                  "$variableName\n$markerName: ${mapOfHumanFactorAssessmentVariableResultsCount[group.x.toInt()][markerName]}%",
                   const TextStyle(color: Colors.white),
                 );
               },
@@ -1217,7 +1217,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   markerName = "PM Markers 5";
                 }
                 return BarTooltipItem(
-                  "$variableName\n$markerName: ${mapOfHumanFactorAssessmentVariableResultsCount[group.x.toInt()][markerName]}",
+                  "$variableName\n$markerName: ${mapOfHumanFactorAssessmentVariableResultsCount[group.x.toInt()][markerName]}%",
                   const TextStyle(color: Colors.white),
                 );
               },
