@@ -35,14 +35,14 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     List<AssessmentResults> assessmentResultsList = AssessmentResults.extractDataFromNewAssessment(newAssessment);
     try{
       for(var assessmentResult in assessmentResultsList){
-        assessmentResult.id = "assessment-result-${assessmentResult.examinerStaffIDNo}-${Util.convertDateTimeDisplay(assessmentResult.date.toString())}";
+        assessmentResult.id = "assessment-result-${assessmentResult.examineeStaffIDNo}-${Util.convertDateTimeDisplay(assessmentResult.date.toString())}";
         await _db!
             .collection(AssessmentResults.firebaseCollection)
             .doc(assessmentResult.id)
             .set(assessmentResult.toFirebase());
 
         for(var assessmentVariableResult in assessmentResult.variableResults) {
-          assessmentVariableResult.id = "assessment-variable-result-${assessmentVariableResult.assessmentVariableId}-${assessmentResult.examinerStaffIDNo}-${Util.convertDateTimeDisplay(assessmentResult.date.toString())}";
+          assessmentVariableResult.id = "assessment-variable-result-${assessmentVariableResult.assessmentVariableId}-${assessmentResult.examineeStaffIDNo}-${Util.convertDateTimeDisplay(assessmentResult.date.toString())}";
           assessmentVariableResult.assessmentResultsId = assessmentResult.id;
           await _db!
               .collection(AssessmentVariableResults.firebaseCollection)
@@ -123,7 +123,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     try {
       await _db!
           .collection(AssessmentResults.firebaseCollection)
-          .where(AssessmentResults.keyExaminerStaffIDNo, isEqualTo: dummyUserId)
+          .where(AssessmentResults.keyExamineeStaffIDNo, isEqualTo: dummyUserId)
           .where(AssessmentResults.keyConfirmedByExaminer, isEqualTo: false)
           .get()
           .then((value) {
