@@ -39,6 +39,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   late bool chartLoading;
   late bool isChartInitialized;
   late Widget barChartMainAssessment;
+  late Widget barChartHumanFactorPFAssessment;
+  late Widget barChartHumanFactorPMAssessment;
 
   @override
   void initState() {
@@ -118,6 +120,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       mapOfHumanFactorAssessmentVariableResultsCount.add({
         AssessmentVariables.keyId: humanfactorAssessmentVariable.id,
         AssessmentVariables.keyName: humanfactorAssessmentVariable.name,
+        AssessmentVariables.keyCategory: humanfactorAssessmentVariable.category,
         AssessmentVariables.keyTypeOfAssessment: humanfactorAssessmentVariable.typeOfAssessment,
         'PF Markers 1': 0,
         'PF Markers 2': 0,
@@ -207,10 +210,80 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           }
 
         }
+
+        for(int j = 0; j < mapOfHumanFactorAssessmentVariableResultsCount.length; j++) {
+
+          if(assessmentResult.variableResults[i].assessmentVariableId == mapOfHumanFactorAssessmentVariableResultsCount[j][AssessmentVariables.keyId]) {
+            if(assessmentResult.variableResults[i].assessmentType == AssessmentVariables.keySatisfactory) {
+              switch(assessmentResult.variableResults[i].assessmentMarkers){
+                case 1:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Markers 1']++;
+                  break;
+                case 2:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Markers 2']++;
+                  break;
+                case 3:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Markers 3']++;
+                  break;
+                case 4:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Markers 4']++;
+                  break;
+                case 5:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Markers 5']++;
+                  break;
+                default:
+                  break;
+              }
+            }
+            else {
+              switch(assessmentResult.variableResults[i].pilotFlyingMarkers) {
+                case 1:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['PF Markers 1']++;
+                  break;
+                case 2:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['PF Markers 2']++;
+                  break;
+                case 3:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['PF Markers 3']++;
+                  break;
+                case 4:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['PF Markers 4']++;
+                  break;
+                case 5:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['PF Markers 5']++;
+                  break;
+                default:
+                  break;
+              }
+
+              switch(assessmentResult.variableResults[i].pilotMonitoringMarkers) {
+                case 1:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['PM Markers 1']++;
+                  break;
+                case 2:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['PM Markers 2']++;
+                  break;
+                case 3:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['PM Markers 3']++;
+                  break;
+                case 4:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['PM Markers 4']++;
+                  break;
+                case 5:
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['PM Markers 5']++;
+                  break;
+                default:
+                  break;
+              }
+            }
+          }
+
+        }
       }
     }
     setState(() {
       mapOfAssessmentVariableResultsCount = mapOfAssessmentVariableResultsCount;
+      mapOfHumanFactorAssessmentVariableResultsCount = mapOfHumanFactorAssessmentVariableResultsCount;
     });
     buildChart();
     isChartInitialized = true;
@@ -345,10 +418,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           ) : Padding(
                             padding: const EdgeInsets.only(top: 16.0),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   'Main Assessment',
-                                  style: tsOneTextTheme.headlineLarge,
+                                  style: tsOneTextTheme.headlineMedium,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16.0),
@@ -368,8 +442,90 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                     width: 4800,
                                     height: 600,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(top: 30.0, bottom: 30.0, left: 60.0),
+                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
                                       child: barChartMainAssessment,
+                                    ),
+                                  ),
+                                ),
+
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 32.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Divider(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                Text(
+                                  'Human Factor Assessment - Pilot Flying',
+                                  style: tsOneTextTheme.headlineMedium,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16.0),
+                                  child: LegendsListWidget(
+                                    legends: [
+                                      Legend('Markers 1', Colors.red),
+                                      Legend('Markers 2', Colors.yellow),
+                                      Legend('Markers 3', Colors.green),
+                                      Legend('Markers 4', Colors.blue),
+                                      Legend('Markers 5', Colors.purple),
+                                    ],
+                                  ),
+                                ),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: SizedBox(
+                                    width: 2000,
+                                    height: 600,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                      child: barChartHumanFactorPFAssessment,
+                                    ),
+                                  ),
+                                ),
+
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 32.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Divider(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                Text(
+                                  'Human Factor Assessment - Pilot Monitoring',
+                                  style: tsOneTextTheme.headlineMedium,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16.0),
+                                  child: LegendsListWidget(
+                                    legends: [
+                                      Legend('Markers 1', Colors.red),
+                                      Legend('Markers 2', Colors.yellow),
+                                      Legend('Markers 3', Colors.green),
+                                      Legend('Markers 4', Colors.blue),
+                                      Legend('Markers 5', Colors.purple),
+                                    ],
+                                  ),
+                                ),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: SizedBox(
+                                    width: 2000,
+                                    height: 600,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                      child: barChartHumanFactorPMAssessment,
                                     ),
                                   ),
                                 ),
@@ -547,6 +703,320 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           ),
         ),
       )
+    );
+    barChartHumanFactorPFAssessment = BarChart(
+        BarChartData(
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 160,
+                getTitlesWidget: (value, meta) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 48.0),
+                    child: Transform.translate(
+                        offset: const Offset(-40, 10),
+                        child: Transform.rotate(
+                          angle: -3.14 / 4,
+                          child: SideTitleWidget(
+                            axisSide: meta.axisSide,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                    mapOfHumanFactorAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyCategory],
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    )
+                                ),
+                                Text(
+                                  mapOfHumanFactorAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyName],
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                    ),
+                  );
+                },
+              ),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+          ),
+          alignment: BarChartAlignment.center,
+          groupsSpace: 52,
+          barGroups: [
+            for (var i = 0; i < mapOfHumanFactorAssessmentVariableResultsCount.length; i++)
+              BarChartGroupData(
+                // showingTooltipIndicators: mapOfHumanFactorAssessmentVariableResultsCount[i]['Name'],
+                x: i,
+                groupVertically: true,
+                barRods: [
+                  BarChartRodData(
+                    fromY: 0,
+                    toY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'].toDouble(),
+                    color: Colors.red,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'].toDouble(),
+                    toY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'].toDouble(),
+                    color: Colors.yellow,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'].toDouble(),
+                    toY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'].toDouble(),
+                    color: Colors.green,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'].toDouble(),
+                    toY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'].toDouble(),
+                    color: Colors.blue,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'].toDouble(),
+                    toY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'].toDouble(),
+                    color: Colors.purple,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                ],
+                // showingTooltipIndicators: [0],
+              ),
+          ],
+          barTouchData: BarTouchData(
+            enabled: true,
+            touchTooltipData: BarTouchTooltipData(
+              tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+              direction: TooltipDirection.bottom,
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                String variableName = mapOfHumanFactorAssessmentVariableResultsCount[group.x.toInt()][AssessmentVariables.keyName];
+                String markerName = "";
+                if (rodIndex == 0) {
+                  markerName = "PF Markers 1";
+                } else if (rodIndex == 1) {
+                  markerName = "PF Markers 2";
+                } else if (rodIndex == 2) {
+                  markerName = "PF Markers 3";
+                } else if (rodIndex == 3) {
+                  markerName = "PF Markers 4";
+                } else if (rodIndex == 4) {
+                  markerName = "PF Markers 5";
+                }
+                return BarTooltipItem(
+                  "$variableName\n$markerName: ${mapOfHumanFactorAssessmentVariableResultsCount[group.x.toInt()][markerName]}",
+                  const TextStyle(color: Colors.white),
+                );
+              },
+            ),
+          ),
+        )
+    );
+    barChartHumanFactorPMAssessment = BarChart(
+        BarChartData(
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 160,
+                getTitlesWidget: (value, meta) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 48.0),
+                    child: Transform.translate(
+                        offset: const Offset(-40, 10),
+                        child: Transform.rotate(
+                          angle: -3.14 / 4,
+                          child: SideTitleWidget(
+                            axisSide: meta.axisSide,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                    mapOfHumanFactorAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyCategory],
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    )
+                                ),
+                                Text(
+                                  mapOfHumanFactorAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyName],
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                    ),
+                  );
+                },
+              ),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+          ),
+          alignment: BarChartAlignment.center,
+          groupsSpace: 52,
+          barGroups: [
+            for (var i = 0; i < mapOfHumanFactorAssessmentVariableResultsCount.length; i++)
+              BarChartGroupData(
+                // showingTooltipIndicators: mapOfHumanFactorAssessmentVariableResultsCount[i]['Name'],
+                x: i,
+                groupVertically: true,
+                barRods: [
+                  BarChartRodData(
+                    fromY: 0,
+                    toY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'].toDouble(),
+                    color: Colors.red,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'].toDouble(),
+                    toY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'].toDouble(),
+                    color: Colors.yellow,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'].toDouble(),
+                    toY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'].toDouble(),
+                    color: Colors.green,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'].toDouble(),
+                    toY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'].toDouble(),
+                    color: Colors.blue,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'].toDouble(),
+                    toY: mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'].toDouble()
+                        + mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'].toDouble(),
+                    color: Colors.purple,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                ],
+                // showingTooltipIndicators: [0],
+              ),
+          ],
+          barTouchData: BarTouchData(
+            enabled: true,
+            touchTooltipData: BarTouchTooltipData(
+              tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+              direction: TooltipDirection.bottom,
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                String variableName = mapOfHumanFactorAssessmentVariableResultsCount[group.x.toInt()][AssessmentVariables.keyName];
+                String markerName = "";
+                if (rodIndex == 0) {
+                  markerName = "PM Markers 1";
+                } else if (rodIndex == 1) {
+                  markerName = "PM Markers 2";
+                } else if (rodIndex == 2) {
+                  markerName = "PM Markers 3";
+                } else if (rodIndex == 3) {
+                  markerName = "PM Markers 4";
+                } else if (rodIndex == 4) {
+                  markerName = "PM Markers 5";
+                }
+                return BarTooltipItem(
+                  "$variableName\n$markerName: ${mapOfHumanFactorAssessmentVariableResultsCount[group.x.toInt()][markerName]}",
+                  const TextStyle(color: Colors.white),
+                );
+              },
+            ),
+          ),
+        )
     );
     chartLoading = false;
   }
