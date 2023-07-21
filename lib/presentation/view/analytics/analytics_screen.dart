@@ -54,7 +54,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     nowWithoutTime = Util.getCurrentDateWithoutTime();
     startDate = Util.defaultDateIfNull;
     endDate = nowWithoutTime;
-    rank = rankList[1];
+    rank = rankList[0];
 
     assessmentResults = [];
     assessmentResultsFilteredByRank = [];
@@ -99,7 +99,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         }
       }
     } else {
-      assessmentResultsFilteredByRank = assessmentResults;
+      assessmentResultsFilteredByRank.addAll(assessmentResults);
     }
 
     // after filtering by rank, filter by date
@@ -364,21 +364,21 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                      padding: const EdgeInsets.only(bottom: 16.0),
                       child: Text(
                         "Analytics",
                         style: tsOneTextTheme.headlineLarge,
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                      padding: const EdgeInsets.only(bottom: 16.0),
                       child: Row(
                         children: [
                           Expanded(
-                            flex: 3,
+                            flex: 2,
                             child: TextField(
                               decoration: const InputDecoration(
-                                border: InputBorder.none,
+                                border: OutlineInputBorder(),
                                 labelText: 'Start Date',
                                 focusColor: TsOneColor.primary,
                               ),
@@ -393,7 +393,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             ),
                           ),
                           const Expanded(
-                            flex: 4,
+                            flex: 1,
                             child: Padding(
                               padding: EdgeInsets.only(left: 8.0, right: 8.0),
                               child: Text(
@@ -403,10 +403,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             ),
                           ),
                           Expanded(
-                            flex: 4,
+                            flex: 2,
                             child: TextField(
                               decoration: const InputDecoration(
-                                border: InputBorder.none,
+                                border: OutlineInputBorder(),
                                 labelText: 'End Date',
                                 focusColor: TsOneColor.primary,
                               ),
@@ -434,17 +434,44 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         ],
                       ),
                     ),
-                    Text("Currently showing analytics of ${assessmentResultsFilteredByDate.length} assessment results from "
-                        "${Util.convertDateTimeDisplay(startDate.toString(), "dd MMM yyyy")} to "
-                        "${Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy")}."),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: DropdownButtonFormField(
+                        value: rank,
+                        items: rankList.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            rank = newValue.toString();
+                          });
+                          filterAssessmentResults();
+                        },
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Rank',
+                          focusColor: TsOneColor.primary,
+                        ),
+                      ),
+                    ),
                     model.isLoading
                     ? const Center(
                         child: CircularProgressIndicator(),
                       )
                     : Column(
                         children: [
-                          chartLoading? const Center(
-                            child: CircularProgressIndicator(),
+                          Text("Currently showing analytics of ${assessmentResultsFilteredByDate.length} assessment results for "
+                              "${rank == rankList[0] ? "all ranks" : "the rank of $rank"} "
+                              "from ${Util.convertDateTimeDisplay(startDate.toString(), "dd MMM yyyy")} "
+                              "to ${Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy")}."),
+                          chartLoading? const Padding(
+                            padding: EdgeInsets.only(top: 16.0),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ) : Padding(
                             padding: const EdgeInsets.only(top: 16.0),
                             child: Column(
