@@ -428,7 +428,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       child: Row(
                         children: [
                           Expanded(
-                            flex: 2,
                             child: TextField(
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
@@ -441,34 +440,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                               ),
                               onTap: () {
                                 _selectStartingDate(context);
-                                FocusScope.of(context).unfocus();
-                              },
-                            ),
-                          ),
-                          const Expanded(
-                            flex: 1,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                              child: Text(
-                                "- to -",
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: TextField(
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'End Date',
-                                focusColor: TsOneColor.primary,
-                              ),
-                              readOnly: true,
-                              controller: TextEditingController(
-                                text: Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy"),
-                              ),
-                              onTap: () {
-                                _selectEndingDate(context);
                                 FocusScope.of(context).unfocus();
                               },
                             ),
@@ -491,9 +462,33 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Row(
                         children: [
+                          Expanded(
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'End Date',
+                                focusColor: TsOneColor.primary,
+                              ),
+                              readOnly: true,
+                              controller: TextEditingController(
+                                text: Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy"),
+                              ),
+                              onTap: () {
+                                _selectEndingDate(context);
+                                FocusScope.of(context).unfocus();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        children: [
                           !isSearchingByUser
                           ? Expanded(
-                            flex: 2,
+                            flex: 4,
                             child: DropdownButtonFormField(
                               value: rank,
                               items: rankList.map((String value) {
@@ -516,8 +511,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             ),
                           )
                           : Container(),
+                          !isSearchingByUser
+                          ? Expanded(
+                            flex: 1,
+                            child: Container(),
+                          )
+                          : Container(),
                           Expanded(
-                            flex: 5,
+                            flex: 10,
                             child: TypeAheadFormField<UserModel>(
                               hideSuggestionsOnKeyboardHide: false,
                               textFieldConfiguration: TextFieldConfiguration(
