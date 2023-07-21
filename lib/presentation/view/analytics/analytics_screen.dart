@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
@@ -12,6 +13,7 @@ import 'package:ts_one/presentation/shared_components/legend_widget.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/assessment_results_viewmodel.dart';
 import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
+import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 import 'package:ts_one/util/util.dart';
 
 class AnalyticsScreen extends StatefulWidget {
@@ -24,6 +26,7 @@ class AnalyticsScreen extends StatefulWidget {
 class _AnalyticsScreenState extends State<AnalyticsScreen> {
   late AssessmentResultsViewModel assessmentResultsviewModel;
   late AssessmentViewModel assessmentViewModel;
+  late UserViewModel userViewModel;
 
   late DateTime nowWithoutTime;
   late DateTime startDate;
@@ -31,8 +34,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   late String rank;
   static List<String> rankList = ['All', UserModel.keyPositionCaptain, UserModel.keyPositionFirstOfficer];
 
+  late int examineeStaffIDNo;
+  late TextEditingController nameTextController;
+  late List<UserModel> usersSearched;
+  late bool isSearchingByUser;
+
   late List<AssessmentResults> assessmentResults;
-  late List<AssessmentResults> assessmentResultsFilteredByRank;
+  late List<AssessmentResults> assessmentResultsFilteredFirst;
   late List<AssessmentResults> assessmentResultsFilteredByDate;
 
   late List<AssessmentVariables> assessmentVariables;
@@ -50,14 +58,20 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   void initState() {
     assessmentResultsviewModel = Provider.of<AssessmentResultsViewModel>(context, listen: false);
     assessmentViewModel = Provider.of<AssessmentViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
 
     nowWithoutTime = Util.getCurrentDateWithoutTime();
     startDate = Util.defaultDateIfNull;
     endDate = nowWithoutTime;
     rank = rankList[0];
 
+    examineeStaffIDNo = Util.defaultIntIfNull;
+    nameTextController = TextEditingController();
+    usersSearched = [];
+    isSearchingByUser = false;
+
     assessmentResults = [];
-    assessmentResultsFilteredByRank = [];
+    assessmentResultsFilteredFirst = [];
     assessmentResultsFilteredByDate = [];
 
     assessmentVariables = [];
@@ -82,28 +96,39 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   // filtered by date and/or rank
   void filterAssessmentResults() {
-    assessmentResultsFilteredByRank.clear();
+    assessmentResultsFilteredFirst.clear();
     assessmentResultsFilteredByDate.clear();
 
     // filtering by rank first
     if(rank == rankList[1]) {
       for (AssessmentResults assessmentResult in assessmentResults) {
         if (assessmentResult.rank == rankList[1]) {
-          assessmentResultsFilteredByRank.add(assessmentResult);
+          assessmentResultsFilteredFirst.add(assessmentResult);
         }
       }
     } else if(rank == rankList[2]) {
       for (AssessmentResults assessmentResult in assessmentResults) {
         if (assessmentResult.rank == rankList[2]) {
-          assessmentResultsFilteredByRank.add(assessmentResult);
+          assessmentResultsFilteredFirst.add(assessmentResult);
         }
       }
     } else {
-      assessmentResultsFilteredByRank.addAll(assessmentResults);
+      assessmentResultsFilteredFirst.addAll(assessmentResults);
     }
 
-    // after filtering by rank, filter by date
-    for (AssessmentResults assessmentResult in assessmentResultsFilteredByRank) {
+    if(isSearchingByUser && examineeStaffIDNo != Util.defaultIntIfNull) {
+      // all the results before are ignored
+      assessmentResultsFilteredFirst.clear();
+
+      for (AssessmentResults assessmentResult in assessmentResults) {
+        if (assessmentResult.examineeStaffIDNo == examineeStaffIDNo) {
+          assessmentResultsFilteredFirst.add(assessmentResult);
+        }
+      }
+    }
+
+    // after filtering by rank or examinee staff ID No, filter by date
+    for (AssessmentResults assessmentResult in assessmentResultsFilteredFirst) {
       if (assessmentResult.date.isAfter(startDate) &&
           assessmentResult.date.isBefore(endDate) ||
           assessmentResult.date.isAtSameMomentAs(startDate) ||
@@ -436,25 +461,121 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
-                      child: DropdownButtonFormField(
-                        value: rank,
-                        items: rankList.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          setState(() {
-                            rank = newValue.toString();
-                          });
-                          filterAssessmentResults();
-                        },
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Rank',
-                          focusColor: TsOneColor.primary,
-                        ),
+                      child: Row(
+                        children: [
+                          !isSearchingByUser
+                          ? Expanded(
+                            flex: 2,
+                            child: DropdownButtonFormField(
+                              value: rank,
+                              items: rankList.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  rank = newValue.toString();
+                                });
+                                filterAssessmentResults();
+                              },
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Rank',
+                                focusColor: TsOneColor.primary,
+                              ),
+                            ),
+                          )
+                          : Container(),
+                          Expanded(
+                            flex: 5,
+                            child: TypeAheadFormField<UserModel>(
+                              hideSuggestionsOnKeyboardHide: false,
+                              textFieldConfiguration: TextFieldConfiguration(
+                                controller: nameTextController,
+                                onTap: () {
+                                  // clear the text field
+                                  nameTextController.clear();
+
+                                  if(nameTextController.text.isEmpty) {
+                                    setState(() {
+                                      isSearchingByUser = false;
+                                    });
+                                    filterAssessmentResults();
+                                  }
+
+                                  // clear the selected user
+                                  examineeStaffIDNo = Util.defaultIntIfNull;
+
+                                  // refresh the UI
+                                  setState(() {});
+                                },
+                                onChanged: (value) {
+                                  if(value.isEmpty) {
+                                    setState(() {
+                                      isSearchingByUser = false;
+                                    });
+                                  }
+                                  else{
+                                    setState(() {
+                                      isSearchingByUser = true;
+                                    });
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  labelText: 'Name',
+                                  suffixIcon: IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.search),
+                                  ),
+                                ),
+                              ),
+                              suggestionsCallback: (pattern) async {
+                                // wait for the user finish typing
+                                Future.delayed(const Duration(milliseconds: 500));
+                                if(pattern.isNotEmpty) {
+                                  usersSearched = await userViewModel.getUsersBySearchName(pattern.toTitleCase(), 5);
+                                  return usersSearched;
+                                } else {
+                                  return [];
+                                }
+                              },
+                              itemBuilder: (context, UserModel suggestion) {
+                                return ListTile(
+                                  title: Text(suggestion.name),
+                                );
+                              },
+                              noItemsFoundBuilder: (context) {
+                                return const SizedBox(
+                                    height: 100,
+                                    child: Center(
+                                      child: Text(
+                                        'No users found.',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    )
+                                );
+                              },
+                              onSuggestionSelected: (UserModel? suggestion) {
+                                if (suggestion != null) {
+                                  // set the selected user id no to be searched in assessment results collection
+                                  examineeStaffIDNo = suggestion.idNo;
+
+                                  // set the text field to be the selected user's name
+                                  nameTextController.text = "${suggestion.rank} ${suggestion.name}";
+
+                                  // run the filter function
+                                  filterAssessmentResults();
+
+                                  // refresh the UI
+                                  setState(() {});
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     model.isLoading
@@ -464,7 +585,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     : Column(
                         children: [
                           Text("Currently showing analytics of ${assessmentResultsFilteredByDate.length} assessment results for "
-                              "${rank == rankList[0] ? "all ranks" : "the rank of $rank"} "
+                              "${isSearchingByUser
+                              ? "${nameTextController.text} "
+                              : rank == rankList[0] ? "all ranks " : "the rank of $rank "
+                              }"
                               "from ${Util.convertDateTimeDisplay(startDate.toString(), "dd MMM yyyy")} "
                               "to ${Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy")}."),
                           chartLoading? const Padding(
