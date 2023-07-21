@@ -341,25 +341,27 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     }
 
     // switch all counts to percentages
-    for(int i = 0; i < mapOfAssessmentVariableResultsCount.length; i++) {
-      mapOfAssessmentVariableResultsCount[i]['Markers 1'] = (mapOfAssessmentVariableResultsCount[i]['Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfAssessmentVariableResultsCount[i]['Markers 2'] = (mapOfAssessmentVariableResultsCount[i]['Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfAssessmentVariableResultsCount[i]['Markers 3'] = (mapOfAssessmentVariableResultsCount[i]['Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfAssessmentVariableResultsCount[i]['Markers 4'] = (mapOfAssessmentVariableResultsCount[i]['Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfAssessmentVariableResultsCount[i]['Markers 5'] = (mapOfAssessmentVariableResultsCount[i]['Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
-    }
-    for(int i = 0; i < mapOfHumanFactorAssessmentVariableResultsCount.length; i++) {
-      mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
+    if(assessmentResultsFilteredByDate.isNotEmpty){
+      for(int i = 0; i < mapOfAssessmentVariableResultsCount.length; i++) {
+        mapOfAssessmentVariableResultsCount[i]['Markers 1'] = (mapOfAssessmentVariableResultsCount[i]['Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfAssessmentVariableResultsCount[i]['Markers 2'] = (mapOfAssessmentVariableResultsCount[i]['Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfAssessmentVariableResultsCount[i]['Markers 3'] = (mapOfAssessmentVariableResultsCount[i]['Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfAssessmentVariableResultsCount[i]['Markers 4'] = (mapOfAssessmentVariableResultsCount[i]['Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfAssessmentVariableResultsCount[i]['Markers 5'] = (mapOfAssessmentVariableResultsCount[i]['Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
+      }
+      for(int i = 0; i < mapOfHumanFactorAssessmentVariableResultsCount.length; i++) {
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
 
-      mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
-      mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
+      }
     }
 
     setState(() {
@@ -758,6 +760,20 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       BarChartData(
         titlesData: FlTitlesData(
           show: true,
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 60,
+              getTitlesWidget: (value, meta) {
+                return SideTitleWidget(
+                  axisSide: meta.axisSide,
+                  child: Text(
+                    "$value%",
+                  ),
+                );
+              },
+            ),
+          ),
           bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                   showTitles: true,
@@ -915,6 +931,20 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         BarChartData(
           titlesData: FlTitlesData(
             show: true,
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 60,
+                getTitlesWidget: (value, meta) {
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Text(
+                      "$value%",
+                    ),
+                  );
+                },
+              ),
+            ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
@@ -1072,6 +1102,20 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         BarChartData(
           titlesData: FlTitlesData(
             show: true,
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 60,
+                getTitlesWidget: (value, meta) {
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Text(
+                      "$value%",
+                    ),
+                  );
+                },
+              ),
+            ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
