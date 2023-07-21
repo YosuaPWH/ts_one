@@ -158,17 +158,20 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     mapOfHumanFactorAssessmentVariableResultsCount.clear();
 
     for(AssessmentVariables assessmentVariable in assessmentVariables) {
-      mapOfAssessmentVariableResultsCount.add({
-        AssessmentVariables.keyId: assessmentVariable.id,
-        AssessmentVariables.keyName: assessmentVariable.name,
-        AssessmentVariables.keyCategory: assessmentVariable.category,
-        AssessmentVariables.keyTypeOfAssessment: assessmentVariable.typeOfAssessment,
-        'Markers 1': 0,
-        'Markers 2': 0,
-        'Markers 3': 0,
-        'Markers 4': 0,
-        'Markers 5': 0,
-      });
+      if (assessmentVariable.category != AssessmentVariables.keyAdvanceManeuvers) {
+        mapOfAssessmentVariableResultsCount.add({
+          AssessmentVariables.keyId: assessmentVariable.id,
+          AssessmentVariables.keyName: assessmentVariable.name,
+          AssessmentVariables.keyCategory: assessmentVariable.category,
+          AssessmentVariables.keyTypeOfAssessment: assessmentVariable
+              .typeOfAssessment,
+          'Markers 1': 0,
+          'Markers 2': 0,
+          'Markers 3': 0,
+          'Markers 4': 0,
+          'Markers 5': 0,
+        });
+      }
     }
 
     for(AssessmentVariables humanfactorAssessmentVariable in humanFactorAssessmentVariables) {
@@ -336,6 +339,29 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         }
       }
     }
+
+    // switch all counts to percentages
+    for(int i = 0; i < mapOfAssessmentVariableResultsCount.length; i++) {
+      mapOfAssessmentVariableResultsCount[i]['Markers 1'] = (mapOfAssessmentVariableResultsCount[i]['Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfAssessmentVariableResultsCount[i]['Markers 2'] = (mapOfAssessmentVariableResultsCount[i]['Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfAssessmentVariableResultsCount[i]['Markers 3'] = (mapOfAssessmentVariableResultsCount[i]['Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfAssessmentVariableResultsCount[i]['Markers 4'] = (mapOfAssessmentVariableResultsCount[i]['Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfAssessmentVariableResultsCount[i]['Markers 5'] = (mapOfAssessmentVariableResultsCount[i]['Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
+    }
+    for(int i = 0; i < mapOfHumanFactorAssessmentVariableResultsCount.length; i++) {
+      mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
+
+      mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
+      mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
+    }
+
     setState(() {
       mapOfAssessmentVariableResultsCount = mapOfAssessmentVariableResultsCount;
       mapOfHumanFactorAssessmentVariableResultsCount = mapOfHumanFactorAssessmentVariableResultsCount;
@@ -620,7 +646,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: SizedBox(
-                                    width: 4800,
+                                    width: 4200,
                                     height: 600,
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
