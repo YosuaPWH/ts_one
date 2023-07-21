@@ -7,16 +7,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
+import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/data/users/user_signatures.dart';
+import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/assessment_results_viewmodel.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 
 class ResultAssessmentDeclaration extends StatefulWidget {
-  const ResultAssessmentDeclaration({Key? key, required this.assessmentResults}) : super(key: key);
+  const ResultAssessmentDeclaration({Key? key, required this.assessmentResults, required this.isCPTS}) : super(key: key);
 
   final AssessmentResults assessmentResults;
+  final bool isCPTS;
 
   @override
   State<ResultAssessmentDeclaration> createState() => _ResultAssessmentDeclarationState();
@@ -30,6 +33,8 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
   late ImagePicker _imagePicker;
   late UserSignatures _userSignatures;
   bool _isConfirmed = false;
+  bool _isCPTS = false;
+  late UserPreferences userPreferences;
 
   File? _image;
   XFile? _pickedImage;
@@ -38,6 +43,7 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
   @override
   void initState() {
     _userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    userPreferences = getItLocator<UserPreferences>();
     _assessmentResults = widget.assessmentResults;
     _tabController = TabController(length: 2, vsync: this);
     _signatureController = SignatureController(
@@ -46,6 +52,10 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
     );
     _imagePicker = ImagePicker();
     _userSignatures = UserSignatures();
+
+    // Check if CPTS
+    _isCPTS = widget.isCPTS;
+
     super.initState();
   }
 
@@ -312,23 +322,42 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
                               _assessmentResults.signatureBytes = await _image!.readAsBytes();
                             }
 
-                            // Navigator.pushNamed(context, NamedRoute.resultAssessmentOverall, arguments: widget.assessmentResults);
-                            // log("SAAA");
+
                             try {
-                              String signatureUrl = await _userViewModel.uploadSignature(
-                                  _assessmentResults.examinerStaffIDNo,
-                                  _assessmentResults.date,
-                                  _assessmentResults.signatureBytes);
-                              _assessmentResults.examinerSignatureUrl = signatureUrl;
+                              // Check if CPTS
+                              if (_isCPTS) {
+                                String signatureUrl = await _userViewModel.uploadSignature(
+                                    userPreferences.getIDNo(),
+                                    _assessmentResults.date,
+                                    _assessmentResults.signatureBytes);
+                                _assessmentResults.cptsSignatureUrl = signatureUrl;
 
-                              // Store UserSignature in remote to be used later in the app
-                              _userSignatures = UserSignatures(
-                                urlSignature: signatureUrl,
-                                staffId: _assessmentResults.examinerStaffIDNo,
-                              );
-                              _userSignatures = await _userViewModel.addSignature(_userSignatures);
+                                // Store UserSignature in remote to be used later in the app
+                                _userSignatures = UserSignatures(
+                                  urlSignature: signatureUrl,
+                                  staffId: userPreferences.getIDNo(),
+                                );
+                                _userSignatures = await _userViewModel.addSignature(_userSignatures);
 
-                              _assessmentResults.confirmedByExaminer = true;
+                                _assessmentResults.confirmedByCPTS = true;
+                                _assessmentResults.cptsStaffIDNo = userPreferences.getIDNo();
+
+                              } else {
+                                String signatureUrl = await _userViewModel.uploadSignature(
+                                    _assessmentResults.examinerStaffIDNo,
+                                    _assessmentResults.date,
+                                    _assessmentResults.signatureBytes);
+                                _assessmentResults.examinerSignatureUrl = signatureUrl;
+
+                                // Store UserSignature in remote to be used later in the app
+                                _userSignatures = UserSignatures(
+                                  urlSignature: signatureUrl,
+                                  staffId: _assessmentResults.examinerStaffIDNo,
+                                );
+                                _userSignatures = await _userViewModel.addSignature(_userSignatures);
+
+                                _assessmentResults.confirmedByExaminer = true;
+                              }
 
                               // Update the data
                               await assessmentResultsViewModel.updateAssessmentResultForExaminee(_assessmentResults);

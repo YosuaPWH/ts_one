@@ -16,6 +16,8 @@ abstract class AssessmentResultsRepo{
 
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm();
 
+  Future<List<AssessmentResults>> getAssessmentResultsNotConfirmByCPTS();
+
   Future<List<AssessmentVariableResults>> getAssessmentVariableResult(String idAssessment);
 
   Future<void> updateAssessmentResultForExaminee(AssessmentResults assessmentResults);
@@ -117,13 +119,14 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm() async {
     final userPreferences = _userPreferences;
     final userId = userPreferences!.getIDNo();
-    int dummyUserId = 11720032;
+    int dummyUserId = 1029620;
     List<AssessmentResults> assessmentResults = [];
 
     try {
       await _db!
           .collection(AssessmentResults.firebaseCollection)
-          .where(AssessmentResults.keyExaminerStaffIDNo, isEqualTo: dummyUserId)
+          .where(AssessmentResults.keyExaminerStaffIDNo, isEqualTo: userId)
+          .where(AssessmentResults.keyConfirmedByInstructor, isEqualTo: true)
           .where(AssessmentResults.keyConfirmedByExaminer, isEqualTo: false)
           .get()
           .then((value) {
@@ -135,6 +138,30 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     } catch (e) {
       log("Exception in AssessmentResultRepo on getAssessmentResultsByCurrentUserNotConfirm: $e");
     }
+    return assessmentResults;
+  }
+
+  @override
+  Future<List<AssessmentResults>> getAssessmentResultsNotConfirmByCPTS() async {
+    List<AssessmentResults> assessmentResults = [];
+
+    try {
+      await _db!
+          .collection(AssessmentResults.firebaseCollection)
+          .where(AssessmentResults.keyConfirmedByExaminer, isEqualTo: true)
+          .where(AssessmentResults.keyConfirmedByInstructor, isEqualTo: true)
+          .where(AssessmentResults.keyConfirmedByCPTS, isEqualTo: false)
+          .get()
+          .then((value) {
+        for (var element in value.docs) {
+          assessmentResults.add(AssessmentResults.fromFirebase(element.data()));
+        }
+      });
+
+    } catch (e) {
+      log("Exception in AssessmentResultRepo on getAssessmentResultsNotConfirmByCPTS: $e");
+    }
+
     return assessmentResults;
   }
 

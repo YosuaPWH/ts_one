@@ -9,9 +9,10 @@ import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 
 class ResultAssessmentOverall extends StatefulWidget {
-  const ResultAssessmentOverall({Key? key, required this.assessmentResults}) : super(key: key);
+  const ResultAssessmentOverall({Key? key, required this.assessmentResults, required this.isCPTS}) : super(key: key);
 
   final AssessmentResults assessmentResults;
+  final bool isCPTS;
 
   @override
   State<ResultAssessmentOverall> createState() => _ResultAssessmentOverallState();
@@ -19,84 +20,15 @@ class ResultAssessmentOverall extends StatefulWidget {
 
 class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with SingleTickerProviderStateMixin {
   late AssessmentResults _assessmentResults;
-  // late TabController _tabController;
-  // late SignatureController signatureController;
-  // late ImagePicker imagePicker;
-  // bool _isConfirmed = false;
-
-  // File? _image;
-  // XFile? _pickedImage;
-  // CroppedFile? _croppedImage;
+  bool isCPTS = false;
 
   @override
   void initState() {
     _assessmentResults = widget.assessmentResults;
-    // _tabController = TabController(length: 2, vsync: this);
-    // signatureController = SignatureController(
-    //   penStrokeWidth: 5,
-    //   penColor: TsOneColor.onSecondary,
-    // );
-    // imagePicker = ImagePicker();
+    isCPTS = widget.isCPTS;
 
     super.initState();
   }
-
-  // @override
-  // void dispose() {
-  //   _tabController.dispose();
-  //   super.dispose();
-  // }
-
-  // Future getImage() async {
-  //   _pickedImage = await imagePicker.pickImage(
-  //     source: ImageSource.gallery,
-  //     imageQuality: 50,
-  //   );
-  //   if (_pickedImage == null) return;
-  //   File? imgTemp;
-  //
-  //   if(_pickedImage != null) {
-  //     final croppedFile = await ImageCropper().cropImage(
-  //       sourcePath: _pickedImage!.path,
-  //       compressFormat: ImageCompressFormat.png,
-  //       compressQuality: 100,
-  //       aspectRatioPresets: [
-  //         CropAspectRatioPreset.square,
-  //       ],
-  //       uiSettings: [
-  //         AndroidUiSettings(
-  //           statusBarColor: tsOneColorScheme.onSecondary,
-  //           toolbarTitle: "Crop Image",
-  //           toolbarColor: tsOneColorScheme.secondary,
-  //           toolbarWidgetColor: tsOneColorScheme.onSurface,
-  //           initAspectRatio: CropAspectRatioPreset.square,
-  //           activeControlsWidgetColor: tsOneColorScheme.primary,
-  //           lockAspectRatio: true,
-  //         ),
-  //         IOSUiSettings(
-  //           title: "Crop Image",
-  //         ),
-  //         WebUiSettings(
-  //             context: context
-  //         ),
-  //       ],
-  //     );
-  //     if (croppedFile != null) {
-  //       setState(() {
-  //         _croppedImage = croppedFile;
-  //         imgTemp = File(_croppedImage!.path);
-  //         _image = imgTemp;
-  //       });
-  //       // print("HALOOOO image: ${_image!.path}");
-  //     }
-  //     else{
-  //       setState(() {
-  //         _pickedImage = null;
-  //         imgTemp = null;
-  //       });
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -170,129 +102,12 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
                 ),
               ),
             ),
-            // Container(
-            //   padding: const EdgeInsets.all(0),
-            //   height: 45,
-            //   width: 400,
-            //   decoration: BoxDecoration(
-            //     color: Colors.grey.shade200,
-            //     borderRadius: BorderRadius.circular(25.0),
-            //   ),
-            //   child: TabBar(
-            //     controller: _tabController,
-            //     indicator: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(25.0),
-            //       color: TsOneColor.primary,
-            //     ),
-            //     padding: EdgeInsets.zero,
-            //     labelColor: TsOneColor.secondary,
-            //     unselectedLabelColor: TsOneColor.primary,
-            //     tabs: const [
-            //       SizedBox.expand(child: Center(child: Text("Draw"))),
-            //       SizedBox.expand(child: Center(child: Text("Image"))),
-            //     ],
-            //   ),
-            // ),
-            // Expanded(
-            //   child: TabBarView(
-            //     physics: const NeverScrollableScrollPhysics(),
-            //     controller: _tabController,
-            //     children: [
-            //       Stack(children: <Widget>[
-            //         ClipRRect(
-            //           child: SizedBox(
-            //             child:
-            //             Signature(
-            //               controller: signatureController,
-            //               backgroundColor: TsOneColor.primaryFaded,
-            //             ),
-            //             /*
-            //                   Container(
-            //                     constraints: BoxConstraints.expand(),
-            //                     color: Colors.white,
-            //                     child: HandSignature(
-            //                       control: handSignatureControl,
-            //                       type: SignatureDrawType.shape,
-            //                     ),
-            //                   )
-            //                   */
-            //           ),
-            //         ),
-            //         Container(
-            //           alignment: Alignment.topRight,
-            //           child: IconButton(
-            //             icon: const Icon(
-            //               Icons.delete_outline_outlined,
-            //               size: 32,
-            //               color: TsOneColor.primary,
-            //             ),
-            //             onPressed: () {
-            //               signatureController.clear();
-            //               // handSignatureControl.clear();
-            //             },
-            //           ),
-            //         ),
-            //       ]),
-            //       if (_image == null)
-            //         InkWell(
-            //           onTap: () {
-            //             getImage();
-            //           },
-            //           child: Ink(
-            //             color: TsOneColor.primaryFaded.withOpacity(0.5),
-            //             child: const Center(
-            //               child: Column(
-            //                 mainAxisAlignment: MainAxisAlignment.center,
-            //                 children: [
-            //                   Icon(
-            //                     Icons.camera_alt,
-            //                     size: 72,
-            //                     color: TsOneColor.primaryFaded,
-            //                   ),
-            //                   Text("Signature")
-            //                 ],
-            //               ),
-            //             ),
-            //           ),
-            //         )
-            //       else
-            //         Padding(
-            //           padding: const EdgeInsets.symmetric(vertical: 5),
-            //           child: Center(
-            //             child: InkWell(
-            //               onTap: () {
-            //                 getImage();
-            //               },
-            //               child: Ink(
-            //                 color: TsOneColor.primaryFaded.withOpacity(0.5),
-            //                 child: Image(
-            //                   image: FileImage(_image!),
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //     ],
-            //   ),
-            // ),
-            // ListTileTheme(
-            //   horizontalTitleGap: 0.0,
-            //   contentPadding: const EdgeInsets.only(bottom: 0),
-            //   child: CheckboxListTile(
-            //     value: _isConfirmed,
-            //     title: const Text("I agree with all of the results above"),
-            //     dense: true,
-            //     controlAffinity: ListTileControlAffinity.leading,
-            //     onChanged: (newValue) {
-            //       setState(() {
-            //         _isConfirmed = newValue!;
-            //       });
-            //     },
-            //   ),
-            // ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, NamedRoute.resultAssessmentDeclaration, arguments: _assessmentResults);
+                Navigator.pushNamed(context, NamedRoute.resultAssessmentDeclaration, arguments: {
+                  "assessmentResults": _assessmentResults,
+                  "isCPTS": isCPTS,
+                });
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
