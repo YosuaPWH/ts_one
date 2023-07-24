@@ -672,174 +672,176 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
                                         // loop through assessment category
                                         for (var assessmentCategory in AssessmentVariables.flightCategory){
-                                          // get the count of each assessment variable
-                                          int initialPosition = index;
-                                          int count = 0; // count of assessment variable will be the final position of merge
+                                          if(assessmentCategory != AssessmentVariables.keyAdvanceManeuvers){
+                                            // get the count of each assessment variable
+                                            int initialPosition = index;
+                                            int count = 0; // count of assessment variable will be the final position of merge
 
-                                          // loop through the mapOfAssessmentVariableResultsCount to get the count of each assessment variable
-                                          for(var map in mapOfAssessmentVariableResultsCount) {
-                                            // get the category of the assessment variable
-                                            var category = map[AssessmentVariables.keyCategory];
-                                            if (category == assessmentCategory) {
-                                              // get the assessment name
-                                              var assessmentName = map[AssessmentVariables.keyName];
-                                              // put the assessment name in the cell
-                                              var assessmentNameCell = allAssessmentSheet.cell(CellIndex.indexByString("B$index"));
-                                              assessmentNameCell.value = assessmentName;
-                                              assessmentNameCell.cellStyle = dataCellStyle;
+                                            // loop through the mapOfAssessmentVariableResultsCount to get the count of each assessment variable
+                                            for(var map in mapOfAssessmentVariableResultsCount) {
+                                              // get the category of the assessment variable
+                                              var category = map[AssessmentVariables.keyCategory];
+                                              if (category == assessmentCategory) {
+                                                // get the assessment name
+                                                var assessmentName = map[AssessmentVariables.keyName];
+                                                // put the assessment name in the cell
+                                                var assessmentNameCell = allAssessmentSheet.cell(CellIndex.indexByString("B$index"));
+                                                assessmentNameCell.value = assessmentName;
+                                                assessmentNameCell.cellStyle = dataCellStyle;
 
-                                              // get the assessment type
-                                              var assessmentType = map[AssessmentVariables.keyTypeOfAssessment];
-                                              if(assessmentType == AssessmentVariables.keySatisfactory) {
-                                                // get Markers 1
-                                                var marker1Cell = allAssessmentSheet.cell(CellIndex.indexByString("F$index"));
-                                                marker1Cell.value = map['Original Markers 1'];
-                                                marker1Cell.cellStyle = dataCellStyle;
+                                                // get the assessment type
+                                                var assessmentType = map[AssessmentVariables.keyTypeOfAssessment];
+                                                if(assessmentType == AssessmentVariables.keySatisfactory) {
+                                                  // get Markers 1
+                                                  var marker1Cell = allAssessmentSheet.cell(CellIndex.indexByString("F$index"));
+                                                  marker1Cell.value = map['Original Markers 1'];
+                                                  marker1Cell.cellStyle = dataCellStyle;
 
-                                                // get Original Markers 2
-                                                var marker2Cell = allAssessmentSheet.cell(CellIndex.indexByString("G$index"));
-                                                marker2Cell.value = map['Original Markers 2'];
-                                                marker2Cell.cellStyle = dataCellStyle;
+                                                  // get Original Markers 2
+                                                  var marker2Cell = allAssessmentSheet.cell(CellIndex.indexByString("G$index"));
+                                                  marker2Cell.value = map['Original Markers 2'];
+                                                  marker2Cell.cellStyle = dataCellStyle;
 
-                                                // get Original Markers 3
-                                                var marker3Cell = allAssessmentSheet.cell(CellIndex.indexByString("H$index"));
-                                                marker3Cell.value = map['Original Markers 3'];
-                                                marker3Cell.cellStyle = dataCellStyle;
+                                                  // get Original Markers 3
+                                                  var marker3Cell = allAssessmentSheet.cell(CellIndex.indexByString("H$index"));
+                                                  marker3Cell.value = map['Original Markers 3'];
+                                                  marker3Cell.cellStyle = dataCellStyle;
 
-                                                // get Original Markers 4
-                                                var marker4Cell = allAssessmentSheet.cell(CellIndex.indexByString("I$index"));
-                                                marker4Cell.value = map['Original Markers 4'];
-                                                marker4Cell.cellStyle = dataCellStyle;
+                                                  // get Original Markers 4
+                                                  var marker4Cell = allAssessmentSheet.cell(CellIndex.indexByString("I$index"));
+                                                  marker4Cell.value = map['Original Markers 4'];
+                                                  marker4Cell.cellStyle = dataCellStyle;
 
-                                                // get Original Markers 5
-                                                var marker5Cell = allAssessmentSheet.cell(CellIndex.indexByString("J$index"));
-                                                marker5Cell.value = map['Original Markers 5'];
-                                                marker5Cell.cellStyle = dataCellStyle;
+                                                  // get Original Markers 5
+                                                  var marker5Cell = allAssessmentSheet.cell(CellIndex.indexByString("J$index"));
+                                                  marker5Cell.value = map['Original Markers 5'];
+                                                  marker5Cell.cellStyle = dataCellStyle;
 
-                                                // fill rest of the columns with black cells
-                                                var pf1Cell = allAssessmentSheet.cell(CellIndex.indexByString("K$index"));
-                                                pf1Cell.value = "";
-                                                pf1Cell.cellStyle = notUsedDataCellStyle;
-                                                var pf2Cell = allAssessmentSheet.cell(CellIndex.indexByString("L$index"));
-                                                pf2Cell.value = "";
-                                                pf2Cell.cellStyle = notUsedDataCellStyle;
-                                                var pf3Cell = allAssessmentSheet.cell(CellIndex.indexByString("M$index"));
-                                                pf3Cell.value = "";
-                                                pf3Cell.cellStyle = notUsedDataCellStyle;
-                                                var pf4Cell = allAssessmentSheet.cell(CellIndex.indexByString("N$index"));
-                                                pf4Cell.value = "";
-                                                pf4Cell.cellStyle = notUsedDataCellStyle;
-                                                var pf5Cell = allAssessmentSheet.cell(CellIndex.indexByString("O$index"));
-                                                pf5Cell.value = "";
-                                                pf5Cell.cellStyle = notUsedDataCellStyle;
-                                                var pm1Cell = allAssessmentSheet.cell(CellIndex.indexByString("P$index"));
-                                                pm1Cell.value = "";
-                                                pm1Cell.cellStyle = notUsedDataCellStyle;
-                                                var pm2Cell = allAssessmentSheet.cell(CellIndex.indexByString("Q$index"));
-                                                pm2Cell.value = "";
-                                                pm2Cell.cellStyle = notUsedDataCellStyle;
-                                                var pm3Cell = allAssessmentSheet.cell(CellIndex.indexByString("R$index"));
-                                                pm3Cell.value = "";
-                                                pm3Cell.cellStyle = notUsedDataCellStyle;
-                                                var pm4Cell = allAssessmentSheet.cell(CellIndex.indexByString("S$index"));
-                                                pm4Cell.value = "";
-                                                pm4Cell.cellStyle = notUsedDataCellStyle;
-                                                var pm5Cell = allAssessmentSheet.cell(CellIndex.indexByString("T$index"));
-                                                pm5Cell.value = "";
-                                                pm5Cell.cellStyle = notUsedDataCellStyle;
+                                                  // fill rest of the columns with black cells
+                                                  var pf1Cell = allAssessmentSheet.cell(CellIndex.indexByString("K$index"));
+                                                  pf1Cell.value = "";
+                                                  pf1Cell.cellStyle = notUsedDataCellStyle;
+                                                  var pf2Cell = allAssessmentSheet.cell(CellIndex.indexByString("L$index"));
+                                                  pf2Cell.value = "";
+                                                  pf2Cell.cellStyle = notUsedDataCellStyle;
+                                                  var pf3Cell = allAssessmentSheet.cell(CellIndex.indexByString("M$index"));
+                                                  pf3Cell.value = "";
+                                                  pf3Cell.cellStyle = notUsedDataCellStyle;
+                                                  var pf4Cell = allAssessmentSheet.cell(CellIndex.indexByString("N$index"));
+                                                  pf4Cell.value = "";
+                                                  pf4Cell.cellStyle = notUsedDataCellStyle;
+                                                  var pf5Cell = allAssessmentSheet.cell(CellIndex.indexByString("O$index"));
+                                                  pf5Cell.value = "";
+                                                  pf5Cell.cellStyle = notUsedDataCellStyle;
+                                                  var pm1Cell = allAssessmentSheet.cell(CellIndex.indexByString("P$index"));
+                                                  pm1Cell.value = "";
+                                                  pm1Cell.cellStyle = notUsedDataCellStyle;
+                                                  var pm2Cell = allAssessmentSheet.cell(CellIndex.indexByString("Q$index"));
+                                                  pm2Cell.value = "";
+                                                  pm2Cell.cellStyle = notUsedDataCellStyle;
+                                                  var pm3Cell = allAssessmentSheet.cell(CellIndex.indexByString("R$index"));
+                                                  pm3Cell.value = "";
+                                                  pm3Cell.cellStyle = notUsedDataCellStyle;
+                                                  var pm4Cell = allAssessmentSheet.cell(CellIndex.indexByString("S$index"));
+                                                  pm4Cell.value = "";
+                                                  pm4Cell.cellStyle = notUsedDataCellStyle;
+                                                  var pm5Cell = allAssessmentSheet.cell(CellIndex.indexByString("T$index"));
+                                                  pm5Cell.value = "";
+                                                  pm5Cell.cellStyle = notUsedDataCellStyle;
+                                                }
+                                                else {
+                                                  // get PF Markers 1
+                                                  var pf1Cell = allAssessmentSheet.cell(CellIndex.indexByString("K$index"));
+                                                  pf1Cell.value = map['Original PF Markers 1'];
+                                                  pf1Cell.cellStyle = dataCellStyle;
+
+                                                  // get Original PF Markers 2
+                                                  var pf2Cell = allAssessmentSheet.cell(CellIndex.indexByString("L$index"));
+                                                  pf2Cell.value = map['Original PF Markers 2'];
+                                                  pf2Cell.cellStyle = dataCellStyle;
+
+                                                  // get Original PF Markers 3
+                                                  var pf3Cell = allAssessmentSheet.cell(CellIndex.indexByString("M$index"));
+                                                  pf3Cell.value = map['Original PF Markers 3'];
+                                                  pf3Cell.cellStyle = dataCellStyle;
+
+                                                  // get Original PF Markers 4
+                                                  var pf4Cell = allAssessmentSheet.cell(CellIndex.indexByString("N$index"));
+                                                  pf4Cell.value = map['Original PF Markers 4'];
+                                                  pf4Cell.cellStyle = dataCellStyle;
+
+                                                  // get Original PF Markers 5
+                                                  var pf5Cell = allAssessmentSheet.cell(CellIndex.indexByString("O$index"));
+                                                  pf5Cell.value = map['Original PF Markers 5'];
+                                                  pf5Cell.cellStyle = dataCellStyle;
+
+                                                  // get Original PM Markers 1
+                                                  var pm1Cell = allAssessmentSheet.cell(CellIndex.indexByString("P$index"));
+                                                  pm1Cell.value = map['Original PM Markers 1'];
+                                                  pm1Cell.cellStyle = dataCellStyle;
+
+                                                  // get Original PM Markers 2
+                                                  var pm2Cell = allAssessmentSheet.cell(CellIndex.indexByString("Q$index"));
+                                                  pm2Cell.value = map['Original PM Markers 2'];
+                                                  pm2Cell.cellStyle = dataCellStyle;
+
+                                                  // get Original PM Markers 3
+                                                  var pm3Cell = allAssessmentSheet.cell(CellIndex.indexByString("R$index"));
+                                                  pm3Cell.value = map['Original PM Markers 3'];
+                                                  pm3Cell.cellStyle = dataCellStyle;
+
+                                                  // get Original PM Markers 4
+                                                  var pm4Cell = allAssessmentSheet.cell(CellIndex.indexByString("S$index"));
+                                                  pm4Cell.value = map['Original PM Markers 4'];
+                                                  pm4Cell.cellStyle = dataCellStyle;
+
+                                                  // get Original PM Markers 5
+                                                  var pm5Cell = allAssessmentSheet.cell(CellIndex.indexByString("T$index"));
+                                                  pm5Cell.value = map['Original PM Markers 5'];
+                                                  pm5Cell.cellStyle = dataCellStyle;
+
+                                                  // fill the rest of the columns with black cells
+                                                  var unsatisfactoryCell = allAssessmentSheet.cell(CellIndex.indexByString("C$index"));
+                                                  unsatisfactoryCell.value = "";
+                                                  unsatisfactoryCell.cellStyle = notUsedDataCellStyle;
+                                                  var satisfactoryCell = allAssessmentSheet.cell(CellIndex.indexByString("D$index"));
+                                                  satisfactoryCell.value = "";
+                                                  satisfactoryCell.cellStyle = notUsedDataCellStyle;
+                                                  var notApplicableCell = allAssessmentSheet.cell(CellIndex.indexByString("E$index"));
+                                                  notApplicableCell.value = "";
+                                                  notApplicableCell.cellStyle = notUsedDataCellStyle;
+                                                  var marker1Cell = allAssessmentSheet.cell(CellIndex.indexByString("F$index"));
+                                                  marker1Cell.value = "";
+                                                  marker1Cell.cellStyle = notUsedDataCellStyle;
+                                                  var marker2Cell = allAssessmentSheet.cell(CellIndex.indexByString("G$index"));
+                                                  marker2Cell.value = "";
+                                                  marker2Cell.cellStyle = notUsedDataCellStyle;
+                                                  var marker3Cell = allAssessmentSheet.cell(CellIndex.indexByString("H$index"));
+                                                  marker3Cell.value = "";
+                                                  marker3Cell.cellStyle = notUsedDataCellStyle;
+                                                  var marker4Cell = allAssessmentSheet.cell(CellIndex.indexByString("I$index"));
+                                                  marker4Cell.value = "";
+                                                  marker4Cell.cellStyle = notUsedDataCellStyle;
+                                                  var marker5Cell = allAssessmentSheet.cell(CellIndex.indexByString("J$index"));
+                                                  marker5Cell.value = "";
+                                                  marker5Cell.cellStyle = notUsedDataCellStyle;
+                                                }
+                                                count++;
+                                                index++;
                                               }
-                                              else {
-                                                // get PF Markers 1
-                                                var pf1Cell = allAssessmentSheet.cell(CellIndex.indexByString("K$index"));
-                                                pf1Cell.value = map['Original PF Markers 1'];
-                                                pf1Cell.cellStyle = dataCellStyle;
-
-                                                // get Original PF Markers 2
-                                                var pf2Cell = allAssessmentSheet.cell(CellIndex.indexByString("L$index"));
-                                                pf2Cell.value = map['Original PF Markers 2'];
-                                                pf2Cell.cellStyle = dataCellStyle;
-
-                                                // get Original PF Markers 3
-                                                var pf3Cell = allAssessmentSheet.cell(CellIndex.indexByString("M$index"));
-                                                pf3Cell.value = map['Original PF Markers 3'];
-                                                pf3Cell.cellStyle = dataCellStyle;
-
-                                                // get Original PF Markers 4
-                                                var pf4Cell = allAssessmentSheet.cell(CellIndex.indexByString("N$index"));
-                                                pf4Cell.value = map['Original PF Markers 4'];
-                                                pf4Cell.cellStyle = dataCellStyle;
-
-                                                // get Original PF Markers 5
-                                                var pf5Cell = allAssessmentSheet.cell(CellIndex.indexByString("O$index"));
-                                                pf5Cell.value = map['Original PF Markers 5'];
-                                                pf5Cell.cellStyle = dataCellStyle;
-
-                                                // get Original PM Markers 1
-                                                var pm1Cell = allAssessmentSheet.cell(CellIndex.indexByString("P$index"));
-                                                pm1Cell.value = map['Original PM Markers 1'];
-                                                pm1Cell.cellStyle = dataCellStyle;
-
-                                                // get Original PM Markers 2
-                                                var pm2Cell = allAssessmentSheet.cell(CellIndex.indexByString("Q$index"));
-                                                pm2Cell.value = map['Original PM Markers 2'];
-                                                pm2Cell.cellStyle = dataCellStyle;
-
-                                                // get Original PM Markers 3
-                                                var pm3Cell = allAssessmentSheet.cell(CellIndex.indexByString("R$index"));
-                                                pm3Cell.value = map['Original PM Markers 3'];
-                                                pm3Cell.cellStyle = dataCellStyle;
-
-                                                // get Original PM Markers 4
-                                                var pm4Cell = allAssessmentSheet.cell(CellIndex.indexByString("S$index"));
-                                                pm4Cell.value = map['Original PM Markers 4'];
-                                                pm4Cell.cellStyle = dataCellStyle;
-
-                                                // get Original PM Markers 5
-                                                var pm5Cell = allAssessmentSheet.cell(CellIndex.indexByString("T$index"));
-                                                pm5Cell.value = map['Original PM Markers 5'];
-                                                pm5Cell.cellStyle = dataCellStyle;
-
-                                                // fill the rest of the columns with black cells
-                                                var unsatisfactoryCell = allAssessmentSheet.cell(CellIndex.indexByString("C$index"));
-                                                unsatisfactoryCell.value = "";
-                                                unsatisfactoryCell.cellStyle = notUsedDataCellStyle;
-                                                var satisfactoryCell = allAssessmentSheet.cell(CellIndex.indexByString("D$index"));
-                                                satisfactoryCell.value = "";
-                                                satisfactoryCell.cellStyle = notUsedDataCellStyle;
-                                                var notApplicableCell = allAssessmentSheet.cell(CellIndex.indexByString("E$index"));
-                                                notApplicableCell.value = "";
-                                                notApplicableCell.cellStyle = notUsedDataCellStyle;
-                                                var marker1Cell = allAssessmentSheet.cell(CellIndex.indexByString("F$index"));
-                                                marker1Cell.value = "";
-                                                marker1Cell.cellStyle = notUsedDataCellStyle;
-                                                var marker2Cell = allAssessmentSheet.cell(CellIndex.indexByString("G$index"));
-                                                marker2Cell.value = "";
-                                                marker2Cell.cellStyle = notUsedDataCellStyle;
-                                                var marker3Cell = allAssessmentSheet.cell(CellIndex.indexByString("H$index"));
-                                                marker3Cell.value = "";
-                                                marker3Cell.cellStyle = notUsedDataCellStyle;
-                                                var marker4Cell = allAssessmentSheet.cell(CellIndex.indexByString("I$index"));
-                                                marker4Cell.value = "";
-                                                marker4Cell.cellStyle = notUsedDataCellStyle;
-                                                var marker5Cell = allAssessmentSheet.cell(CellIndex.indexByString("J$index"));
-                                                marker5Cell.value = "";
-                                                marker5Cell.cellStyle = notUsedDataCellStyle;
-                                              }
-                                              count++;
-                                              index++;
                                             }
-                                          }
 
-                                          // merge the cells for the assessment category
-                                          allAssessmentSheet.merge(CellIndex.indexByString("A$initialPosition"), CellIndex.indexByString("A${initialPosition + count - 1}"));
-                                          // put the assessment category in the cell
-                                          var assessmentCategoryCell = allAssessmentSheet.cell(CellIndex.indexByString("A$initialPosition"));
-                                          assessmentCategoryCell.value = assessmentCategory;
-                                          assessmentCategoryCell.cellStyle = CellStyle(
-                                            horizontalAlign: HorizontalAlign.Center,
-                                            verticalAlign: VerticalAlign.Center,
-                                            textWrapping: TextWrapping.WrapText,
-                                          );
+                                            // merge the cells for the assessment category
+                                            allAssessmentSheet.merge(CellIndex.indexByString("A$initialPosition"), CellIndex.indexByString("A${initialPosition + count - 1}"));
+                                            // put the assessment category in the cell
+                                            var assessmentCategoryCell = allAssessmentSheet.cell(CellIndex.indexByString("A$initialPosition"));
+                                            assessmentCategoryCell.value = assessmentCategory;
+                                            assessmentCategoryCell.cellStyle = CellStyle(
+                                              horizontalAlign: HorizontalAlign.Center,
+                                              verticalAlign: VerticalAlign.Center,
+                                              textWrapping: TextWrapping.WrapText,
+                                            );
+                                          }
                                         }
 
                                         index = index + 1;
