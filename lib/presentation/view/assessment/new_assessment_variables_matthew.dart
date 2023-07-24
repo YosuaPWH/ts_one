@@ -147,8 +147,8 @@ class _NewAssessmentVariablesMatthewState extends State<NewAssessmentVariablesMa
                     padding: const EdgeInsets.all(16),
                     child: ElevatedButton(
                       onPressed: () {
-                        log(_newAssessment.assessmentVariablesFlights1.toString());
-                        log(_newAssessment.assessmentVariablesFlights1.length.toString());
+                        // log(_newAssessment.assessmentVariablesFlights1.toString());
+                        // log(_newAssessment.assessmentVariablesFlights1.length.toString());
                         if(_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
                           Navigator.pushNamed(
