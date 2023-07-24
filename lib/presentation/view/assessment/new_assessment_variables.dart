@@ -99,14 +99,14 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
       for(int i = 0; i < lengthOfManualAssessmentVariables; i++) {
         _newAssessment.assessmentVariablesFlights1.add(AssessmentVariableResults(
           assessmentVariableId: "manual-${assessmentCategory.toLowerCase()}-${i + 1}",
-          assessmentVariableName: "Manual ${assessmentCategory.toLowerCase()} ${i + 1}",
+          // assessmentVariableName: "Manual ${assessmentCategory.toLowerCase()} ${i + 1}",
           assessmentVariableCategory: assessmentCategory,
           assessmentType: AssessmentVariables.keyPFPM,
         ));
 
         _newAssessment.assessmentVariablesFlights2.add(AssessmentVariableResults(
           assessmentVariableId: "manual-${assessmentCategory.toLowerCase()}-${i + 1}",
-          assessmentVariableName: "Manual ${assessmentCategory.toLowerCase()} ${i + 1}",
+          // assessmentVariableName: "Manual ${assessmentCategory.toLowerCase()} ${i + 1}",
           assessmentVariableCategory: assessmentCategory,
           assessmentType: AssessmentVariables.keyPFPM,
         ));
