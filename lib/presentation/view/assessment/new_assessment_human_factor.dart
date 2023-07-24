@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
@@ -7,7 +8,6 @@ import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/presentation/routes.dart';
-import 'package:ts_one/presentation/shared_components/dropdown_button_form_component.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
 
@@ -24,22 +24,25 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
   late AssessmentViewModel viewModel;
   late AssessmentPeriod dataAssessmentPeriod;
   late NewAssessment _newAssessment;
+  late List<AssessmentVariables> assessmentVariables;
   late List<String> assessmentCategories;
-  late List<AssessmentVariables> allAssessmentVariables;
-  late Map<AssessmentVariables, bool> allAssessmentVariablesFirstCrew;
-  late Map<AssessmentVariables, bool> allAssessmentVariablesSecondCrew;
-  Map<AssessmentVariables, Map<String, String>> dataAssessmentHumanFactorFirstCrew = {};
-  Map<AssessmentVariables, Map<String, String>> dataAssessmentHumanFactorSecondCrew = {};
+  late List<String> manualAssessmentCategories;
+  late List<Map<String, dynamic>> inputs1;
+  late List<Map<String, dynamic>> inputs2;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     viewModel = Provider.of<AssessmentViewModel>(context, listen: false);
-    dataAssessmentPeriod = AssessmentPeriod();
     _newAssessment = widget.dataCandidate;
+    _newAssessment.assessmentVariablesFlightsHumanFactor1 = [];
+    _newAssessment.assessmentVariablesFlightsHumanFactor2 = [];
+    dataAssessmentPeriod = AssessmentPeriod();
+    assessmentVariables = [];
     assessmentCategories = [];
-    allAssessmentVariables = [];
-    allAssessmentVariablesFirstCrew = {};
-    allAssessmentVariablesSecondCrew = {};
+    manualAssessmentCategories = AssessmentVariables.aircraftSystemCategory;
+    inputs1 = [];
+    inputs2 = [];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getAllAssessment();
@@ -49,86 +52,118 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
   }
 
   void getAllAssessment() async {
+    assessmentVariables.clear();
+    assessmentCategories.clear();
+    _newAssessment.assessmentVariablesFlightsHumanFactor1.clear();
+    _newAssessment.assessmentVariablesFlightsHumanFactor2.clear();
+
     dataAssessmentPeriod = await viewModel.getAllHumanFactorAssessmentVariablesFromLastPeriod();
-    // log("data ${dataAssessmentPeriod.toString()}");
 
     for (var assessmentVariable in dataAssessmentPeriod.assessmentVariables) {
       if (!assessmentCategories.contains(assessmentVariable.category)) {
         assessmentCategories.add(assessmentVariable.category);
       }
-
-      allAssessmentVariables.add(assessmentVariable);
-      allAssessmentVariablesFirstCrew.addAll({assessmentVariable: false});
-      allAssessmentVariablesSecondCrew.addAll({assessmentVariable: false});
+      assessmentVariables.add(assessmentVariable);
 
       _newAssessment.assessmentVariablesFlightsHumanFactor1.add(AssessmentVariableResults(
         assessmentVariableId: assessmentVariable.id,
         assessmentVariableName: assessmentVariable.name,
+        assessmentVariableCategory: assessmentVariable.category,
+        assessmentType: assessmentVariable.typeOfAssessment,
       ));
       _newAssessment.assessmentVariablesFlightsHumanFactor2.add(AssessmentVariableResults(
         assessmentVariableId: assessmentVariable.id,
         assessmentVariableName: assessmentVariable.name,
+        assessmentVariableCategory: assessmentVariable.category,
+        assessmentType: assessmentVariable.typeOfAssessment,
       ));
     }
+  }
+
+  void calculateOverallPerformance() {
+    _newAssessment.setOverallPerformance1();
+    _newAssessment.setOverallPerformance2();
+    print("Overall Performance 1: ${_newAssessment.overallPerformance1}");
+    print("Overall Performance 2: ${_newAssessment.overallPerformance2}");
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AssessmentViewModel>(
-      builder: (_, model, child) {
+      builder: (_, model, child){
         return Scaffold(
           appBar: AppBar(
             title: const Text("Human Factor"),
           ),
-          body: Column(
-            children: [
-              Expanded(
-                child: model.isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: _expansionTilesForNewAssessmentHumanFactorVariables(),
-                          ),
-                        ),
-                      ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: ElevatedButton(
-                  onPressed: () {
-                    log(_newAssessment.assessmentVariablesFlights1.toString());
-                    log(_newAssessment.assessmentVariablesFlightsHumanFactor1.toString());
-                    log(_newAssessment.setOverallPerformance1().toString());
-
-                    Navigator.pushNamed(
-                      context,
-                      NamedRoute.newAssessmentOverallPerformance,
-                      arguments: _newAssessment,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                    backgroundColor: TsOneColor.primary,
-                  ),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: 48,
-                    child: const Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Next",
-                        style: TextStyle(color: TsOneColor.secondary),
+          body: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Expanded(
+                  child: model.isLoading
+                      ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                      : SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: _expansionTilesForNewAssessmentHumanFactorVariables(),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if(_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        calculateOverallPerformance();
+                        Navigator.pushNamed(
+                          context,
+                          NamedRoute.newAssessmentOverallPerformance,
+                          arguments: _newAssessment,
+                        );
+                      }
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text("Please fill all the fields"),
+                            duration: const Duration(milliseconds: 3000),
+                            action: SnackBarAction(
+                              label: 'Close',
+                              onPressed: () {
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                              },
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 40),
+                      backgroundColor: TsOneColor.primary,
+                      foregroundColor: TsOneColor.primaryContainer,
+                      surfaceTintColor: TsOneColor.primaryContainer,
+                    ),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: 48,
+                      child: const Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Next",
+                          style: TextStyle(color: TsOneColor.secondary),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -136,215 +171,512 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
   }
 
   List<Widget> _expansionTilesForNewAssessmentHumanFactorVariables() {
-    List<Widget> expansionTilesHumanFactorVariables = [];
+    inputs1.clear();
+    inputs2.clear();
+    List<Widget> expansionTiles = [];
+    int indexOfVariable = 0;
+    int startingIndexForInputsList = 0;
 
     for (var assessmentCategory in assessmentCategories) {
-      expansionTilesHumanFactorVariables.add(
-        ExpansionTile(
-          title: Text(assessmentCategory),
-          backgroundColor: TsOneColor.primary,
-          collapsedBackgroundColor: TsOneColor.surface,
-          textColor: TsOneColor.onPrimary,
-          collapsedTextColor: TsOneColor.onSecondary,
-          iconColor: TsOneColor.onPrimary,
-          collapsedIconColor: TsOneColor.onSecondary,
-          collapsedShape: RoundedRectangleBorder(
-            side: BorderSide(color: TsOneColor.primary.withOpacity(0.15)),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: TsOneColor.primary.withOpacity(0.5)),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(5.0),
-                ),
-                color: TsOneColor.secondary,
+      startingIndexForInputsList = indexOfVariable;
+      for (var assessmentVariable in assessmentVariables) {
+        if (assessmentVariable.category == assessmentCategory) {
+          buildInputFlightCrew1(assessmentVariable, indexOfVariable);
+          buildInputFlightCrew2(assessmentVariable, indexOfVariable);
+          indexOfVariable++;
+        }
+      }
+
+      expansionTiles.add(
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+            child: ExpansionTile(
+              title: Text(assessmentCategory),
+              backgroundColor: TsOneColor.primary,
+              collapsedBackgroundColor: TsOneColor.surface,
+              textColor: TsOneColor.onPrimary,
+              collapsedTextColor: TsOneColor.onSecondary,
+              iconColor: TsOneColor.onPrimary,
+              collapsedIconColor: TsOneColor.onSecondary,
+              collapsedShape: RoundedRectangleBorder(
+                side: BorderSide(color: TsOneColor.primary.withOpacity(0.15)),
+                borderRadius: BorderRadius.circular(5.0),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 16.0,
-                ),
-                child: Column(
-                  children: [
-                    for (var index = 0; index < allAssessmentVariables.length; index++)
-                      if (allAssessmentVariables[index].category == assessmentCategory)
-                        Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                allAssessmentVariables[index].name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            for (int flightCrewNo = 1; flightCrewNo <= 2; flightCrewNo++)
-                              Column(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Crew $flightCrewNo"),
-                                  ),
-                                  fieldForEveryCrew(
-                                    allAssessmentVariables[index],
-                                    index,
-                                    flightCrewNo,
-                                    flightCrewNo == 1 ? dataAssessmentHumanFactorFirstCrew : dataAssessmentHumanFactorSecondCrew,
-                                    flightCrewNo == 1 ? allAssessmentVariablesFirstCrew : allAssessmentVariablesSecondCrew,
-                                  ),
-                                ],
-                              ),
-                            const Divider(
-                              color: TsOneColor.secondaryContainer,
-                            ),
-                          ],
-                        )
-                  ],
-                ),
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: TsOneColor.primary.withOpacity(0.5)),
+                borderRadius: BorderRadius.circular(5.0),
               ),
-            )
-          ],
-        ),
+              // keep the expansion tile open when user tap on it
+              maintainState: true,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(5.0),
+                      ),
+                      color: TsOneColor.secondary
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 16.0
+                    ),
+                    child: Column(
+                      children: [
+                        for (var i = startingIndexForInputsList; i < inputs1.length; i++)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                inputs1[i]["assessmentName"],
+                                style: tsOneTextTheme.headlineMedium,
+                              ),
+                              const Text("Crew 1"),
+                              ValueListenableBuilder<bool>(
+                                valueListenable: _newAssessment.assessmentVariablesFlightsHumanFactor1[i].isNotApplicableNotifier,
+                                builder: (context, value, child) {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        flex: 3,
+                                        child: ListTileTheme(
+                                          horizontalTitleGap: 0.0,
+                                          contentPadding: EdgeInsets.zero,
+                                          child: inputs1[i]["checkbox"],
+                                        ),
+                                      ),
+                                      !value
+                                          ? Flexible(
+                                          flex: 7,
+                                          child: Row(
+                                            children: [
+                                              Flexible(
+                                                  flex: 5,
+                                                  child: inputs1[i]["dropdown1"]
+                                              ),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              Flexible(
+                                                  flex: 3, child: inputs1[i]["dropdown2"]
+                                              ),
+                                            ],
+                                          )
+                                      )
+                                          : const SizedBox.shrink()
+                                    ],
+                                  );
+                                },
+                              ),
+                              const Text("Crew 2"),
+                              ValueListenableBuilder(
+                                valueListenable: _newAssessment.assessmentVariablesFlightsHumanFactor2[i].isNotApplicableNotifier,
+                                builder: (context, value, child) {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        flex: 3,
+                                        child: ListTileTheme(
+                                          horizontalTitleGap: 0.0,
+                                          contentPadding: EdgeInsets.zero,
+                                          child: inputs2[i]["checkbox"],
+                                        ),
+                                      ),
+                                      !value
+                                          ? Flexible(
+                                          flex: 7,
+                                          child: Row(
+                                            children: [
+                                              Flexible(
+                                                  flex: 5,
+                                                  child: inputs2[i]["dropdown1"]
+                                              ),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              Flexible(
+                                                  flex: 3, child: inputs2[i]["dropdown2"]
+                                              ),
+                                            ],
+                                          )
+                                      )
+                                          : const SizedBox.shrink()
+                                    ],
+                                  );
+                                },
+                              ),
+                              const Divider(
+                                color: TsOneColor.onSecondary,
+                                thickness: 1.0,
+                              )
+                            ],
+                          )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )
       );
-      expansionTilesHumanFactorVariables.add(const SizedBox(
-        height: 15,
-      ));
     }
 
-    return expansionTilesHumanFactorVariables;
+    return expansionTiles;
   }
 
-  Widget fieldForEveryCrew(
-      AssessmentVariables data,
-      int currentIndexInListOfAssessmentVariables,
-      int flightCrewNo,
-      Map<AssessmentVariables, Map<String, String>> dataCrew,
-      Map<AssessmentVariables, bool> allVariableCrew) {
+  void buildInputFlightCrew1(AssessmentVariables assessmentVariable, int indexOfVariable) {
+    final checkbox = StatefulBuilder(
+        builder: (context, setState) {
+          return CheckboxListTile(
+            title: const Text("N/A"),
+            controlAffinity: ListTileControlAffinity.leading,
+            value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].isNotApplicable,
+            dense: true,
+            onChanged: (value) {
+              setState(() {
+                // _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].isNotApplicable = value!;
+                // _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].reset();
+                _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].toggleIsNotApplicable();
+              });
+            },
+          );
+        }
+    );
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Flexible(
-          flex: 3,
-          child: ListTileTheme(
-            horizontalTitleGap: 0.0,
-            contentPadding: EdgeInsets.zero,
-            child: CheckboxListTile(
-              title: const Text("N/A"),
-              controlAffinity: ListTileControlAffinity.leading,
-              value: allVariableCrew[data],
-              contentPadding: const EdgeInsets.only(bottom: 10),
-              dense: true,
-              onChanged: (newValue) {
-                setState(() {
-                  allVariableCrew[data] = newValue!;
+    Widget? dropdown1;
+    Widget? dropdown2;
 
-                  if (newValue) {
-                    if (!dataCrew.containsKey(data)) {
-                      dataCrew.addAll({
-                        data: {"PF": "N/A", "PM": "N/A", "Empty": "true"}
-                      });
-                    } else {
-                      dataCrew[data]?["Empty"] = "true";
-                    }
-                  } else {
-                    dataCrew[data]?["Empty"] = "false";
-                  }
-
-                  switch(flightCrewNo) {
-                    case 1:
-                      _newAssessment.assessmentVariablesFlightsHumanFactor1[currentIndexInListOfAssessmentVariables].isNotApplicable = newValue;
-                      _newAssessment.assessmentVariablesFlightsHumanFactor1[currentIndexInListOfAssessmentVariables].reset();
-                      break;
-                    case 2:
-                      _newAssessment.assessmentVariablesFlightsHumanFactor2[currentIndexInListOfAssessmentVariables].isNotApplicable = newValue;
-                      _newAssessment.assessmentVariablesFlightsHumanFactor2[currentIndexInListOfAssessmentVariables].reset();
-                      break;
-                  }
-                });
-              },
-            ),
+    if(assessmentVariable.typeOfAssessment == AssessmentVariables.keySatisfactory) {
+      // assessment dropdown
+      dropdown1 = DropdownButtonFormField(
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory,
+        padding: const EdgeInsets.all(0),
+        isExpanded: true,
+        isDense: true,
+        validator: (value) {
+          if (value == null) {
+            return "Please select an option";
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onChanged: (value) {
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentSatisfactory = value as String;
+          });
+        },
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          label: Text(
+            "Assessment",
+            style: TextStyle(fontSize: 12),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        Flexible(
-          flex: 7,
-          child: Row(
-            children: [
-              Flexible(
-                flex: 3,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 5, bottom: 15),
-                  child: DropdownButtonFormComponent(
-                    value: dataCrew[data]?["PF"] == "N/A" ? null : dataCrew[data]?["PF"],
-                    label: "PF",
-                    isDisabled: allVariableCrew[data]!,
-                    onValueChanged: (newValue) {
-                      setState(() {
-                        if (!dataCrew.containsKey(data)) {
-                          dataCrew.addAll({
-                            data: {"PF": newValue, "PM": "N/A", "Empty": "false"}
-                          });
-                        } else {
-                          dataCrew[data]?["PF"] = newValue;
-                        }
+        items: AssessmentVariables.satisfactoryList.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 10),
+            ),
+          );
+        }).toList(),
+      );
+      // markers dropdown
+      dropdown2 = DropdownButtonFormField(
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentMarkers,
+        validator: (value) {
+          if (value == null) {
+            return "Please select an option";
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onChanged: (value) {
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].assessmentMarkers = value!;
+          });
+        },
+        decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintMaxLines: 1,
+            label: Text(
+              "Markers",
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            )
+        ),
+        items: AssessmentVariables.markerList.map((int value) {
+          return DropdownMenuItem<int>(
+            value: value,
+            child: Text(
+              value.toString(),
+              style: const TextStyle(fontSize: 10),
+            ),
+          );
+        }).toList(),
+      );
+    }
+    else {
+      // pilot flying markers dropdown
+      dropdown1 = DropdownButtonFormField(
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotFlyingMarkers,
+        validator: (value) {
+          if (value == null) {
+            return "Please select an option";
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onChanged: (value) {
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotFlyingMarkers = value!;
+          });
+        },
+        decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintMaxLines: 1,
+            label: Text(
+              "Markers",
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            )
+        ),
+        items: AssessmentVariables.markerList.map((int value) {
+          return DropdownMenuItem<int>(
+            value: value,
+            child: Text(
+              value.toString(),
+              style: const TextStyle(fontSize: 10),
+            ),
+          );
+        }).toList(),
+      );
+      // pilot monitoring markers dropdown
+      dropdown2 = DropdownButtonFormField(
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotMonitoringMarkers,
+        validator: (value) {
+          if (value == null) {
+            return "Please select an option";
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onChanged: (value) {
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor1[indexOfVariable].pilotMonitoringMarkers = value!;
+          });
+        },
+        decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintMaxLines: 1,
+            label: Text(
+              "Markers",
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            )
+        ),
+        items: AssessmentVariables.markerList.map((int value) {
+          return DropdownMenuItem<int>(
+            value: value,
+            child: Text(
+              value.toString(),
+              style: const TextStyle(fontSize: 10),
+            ),
+          );
+        }).toList(),
+      );
+    }
 
-                        switch(flightCrewNo) {
-                          case 1:
-                            _newAssessment.assessmentVariablesFlightsHumanFactor1[currentIndexInListOfAssessmentVariables].pilotFlyingMarkers = int.parse(newValue);
-                            break;
-                          case 2:
-                            _newAssessment.assessmentVariablesFlightsHumanFactor2[currentIndexInListOfAssessmentVariables].pilotFlyingMarkers = int.parse(newValue);
-                            break;
-                        }
-                      });
-                    },
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Flexible(
-                flex: 3,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 5, bottom: 15),
-                  child: DropdownButtonFormComponent(
-                    value: dataCrew[data]?["PM"] == "N/A" ? null : dataCrew[data]?["PM"],
-                    label: "PM",
-                    isDisabled: allVariableCrew[data]!,
-                    onValueChanged: (newValue) {
-                      setState(() {
-                        if (!dataCrew.containsKey(data)) {
-                          dataCrew.addAll({
-                            data: {"PF": "N/A", "PM": newValue, "Empty": "false"}
-                          });
-                        } else {
-                          dataCrew[data]?["PM"] = newValue;
-                        }
+    inputs1.add({
+      "checkbox": checkbox,
+      "dropdown1": dropdown1,
+      "dropdown2": dropdown2,
+      "assessmentVariable": assessmentVariable,
+      "assessmentName": assessmentVariable.name,
+    });
+  }
 
-                        switch(flightCrewNo) {
-                          case 1:
-                            _newAssessment.assessmentVariablesFlightsHumanFactor1[currentIndexInListOfAssessmentVariables].pilotMonitoringMarkers = int.parse(newValue);
-                            break;
-                          case 2:
-                            _newAssessment.assessmentVariablesFlightsHumanFactor2[currentIndexInListOfAssessmentVariables].pilotMonitoringMarkers = int.parse(newValue);
-                            break;
-                        }
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
+  void buildInputFlightCrew2(AssessmentVariables assessmentVariable, int indexOfVariable) {
+    final checkbox = StatefulBuilder(
+        builder: (context, setState) {
+          return CheckboxListTile(
+            title: const Text("N/A"),
+            controlAffinity: ListTileControlAffinity.leading,
+            value: _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].isNotApplicable,
+            dense: true,
+            onChanged: (value) {
+              setState(() {
+                // _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].isNotApplicable = value!;
+                // _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].reset();
+                _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].toggleIsNotApplicable();
+              });
+            },
+          );
+        }
     );
+
+    Widget? dropdown1;
+    Widget? dropdown2;
+
+    if(assessmentVariable.typeOfAssessment == AssessmentVariables.keySatisfactory) {
+      // assessment dropdown
+      dropdown1 = DropdownButtonFormField(
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].assessmentSatisfactory,
+        padding: const EdgeInsets.all(0),
+        isExpanded: false,
+        isDense: true,
+        validator: (value) {
+          if (value == null) {
+            return "Please select an option";
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onChanged: (value) {
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].assessmentSatisfactory = value as String;
+          });
+        },
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          label: Text(
+            "Assessment",
+            style: TextStyle(fontSize: 12),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        items: AssessmentVariables.satisfactoryList.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 10),
+            ),
+          );
+        }).toList(),
+      );
+      // markers dropdown
+      dropdown2 = DropdownButtonFormField(
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].assessmentMarkers,
+        validator: (value) {
+          if (value == null) {
+            return "Please select an option";
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onChanged: (value) {
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].assessmentMarkers = value!;
+          });
+        },
+        decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintMaxLines: 1,
+            label: Text(
+              "Markers",
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            )
+        ),
+        items: AssessmentVariables.markerList.map((int value) {
+          return DropdownMenuItem<int>(
+            value: value,
+            child: Text(
+              value.toString(),
+              style: const TextStyle(fontSize: 10),
+            ),
+          );
+        }).toList(),
+      );
+    }
+    else {
+      // pilot flying markers dropdown
+      dropdown1 = DropdownButtonFormField(
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].pilotFlyingMarkers,
+        validator: (value) {
+          if (value == null) {
+            return "Please select an option";
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onChanged: (value) {
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].pilotFlyingMarkers = value!;
+          });
+        },
+        decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintMaxLines: 1,
+            label: Text(
+              "Markers",
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            )
+        ),
+        items: AssessmentVariables.markerList.map((int value) {
+          return DropdownMenuItem<int>(
+            value: value,
+            child: Text(
+              value.toString(),
+              style: const TextStyle(fontSize: 10),
+            ),
+          );
+        }).toList(),
+      );
+      // pilot monitoring markers dropdown
+      dropdown2 = DropdownButtonFormField(
+        value: _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].pilotMonitoringMarkers,
+        validator: (value) {
+          if (value == null) {
+            return "Please select an option";
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onChanged: (value) {
+          setState(() {
+            _newAssessment.assessmentVariablesFlightsHumanFactor2[indexOfVariable].pilotMonitoringMarkers = value!;
+          });
+        },
+        decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintMaxLines: 1,
+            label: Text(
+              "Markers",
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            )
+        ),
+        items: AssessmentVariables.markerList.map((int value) {
+          return DropdownMenuItem<int>(
+            value: value,
+            child: Text(
+              value.toString(),
+              style: const TextStyle(fontSize: 10),
+            ),
+          );
+        }).toList(),
+      );
+    }
+
+    inputs2.add({
+      "checkbox": checkbox,
+      "dropdown1": dropdown1,
+      "dropdown2": dropdown2,
+      "assessmentVariable": assessmentVariable,
+      "assessmentName": assessmentVariable.name,
+    });
   }
 }

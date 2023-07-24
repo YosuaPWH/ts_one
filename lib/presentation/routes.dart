@@ -15,12 +15,10 @@ import 'package:ts_one/presentation/view/assessment/new_assessment_candidate.dar
 import 'package:ts_one/presentation/view/assessment/new_assessment_declaration.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_flight_details.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_human_factor.dart';
-import 'package:ts_one/presentation/view/assessment/new_assessment_human_factor_matthew.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_overall_performance.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_success.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_simulator_flight.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
-import 'package:ts_one/presentation/view/assessment/new_assessment_variables_matthew.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables_second.dart';
 import 'package:ts_one/presentation/view/assessment/result_assessment_declaration.dart';
 import 'package:ts_one/presentation/view/assessment/result_assessment_overall.dart';
@@ -97,7 +95,7 @@ class AppRoutes {
 
       case NamedRoute.newAssessmentVariables:
         return MaterialPageRoute<void>(
-          builder: (context) => NewAssessmentVariablesMatthew(
+          builder: (context) => NewAssessmentVariables(
             dataCandidate: settings.arguments as NewAssessment,
           ),
           settings: settings,
@@ -105,7 +103,7 @@ class AppRoutes {
 
       case NamedRoute.newAssessmentHumanFactorVariables:
         return MaterialPageRoute<void>(
-          builder: (context) => NewAssessmentHumanFactorMatthew(
+          builder: (context) => NewAssessmentHumanFactor(
             dataCandidate: settings.arguments as NewAssessment,
           ),
           settings: settings,
