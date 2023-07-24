@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void getAssessmentResults() async {
-    if (userPreferences.getIDNo() == 1000854) {
+    if (userPreferences.getIDNo() == 11720032) {
       assessmentResultsNotConfirmedByCPTS = await viewModel.getAssessmentResultsNotConfirmByCPTS();
       isCPTS = true;
     }
@@ -183,6 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: CircularProgressIndicator(),
                         )
                       : assessmentResults.isNotEmpty
+                          // Confirmation Assessment For Pilot
                           ? Column(
                               children: cardAssessment(assessmentResults, false),
                             )
@@ -205,6 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: CircularProgressIndicator(),
                               )
                             : assessmentResultsNotConfirmedByCPTS.isNotEmpty
+                                // Confirmation Assessment For CPTS
                                 ? Column(
                                     children: cardAssessment(assessmentResultsNotConfirmedByCPTS, true),
                                   )
@@ -230,10 +232,8 @@ class _HomeScreenState extends State<HomeScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           child: InkWell(
             onTap: () {
-              Navigator.pushNamed(context, NamedRoute.resultAssessmentVariables, arguments: {
-                "assessmentResults": data,
-                "isCPTS": isCPTS,
-              });
+              data.isCPTS = isCPTS;
+              Navigator.pushNamed(context, NamedRoute.resultAssessmentVariables, arguments: data);
             },
             child: Padding(
               padding: const EdgeInsets.all(15),

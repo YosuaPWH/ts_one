@@ -20,7 +20,8 @@ class UserSignatures with ChangeNotifier {
   UserSignatures.fromFirebase(Map<String, dynamic> map) {
     urlSignature = map[keyUrlSignature];
     staffId = map[keyStaffId];
-    dateUploaded = map[keyDateUploaded];
+    // dateUploaded = map[keyDateUploaded];
+    dateUploaded = DateTime.fromMillisecondsSinceEpoch(map[keyDateUploaded].seconds * 1000);
   }
 
   Map<String, dynamic> toFirebase() {
@@ -29,5 +30,10 @@ class UserSignatures with ChangeNotifier {
       keyStaffId: staffId,
       keyDateUploaded: dateUploaded,
     };
+  }
+
+  @override
+  String toString() {
+    return "UserSignatures{urlSignature: $urlSignature, staffId: $staffId, dateUploaded: $dateUploaded}";
   }
 }

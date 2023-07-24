@@ -22,6 +22,8 @@ class AssessmentResults{
   static const String keySimIdent = "sim-ident";
   static const String keyExaminerSignatureUrl = "examinee-signature-url";
   static const String keyConfirmedByExaminer = "confirmed-by-examiner";
+  static const String keyRankExaminee = "rank";
+  static const String keyNameExaminee = "examinee-name";
 
   static const String keyOtherStaffIDNo = "other-staff-id-no";
 
@@ -58,6 +60,8 @@ class AssessmentResults{
   String simIdent = Util.defaultStringIfNull;
   String examinerSignatureUrl = Util.defaultStringIfNull;
   bool confirmedByExaminer = false;
+  String examineeRank = Util.defaultStringIfNull;
+  String examineeName = Util.defaultStringIfNull;
 
   int otherStaffIDNo = Util.defaultIntIfNull;
 
@@ -83,6 +87,10 @@ class AssessmentResults{
   String notes = Util.defaultStringIfNull;
   String declaration = Util.defaultStringIfNull;
 
+
+  bool isCPTS = false;
+  bool isFromHistory = true;
+
   /// All variables results are stored here
   List<AssessmentVariableResults> variableResults = [];
 
@@ -95,6 +103,8 @@ class AssessmentResults{
     simIdent = data[keySimIdent];
     examinerSignatureUrl = data[keyExaminerSignatureUrl];
     confirmedByExaminer = data[keyConfirmedByExaminer];
+    examineeRank = data[keyRankExaminee];
+    examineeName = data[keyNameExaminee];
 
     otherStaffIDNo = data[keyOtherStaffIDNo];
 
@@ -132,6 +142,8 @@ class AssessmentResults{
       keySimIdent: simIdent,
       keyExaminerSignatureUrl: examinerSignatureUrl,
       keyConfirmedByExaminer: confirmedByExaminer,
+      keyRankExaminee: examineeRank,
+      keyNameExaminee: examineeName,
 
       keyOtherStaffIDNo: otherStaffIDNo,
 
@@ -163,6 +175,8 @@ class AssessmentResults{
 
     AssessmentResults assessmentResults1 = AssessmentResults();
     assessmentResults1.typeOfAssessment = newAssessment.typeOfAssessment;
+    assessmentResults1.examineeName = newAssessment.nameExaminee1;
+    assessmentResults1.examineeRank = newAssessment.rankExaminee1;
     assessmentResults1.date = newAssessment.assessmentDate;
     assessmentResults1.examinerStaffIDNo = newAssessment.idNo1;
     assessmentResults1.licenseExpiry = newAssessment.licenseExpiry1;
@@ -184,6 +198,8 @@ class AssessmentResults{
 
     AssessmentResults assessmentResults2 = AssessmentResults();
     assessmentResults2.typeOfAssessment = newAssessment.typeOfAssessment;
+    assessmentResults2.examineeName = newAssessment.nameExaminee2;
+    assessmentResults2.examineeRank = newAssessment.rankExaminee2;
     assessmentResults2.date = newAssessment.assessmentDate;
     assessmentResults2.examinerStaffIDNo = newAssessment.idNo2;
     assessmentResults2.licenseExpiry = newAssessment.licenseExpiry2;
