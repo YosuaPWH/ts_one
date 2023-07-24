@@ -9,10 +9,9 @@ import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 
 class ResultAssessmentOverall extends StatefulWidget {
-  const ResultAssessmentOverall({Key? key, required this.assessmentResults, required this.isCPTS}) : super(key: key);
+  const ResultAssessmentOverall({Key? key, required this.assessmentResults}) : super(key: key);
 
   final AssessmentResults assessmentResults;
-  final bool isCPTS;
 
   @override
   State<ResultAssessmentOverall> createState() => _ResultAssessmentOverallState();
@@ -25,7 +24,7 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
   @override
   void initState() {
     _assessmentResults = widget.assessmentResults;
-    isCPTS = widget.isCPTS;
+    isCPTS = _assessmentResults.isCPTS;
 
     super.initState();
   }
@@ -102,12 +101,10 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
                 ),
               ),
             ),
+            _assessmentResults.isFromHistory ? const SizedBox() :
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, NamedRoute.resultAssessmentDeclaration, arguments: {
-                  "assessmentResults": _assessmentResults,
-                  "isCPTS": isCPTS,
-                });
+                Navigator.pushNamed(context, NamedRoute.resultAssessmentDeclaration, arguments: _assessmentResults);
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

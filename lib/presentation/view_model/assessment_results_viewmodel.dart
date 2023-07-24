@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
@@ -28,6 +29,20 @@ class AssessmentResultsViewModel extends LoadingViewModel{
     List<AssessmentResults> assessmentResultsList = [];
     try{
       assessmentResultsList = await repo.getAllAssessmentResults();
+      isLoading = false;
+    }
+    catch(e){
+      print("Exception on AssessmentResultsViewModel: $e");
+      isLoading = false;
+    }
+    return assessmentResultsList;
+  }
+
+  Future<List<AssessmentResults>> getAllAssessmentResultsPaging(int startAt, String sortBy) async {
+    isLoading = true;
+    List<AssessmentResults> assessmentResultsList = [];
+    try{
+      assessmentResultsList = await repo.getAllAssessmentResultsPaging(startAt, sortBy);
       isLoading = false;
     }
     catch(e){

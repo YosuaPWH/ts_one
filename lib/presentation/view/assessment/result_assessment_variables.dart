@@ -13,10 +13,9 @@ import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 import 'package:ts_one/util/util.dart';
 
 class ResultAssessmentVariables extends StatefulWidget {
-  const ResultAssessmentVariables({Key? key, required this.assessmentResults, required this.isCPTS}) : super(key: key);
+  const ResultAssessmentVariables({Key? key, required this.assessmentResults}) : super(key: key);
 
   final AssessmentResults assessmentResults;
-  final bool isCPTS;
 
   @override
   State<ResultAssessmentVariables> createState() => _ResultAssessmentVariablesState();
@@ -41,7 +40,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     assessmentCategories = {};
     _instructor = UserModel();
     _examinee = UserModel();
-    isCPTS = widget.isCPTS;
+    isCPTS = _assessmentResults.isCPTS;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getInstructor();
@@ -102,10 +101,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
               padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, NamedRoute.resultAssessmentOverall, arguments: {
-                    "assessmentResults": _assessmentResults,
-                    "isCPTS": isCPTS,
-                  });
+                  Navigator.pushNamed(context, NamedRoute.resultAssessmentOverall, arguments: _assessmentResults);
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

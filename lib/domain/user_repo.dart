@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -212,7 +213,7 @@ class UserRepoImpl implements UserRepo {
       // create user model from firebase user and user data from firestore
       user = UserModel.fromFirebaseUser(userData.data()!);
     } catch (e) {
-      print("Exception in UserRepo getUserByEmail: $e");
+      print("Exception in UserRepo getUserByIdNo: $e");
     }
 
     return user;
@@ -380,14 +381,17 @@ class UserRepoImpl implements UserRepo {
   Future<UserSignatures> getSignature(int staffIDNo) async {
     UserSignatures userSignatures = UserSignatures();
     try {
+      log("DADAAA");
       final snapshot = await _db!
           .collection(UserSignatures.firebaseCollection)
           .where(UserSignatures.keyStaffId, isEqualTo: staffIDNo)
-          .orderBy(UserSignatures.keyDateUploaded, descending: true)
+          // .orderBy(UserSignatures.keyDateUploaded, descending: true)
           .get();
 
       // get the first signature
       userSignatures = UserSignatures.fromFirebase(snapshot.docs.first.data());
+      log("DAD  =>$userSignatures");
+      log("TERAKHIR => ${UserSignatures.fromFirebase(snapshot.docs.last.data())}");
     }
     catch (e) {
       print(e.toString());

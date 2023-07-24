@@ -157,40 +157,25 @@ class AppRoutes {
         );
 
       case NamedRoute.resultAssessmentVariables:
-        final arguments = settings.arguments as Map<String, dynamic>;
-        final assessmentResults = arguments['assessmentResults'] as AssessmentResults;
-        final isCPTS = arguments['isCPTS'] as bool;
-
         return MaterialPageRoute<void>(
           builder: (context) => ResultAssessmentVariables(
-            assessmentResults: assessmentResults,
-            isCPTS: isCPTS,
+            assessmentResults: settings.arguments as AssessmentResults,
           ),
           settings: settings,
         );
 
       case NamedRoute.resultAssessmentOverall:
-        final arguments = settings.arguments as Map<String, dynamic>;
-        final assessmentResults = arguments['assessmentResults'] as AssessmentResults;
-        final isCPTS = arguments['isCPTS'] as bool;
-
         return MaterialPageRoute<void>(
           builder: (context) => ResultAssessmentOverall(
-            assessmentResults: assessmentResults,
-            isCPTS: isCPTS,
+            assessmentResults: settings.arguments as AssessmentResults,
           ),
           settings: settings,
         );
 
       case NamedRoute.resultAssessmentDeclaration:
-        final arguments = settings.arguments as Map<String, dynamic>;
-        final assessmentResults = arguments['assessmentResults'] as AssessmentResults;
-        final isCPTS = arguments['isCPTS'] as bool;
-
         return MaterialPageRoute<void>(
           builder: (context) => ResultAssessmentDeclaration(
-            assessmentResults: assessmentResults,
-            isCPTS: isCPTS,
+            assessmentResults: settings.arguments as AssessmentResults,
           ),
           settings: settings,
         );

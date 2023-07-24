@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -16,10 +17,9 @@ import 'package:ts_one/presentation/view_model/assessment_results_viewmodel.dart
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 
 class ResultAssessmentDeclaration extends StatefulWidget {
-  const ResultAssessmentDeclaration({Key? key, required this.assessmentResults, required this.isCPTS}) : super(key: key);
+  const ResultAssessmentDeclaration({Key? key, required this.assessmentResults}) : super(key: key);
 
   final AssessmentResults assessmentResults;
-  final bool isCPTS;
 
   @override
   State<ResultAssessmentDeclaration> createState() => _ResultAssessmentDeclarationState();
@@ -35,6 +35,7 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
   bool _isConfirmed = false;
   bool _isCPTS = false;
   late UserPreferences userPreferences;
+  Image? imageSignature;
 
   File? _image;
   XFile? _pickedImage;
@@ -54,10 +55,25 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
     _userSignatures = UserSignatures();
 
     // Check if CPTS
-    _isCPTS = widget.isCPTS;
+    _isCPTS = _assessmentResults.isCPTS;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getSignatureOfCurrentUser();
+    });
 
     super.initState();
   }
+
+  void getSignatureOfCurrentUser() async {
+    _userSignatures = await _userViewModel.getSignature(userPreferences.getIDNo());
+
+    var data = await http.get(Uri.parse(_userSignatures.urlSignature)).then((value) => value.bodyBytes);
+
+    // var fileSignatureBytes = await File(_userSignatures.urlSignature).readAsBytes();
+
+    imageSignature = Image.memory(data);
+  }
+
 
   @override
   void dispose() {
@@ -170,7 +186,8 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
                                   Stack(children: <Widget>[
                                     ClipRRect(
                                       child: SizedBox(
-                                        child: Signature(
+                                        child:
+                                        Signature(
                                           controller: _signatureController,
                                           backgroundColor: TsOneColor.primaryFaded,
                                         ),
