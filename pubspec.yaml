@@ -77,6 +77,7 @@ dependencies:
   open_file_plus: ^3.4.1
   screenshot: ^2.1.0
   flutter_progress_hud: ^2.0.2
+  excel: ^2.1.0
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:excel/excel.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -469,6 +470,19 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                       "Analytics",
                                       style: tsOneTextTheme.headlineLarge,
                                     ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16.0),
+                                  child: IconButton(
+                                    icon: Icon(
+                                      Icons.table_chart_rounded,
+                                      color: tsOneColorScheme.primary,
+                                    ),
+                                    tooltip: "Export to Sheet",
+                                    onPressed: () {
+                                      var excel = Excel.createExcel();
+                                    },
                                   ),
                                 ),
                                 Padding(
@@ -998,8 +1012,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                         final file = File(filePath);
                                         await file.writeAsBytes(await pdf.save());
 
-                                        final destinationDirectory = await getExternalStorageDirectory();
-                                        log(destinationDirectory!.path);
+                                        Directory? destinationDirectory;
+                                        destinationDirectory = await getTemporaryDirectory();
+                                        log(destinationDirectory.path);
                                         final destinationPath = '${destinationDirectory.path}/$fileName.pdf';
                                         await file.copy(destinationPath);
 
@@ -1023,7 +1038,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                       progress?.dismiss();
                                       pdfLoading = false;
                                     },
-                                    icon: const Icon(Icons.picture_as_pdf_rounded),
+                                    icon: Icon(
+                                      Icons.picture_as_pdf_rounded,
+                                      color: tsOneColorScheme.primary,
+                                    ),
+                                    tooltip: "Export to PDF",
                                   ),
                                 ),
                               ],
