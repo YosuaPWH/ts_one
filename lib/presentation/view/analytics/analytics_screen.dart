@@ -188,6 +188,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           'Markers 3': 0,
           'Markers 4': 0,
           'Markers 5': 0,
+          'Total Markers': 0,
         });
       }
     }
@@ -203,12 +204,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         'PF Markers 3': 0,
         'PF Markers 4': 0,
         'PF Markers 5': 0,
+        'Total PF Markers': 0,
 
         'PM Markers 1': 0,
         'PM Markers 2': 0,
         'PM Markers 3': 0,
         'PM Markers 4': 0,
         'PM Markers 5': 0,
+        'Total PM Markers': 0,
       });
     }
 
@@ -225,18 +228,23 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               switch(assessmentResult.variableResults[i].assessmentMarkers){
                 case 1:
                   mapOfAssessmentVariableResultsCount[j]['Markers 1']++;
+                  mapOfAssessmentVariableResultsCount[j]['Total Markers']++;
                   break;
                 case 2:
                   mapOfAssessmentVariableResultsCount[j]['Markers 2']++;
+                  mapOfAssessmentVariableResultsCount[j]['Total Markers']++;
                   break;
                 case 3:
                   mapOfAssessmentVariableResultsCount[j]['Markers 3']++;
+                  mapOfAssessmentVariableResultsCount[j]['Total Markers']++;
                   break;
                 case 4:
                   mapOfAssessmentVariableResultsCount[j]['Markers 4']++;
+                  mapOfAssessmentVariableResultsCount[j]['Total Markers']++;
                   break;
                 case 5:
                   mapOfAssessmentVariableResultsCount[j]['Markers 5']++;
+                  mapOfAssessmentVariableResultsCount[j]['Total Markers']++;
                   break;
                 default:
                   break;
@@ -315,18 +323,23 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               switch(assessmentResult.variableResults[i].pilotFlyingMarkers) {
                 case 1:
                   mapOfHumanFactorAssessmentVariableResultsCount[j]['PF Markers 1']++;
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Total PF Markers']++;
                   break;
                 case 2:
                   mapOfHumanFactorAssessmentVariableResultsCount[j]['PF Markers 2']++;
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Total PF Markers']++;
                   break;
                 case 3:
                   mapOfHumanFactorAssessmentVariableResultsCount[j]['PF Markers 3']++;
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Total PF Markers']++;
                   break;
                 case 4:
                   mapOfHumanFactorAssessmentVariableResultsCount[j]['PF Markers 4']++;
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Total PF Markers']++;
                   break;
                 case 5:
                   mapOfHumanFactorAssessmentVariableResultsCount[j]['PF Markers 5']++;
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Total PF Markers']++;
                   break;
                 default:
                   break;
@@ -335,18 +348,23 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               switch(assessmentResult.variableResults[i].pilotMonitoringMarkers) {
                 case 1:
                   mapOfHumanFactorAssessmentVariableResultsCount[j]['PM Markers 1']++;
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Total PM Markers']++;
                   break;
                 case 2:
                   mapOfHumanFactorAssessmentVariableResultsCount[j]['PM Markers 2']++;
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Total PM Markers']++;
                   break;
                 case 3:
                   mapOfHumanFactorAssessmentVariableResultsCount[j]['PM Markers 3']++;
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Total PM Markers']++;
                   break;
                 case 4:
                   mapOfHumanFactorAssessmentVariableResultsCount[j]['PM Markers 4']++;
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Total PM Markers']++;
                   break;
                 case 5:
                   mapOfHumanFactorAssessmentVariableResultsCount[j]['PM Markers 5']++;
+                  mapOfHumanFactorAssessmentVariableResultsCount[j]['Total PM Markers']++;
                   break;
                 default:
                   break;
@@ -361,24 +379,24 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     // switch all counts to percentages
     if(assessmentResultsFilteredByDate.isNotEmpty){
       for(int i = 0; i < mapOfAssessmentVariableResultsCount.length; i++) {
-        mapOfAssessmentVariableResultsCount[i]['Markers 1'] = (mapOfAssessmentVariableResultsCount[i]['Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfAssessmentVariableResultsCount[i]['Markers 2'] = (mapOfAssessmentVariableResultsCount[i]['Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfAssessmentVariableResultsCount[i]['Markers 3'] = (mapOfAssessmentVariableResultsCount[i]['Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfAssessmentVariableResultsCount[i]['Markers 4'] = (mapOfAssessmentVariableResultsCount[i]['Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfAssessmentVariableResultsCount[i]['Markers 5'] = (mapOfAssessmentVariableResultsCount[i]['Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfAssessmentVariableResultsCount[i]['Markers 1'] = (mapOfAssessmentVariableResultsCount[i]['Markers 1'] / mapOfAssessmentVariableResultsCount[i]['Total Markers'] * 100).round();
+        mapOfAssessmentVariableResultsCount[i]['Markers 2'] = (mapOfAssessmentVariableResultsCount[i]['Markers 2'] / mapOfAssessmentVariableResultsCount[i]['Total Markers'] * 100).round();
+        mapOfAssessmentVariableResultsCount[i]['Markers 3'] = (mapOfAssessmentVariableResultsCount[i]['Markers 3'] / mapOfAssessmentVariableResultsCount[i]['Total Markers'] * 100).round();
+        mapOfAssessmentVariableResultsCount[i]['Markers 4'] = (mapOfAssessmentVariableResultsCount[i]['Markers 4'] / mapOfAssessmentVariableResultsCount[i]['Total Markers'] * 100).round();
+        mapOfAssessmentVariableResultsCount[i]['Markers 5'] = (mapOfAssessmentVariableResultsCount[i]['Markers 5'] / mapOfAssessmentVariableResultsCount[i]['Total Markers'] * 100).round();
       }
       for(int i = 0; i < mapOfHumanFactorAssessmentVariableResultsCount.length; i++) {
-        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 1'] / mapOfHumanFactorAssessmentVariableResultsCount[i]['Total PF Markers'] * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 2'] / mapOfHumanFactorAssessmentVariableResultsCount[i]['Total PF Markers'] * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 3'] / mapOfHumanFactorAssessmentVariableResultsCount[i]['Total PF Markers'] * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 4'] / mapOfHumanFactorAssessmentVariableResultsCount[i]['Total PF Markers'] * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PF Markers 5'] / mapOfHumanFactorAssessmentVariableResultsCount[i]['Total PF Markers'] * 100).round();
 
-        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'] / assessmentResultsFilteredByDate.length * 100).round();
-        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'] / assessmentResultsFilteredByDate.length * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 1'] / mapOfHumanFactorAssessmentVariableResultsCount[i]['Total PM Markers'] * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 2'] / mapOfHumanFactorAssessmentVariableResultsCount[i]['Total PM Markers'] * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 3'] / mapOfHumanFactorAssessmentVariableResultsCount[i]['Total PM Markers'] * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 4'] / mapOfHumanFactorAssessmentVariableResultsCount[i]['Total PM Markers'] * 100).round();
+        mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'] = (mapOfHumanFactorAssessmentVariableResultsCount[i]['PM Markers 5'] / mapOfHumanFactorAssessmentVariableResultsCount[i]['Total PM Markers'] * 100).round();
       }
     }
 
@@ -1005,7 +1023,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                       progress?.dismiss();
                                       pdfLoading = false;
                                     },
-                                    icon: const Icon(Icons.download),
+                                    icon: const Icon(Icons.picture_as_pdf_rounded),
                                   ),
                                 ),
                               ],
