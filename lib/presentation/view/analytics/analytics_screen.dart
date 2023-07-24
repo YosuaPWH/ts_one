@@ -1,10 +1,16 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
@@ -15,6 +21,7 @@ import 'package:ts_one/presentation/view_model/assessment_results_viewmodel.dart
 import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 import 'package:ts_one/util/util.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class AnalyticsScreen extends StatefulWidget {
   const AnalyticsScreen({super.key});
@@ -50,9 +57,16 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   late bool chartLoading;
   late bool isChartInitialized;
+  late String descBarChart;
+
   late Widget barChartMainAssessment;
+  late Widget textTitleBarChartMainAssessment;
+
   late Widget barChartHumanFactorPFAssessment;
+  late Widget textTitleBarChartHumanFactorPFAssessment;
+
   late Widget barChartHumanFactorPMAssessment;
+  late Widget textTitleBarChartHumanFactorPMAssessment;
 
   @override
   void initState() {
@@ -81,6 +95,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     chartLoading = true;
     isChartInitialized = false;
+    descBarChart = "Assessment Results from ${Util.convertDateTimeDisplay(startDate.toString())} to ${Util.convertDateTimeDisplay(endDate.toString())}";
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getAllAssessmentResultsFromRemote();
@@ -385,6 +400,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         startDate = picked;
       });
       filterAssessmentResults();
+      descBarChart = "Assessment Results from ${Util.convertDateTimeDisplay(startDate.toString())} to ${Util.convertDateTimeDisplay(endDate.toString())}";
     }
   }
 
@@ -401,6 +417,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         endDate = picked;
       });
       filterAssessmentResults();
+      descBarChart = "Assessment Results from ${Util.convertDateTimeDisplay(startDate.toString())} to ${Util.convertDateTimeDisplay(endDate.toString())}";
     }
   }
 
@@ -416,12 +433,568 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Text(
-                        "Analytics",
-                        style: tsOneTextTheme.headlineLarge,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Text(
+                              "Analytics",
+                              style: tsOneTextTheme.headlineLarge,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: IconButton(
+                            onPressed: () async {
+                              try{
+                                ScreenshotController screenshotController = ScreenshotController();
+                                double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+
+                                final bytesBarChartMainAssessment = await screenshotController.captureFromWidget(
+                                  MediaQuery(
+                                    data: const MediaQueryData(),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                      child: barChartMainAssessment,
+                                    ),
+                                  ),
+                                  pixelRatio: pixelRatio,
+                                  targetSize: const Size(4200, 1400),
+                                  delay: const Duration(milliseconds: 10),
+                                  context: context,
+                                );
+
+                                if (!context.mounted) return;
+
+                                final bytesBarChartHumanFactorPFAssessment = await screenshotController.captureFromWidget(
+                                  MediaQuery(
+                                    data: const MediaQueryData(),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                      child: barChartHumanFactorPFAssessment,
+                                    ),
+                                  ),
+                                  pixelRatio: pixelRatio,
+                                  targetSize: const Size(2000, 800),
+                                  delay: const Duration(milliseconds: 10),
+                                  context: context,
+                                );
+
+                                if (!context.mounted) return;
+
+                                final bytesBarChartHumanFactorPMAssessment = await screenshotController.captureFromWidget(
+                                  MediaQuery(
+                                    data: const MediaQueryData(),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                      child: barChartHumanFactorPMAssessment,
+                                    ),
+                                  ),
+                                  pixelRatio: pixelRatio,
+                                  targetSize: const Size(2000, 800),
+                                  delay: const Duration(milliseconds: 10),
+                                  context: context,
+                                );
+
+
+                                final font = await rootBundle.load("assets/fonts/Poppins-Regular.ttf");
+                                final ttf = pw.Font.ttf(font);
+                                final pdf = pw.Document();
+
+                                // main assessment page
+                                pdf.addPage(
+                                    pw.Page(
+                                      pageTheme: pw.PageTheme(
+                                        margin: const pw.EdgeInsets.all(16),
+                                        pageFormat: PdfPageFormat.a4.landscape,
+                                      ),
+                                      build: (pw.Context context) => pw.Center(
+                                        child: pw.Padding(
+                                          padding: const pw.EdgeInsets.all(16),
+                                          child: pw.Column(
+                                            mainAxisAlignment: pw.MainAxisAlignment.center,
+                                            crossAxisAlignment: pw.CrossAxisAlignment.center,
+                                            children: [
+                                              pw.Text(
+                                                "Main Assessment",
+                                                style: pw.TextStyle(
+                                                  font: ttf,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              pw.Text(
+                                                descBarChart,
+                                                style: pw.TextStyle(
+                                                  font: ttf,
+                                                  fontSize: 12,
+                                                )
+                                              ),
+                                              pw.Wrap(
+                                                spacing: 16,
+                                                alignment: pw.WrapAlignment.center,
+                                                children: [
+                                                  pw.Row(
+                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                    children: [
+                                                      pw.Container(
+                                                        width: 10,
+                                                        height: 10,
+                                                        decoration: const pw.BoxDecoration(
+                                                          shape: pw.BoxShape.circle,
+                                                          color: PdfColors.red,
+                                                        )
+                                                      ),
+                                                      pw.SizedBox(width: 6),
+                                                      pw.Text(
+                                                        "Markers 1",
+                                                        style: pw.TextStyle(
+                                                          font: ttf,
+                                                          fontSize: 12
+                                                        )
+                                                      )
+                                                    ]
+                                                  ),
+
+                                                  pw.Row(
+                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                    children: [
+                                                        pw.Container(
+                                                            width: 10,
+                                                            height: 10,
+                                                            decoration: const pw.BoxDecoration(
+                                                              shape: pw.BoxShape.circle,
+                                                              color: PdfColors.yellow,
+                                                            )
+                                                        ),
+                                                        pw.SizedBox(width: 6),
+                                                        pw.Text(
+                                                            "Markers 2",
+                                                            style: pw.TextStyle(
+                                                                font: ttf,
+                                                                fontSize: 12
+                                                            )
+                                                        )
+                                                      ]
+                                                  ),
+
+                                                  pw.Row(
+                                                      mainAxisSize: pw.MainAxisSize.min,
+                                                      children: [
+                                                        pw.Container(
+                                                            width: 10,
+                                                            height: 10,
+                                                            decoration: const pw.BoxDecoration(
+                                                              shape: pw.BoxShape.circle,
+                                                              color: PdfColors.green,
+                                                            )
+                                                        ),
+                                                        pw.SizedBox(width: 6),
+                                                        pw.Text(
+                                                            "Markers 3",
+                                                            style: pw.TextStyle(
+                                                                font: ttf,
+                                                                fontSize: 12
+                                                            )
+                                                        )
+                                                      ]
+                                                  ),
+
+                                                  pw.Row(
+                                                      mainAxisSize: pw.MainAxisSize.min,
+                                                      children: [
+                                                        pw.Container(
+                                                            width: 10,
+                                                            height: 10,
+                                                            decoration: const pw.BoxDecoration(
+                                                              shape: pw.BoxShape.circle,
+                                                              color: PdfColors.blue,
+                                                            )
+                                                        ),
+                                                        pw.SizedBox(width: 6),
+                                                        pw.Text(
+                                                            "Markers 4",
+                                                            style: pw.TextStyle(
+                                                                font: ttf,
+                                                                fontSize: 12
+                                                            )
+                                                        )
+                                                      ]
+                                                  ),
+
+                                                  pw.Row(
+                                                      mainAxisSize: pw.MainAxisSize.min,
+                                                      children: [
+                                                        pw.Container(
+                                                            width: 10,
+                                                            height: 10,
+                                                            decoration: const pw.BoxDecoration(
+                                                              shape: pw.BoxShape.circle,
+                                                              color: PdfColors.purple,
+                                                            )
+                                                        ),
+                                                        pw.SizedBox(width: 6),
+                                                        pw.Text(
+                                                            "Markers 5",
+                                                            style: pw.TextStyle(
+                                                                font: ttf,
+                                                                fontSize: 12
+                                                            )
+                                                        )
+                                                      ]
+                                                  ),
+                                                ]
+                                              ),
+                                              pw.Image(
+                                                pw.MemoryImage(bytesBarChartMainAssessment),
+                                              ),
+                                            ]
+                                          ),
+                                        )
+                                      ),
+                                    )
+                                );
+
+                                // human factor pilot flying page
+                                pdf.addPage(
+                                    pw.Page(
+                                      pageTheme: pw.PageTheme(
+                                        margin: const pw.EdgeInsets.all(16),
+                                        pageFormat: PdfPageFormat.a4.landscape,
+                                      ),
+                                      build: (pw.Context context) => pw.Center(
+                                          child: pw.Padding(
+                                            padding: const pw.EdgeInsets.all(16),
+                                            child: pw.Column(
+                                                mainAxisAlignment: pw.MainAxisAlignment.center,
+                                                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                                                children: [
+                                                  pw.Text(
+                                                    "Human Factor - Pilot Flying",
+                                                    style: pw.TextStyle(
+                                                      font: ttf,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  pw.Text(
+                                                    descBarChart,
+                                                      style: pw.TextStyle(
+                                                        font: ttf,
+                                                        fontSize: 12,
+                                                      )
+                                                  ),
+                                                  pw.Wrap(
+                                                      spacing: 16,
+                                                      alignment: pw.WrapAlignment.center,
+                                                      children: [
+                                                        pw.Row(
+                                                            mainAxisSize: pw.MainAxisSize.min,
+                                                            children: [
+                                                              pw.Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration: const pw.BoxDecoration(
+                                                                    shape: pw.BoxShape.circle,
+                                                                    color: PdfColors.red,
+                                                                  )
+                                                              ),
+                                                              pw.SizedBox(width: 6),
+                                                              pw.Text(
+                                                                  "Markers 1",
+                                                                  style: pw.TextStyle(
+                                                                      font: ttf,
+                                                                      fontSize: 12
+                                                                  )
+                                                              )
+                                                            ]
+                                                        ),
+
+                                                        pw.Row(
+                                                            mainAxisSize: pw.MainAxisSize.min,
+                                                            children: [
+                                                              pw.Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration: const pw.BoxDecoration(
+                                                                    shape: pw.BoxShape.circle,
+                                                                    color: PdfColors.yellow,
+                                                                  )
+                                                              ),
+                                                              pw.SizedBox(width: 6),
+                                                              pw.Text(
+                                                                  "Markers 2",
+                                                                  style: pw.TextStyle(
+                                                                      font: ttf,
+                                                                      fontSize: 12
+                                                                  )
+                                                              )
+                                                            ]
+                                                        ),
+
+                                                        pw.Row(
+                                                            mainAxisSize: pw.MainAxisSize.min,
+                                                            children: [
+                                                              pw.Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration: const pw.BoxDecoration(
+                                                                    shape: pw.BoxShape.circle,
+                                                                    color: PdfColors.green,
+                                                                  )
+                                                              ),
+                                                              pw.SizedBox(width: 6),
+                                                              pw.Text(
+                                                                  "Markers 3",
+                                                                  style: pw.TextStyle(
+                                                                      font: ttf,
+                                                                      fontSize: 12
+                                                                  )
+                                                              )
+                                                            ]
+                                                        ),
+
+                                                        pw.Row(
+                                                            mainAxisSize: pw.MainAxisSize.min,
+                                                            children: [
+                                                              pw.Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration: const pw.BoxDecoration(
+                                                                    shape: pw.BoxShape.circle,
+                                                                    color: PdfColors.blue,
+                                                                  )
+                                                              ),
+                                                              pw.SizedBox(width: 6),
+                                                              pw.Text(
+                                                                  "Markers 4",
+                                                                  style: pw.TextStyle(
+                                                                      font: ttf,
+                                                                      fontSize: 12
+                                                                  )
+                                                              )
+                                                            ]
+                                                        ),
+
+                                                        pw.Row(
+                                                            mainAxisSize: pw.MainAxisSize.min,
+                                                            children: [
+                                                              pw.Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration: const pw.BoxDecoration(
+                                                                    shape: pw.BoxShape.circle,
+                                                                    color: PdfColors.purple,
+                                                                  )
+                                                              ),
+                                                              pw.SizedBox(width: 6),
+                                                              pw.Text(
+                                                                  "Markers 5",
+                                                                  style: pw.TextStyle(
+                                                                      font: ttf,
+                                                                      fontSize: 12
+                                                                  )
+                                                              )
+                                                            ]
+                                                        ),
+                                                      ]
+                                                  ),
+                                                  pw.Image(
+                                                    pw.MemoryImage(bytesBarChartHumanFactorPFAssessment),
+                                                  ),
+                                                ]
+                                            ),
+                                          )
+                                      ),
+                                    )
+                                );
+
+                                // human factor pilot monitoring page
+                                pdf.addPage(
+                                    pw.Page(
+                                      pageTheme: pw.PageTheme(
+                                        margin: const pw.EdgeInsets.all(16),
+                                        pageFormat: PdfPageFormat.a4.landscape,
+                                      ),
+                                      build: (pw.Context context) => pw.Center(
+                                          child: pw.Padding(
+                                            padding: const pw.EdgeInsets.all(16),
+                                            child: pw.Column(
+                                                mainAxisAlignment: pw.MainAxisAlignment.center,
+                                                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                                                children: [
+                                                  pw.Text(
+                                                    "Human Factor - Pilot Monitoring",
+                                                    style: pw.TextStyle(
+                                                      font: ttf,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  pw.Text(
+                                                    descBarChart,
+                                                    style: pw.TextStyle(
+                                                      font: ttf,
+                                                      fontSize: 12,
+                                                    )
+                                                  ),
+                                                  pw.Wrap(
+                                                      spacing: 16,
+                                                      alignment: pw.WrapAlignment.center,
+                                                      children: [
+                                                        pw.Row(
+                                                            mainAxisSize: pw.MainAxisSize.min,
+                                                            children: [
+                                                              pw.Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration: const pw.BoxDecoration(
+                                                                    shape: pw.BoxShape.circle,
+                                                                    color: PdfColors.red,
+                                                                  )
+                                                              ),
+                                                              pw.SizedBox(width: 6),
+                                                              pw.Text(
+                                                                  "Markers 1",
+                                                                  style: pw.TextStyle(
+                                                                      font: ttf,
+                                                                      fontSize: 12
+                                                                  )
+                                                              )
+                                                            ]
+                                                        ),
+
+                                                        pw.Row(
+                                                            mainAxisSize: pw.MainAxisSize.min,
+                                                            children: [
+                                                              pw.Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration: const pw.BoxDecoration(
+                                                                    shape: pw.BoxShape.circle,
+                                                                    color: PdfColors.yellow,
+                                                                  )
+                                                              ),
+                                                              pw.SizedBox(width: 6),
+                                                              pw.Text(
+                                                                  "Markers 2",
+                                                                  style: pw.TextStyle(
+                                                                      font: ttf,
+                                                                      fontSize: 12
+                                                                  )
+                                                              )
+                                                            ]
+                                                        ),
+
+                                                        pw.Row(
+                                                            mainAxisSize: pw.MainAxisSize.min,
+                                                            children: [
+                                                              pw.Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration: const pw.BoxDecoration(
+                                                                    shape: pw.BoxShape.circle,
+                                                                    color: PdfColors.green,
+                                                                  )
+                                                              ),
+                                                              pw.SizedBox(width: 6),
+                                                              pw.Text(
+                                                                  "Markers 3",
+                                                                  style: pw.TextStyle(
+                                                                      font: ttf,
+                                                                      fontSize: 12
+                                                                  )
+                                                              )
+                                                            ]
+                                                        ),
+
+                                                        pw.Row(
+                                                            mainAxisSize: pw.MainAxisSize.min,
+                                                            children: [
+                                                              pw.Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration: const pw.BoxDecoration(
+                                                                    shape: pw.BoxShape.circle,
+                                                                    color: PdfColors.blue,
+                                                                  )
+                                                              ),
+                                                              pw.SizedBox(width: 6),
+                                                              pw.Text(
+                                                                  "Markers 4",
+                                                                  style: pw.TextStyle(
+                                                                      font: ttf,
+                                                                      fontSize: 12
+                                                                  )
+                                                              )
+                                                            ]
+                                                        ),
+
+                                                        pw.Row(
+                                                            mainAxisSize: pw.MainAxisSize.min,
+                                                            children: [
+                                                              pw.Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration: const pw.BoxDecoration(
+                                                                    shape: pw.BoxShape.circle,
+                                                                    color: PdfColors.purple,
+                                                                  )
+                                                              ),
+                                                              pw.SizedBox(width: 6),
+                                                              pw.Text(
+                                                                  "Markers 5",
+                                                                  style: pw.TextStyle(
+                                                                      font: ttf,
+                                                                      fontSize: 12
+                                                                  )
+                                                              )
+                                                            ]
+                                                        ),
+                                                      ]
+                                                  ),
+                                                  pw.Image(
+                                                    pw.MemoryImage(bytesBarChartHumanFactorPMAssessment),
+                                                  ),
+                                                ]
+                                            ),
+                                          )
+                                      ),
+                                    )
+                                );
+
+                                final directory = await getApplicationDocumentsDirectory();
+                                final fileName = "tsone_analytics_report_${Util.convertDateTimeDisplay(DateTime.now().toString(), 'yyyy-MM-dd-HH:mm:ss')}";
+                                final filePath = '${directory.path}/$fileName.pdf';
+                                final file = File(filePath);
+                                await file.writeAsBytes(await pdf.save());
+
+                                final destinationDirectory = await getExternalStorageDirectory();
+                                log(destinationDirectory!.path);
+                                final destinationPath = '${destinationDirectory.path}/$fileName.pdf';
+                                await file.copy(destinationPath);
+
+                                file.delete();
+
+                                await OpenFile.open(destinationPath);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('PDF file saved to downloads folder'),
+                                  ),
+                                );
+                              }
+                              catch (e) {
+                                print("Exception occurred on analytics screen: $e");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Error occurred while saving PDF file'),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.download),
+                          ),
+                        ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
@@ -500,6 +1073,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                               onChanged: (newValue) {
                                 setState(() {
                                   rank = newValue.toString();
+                                  descBarChart = "Assessment Results from ${Util.convertDateTimeDisplay(startDate.toString())} to ${Util.convertDateTimeDisplay(endDate.toString())}"
+                                      "\nFor the rank of $rank";
                                 });
                                 filterAssessmentResults();
                               },
@@ -598,6 +1173,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                   // run the filter function
                                   filterAssessmentResults();
 
+                                  descBarChart = "Assessment Results from ${Util.convertDateTimeDisplay(startDate.toString())} to ${Util.convertDateTimeDisplay(endDate.toString())}"
+                                      "\nFor the flight crew ${nameTextController.text}";
+
                                   // refresh the UI
                                   setState(() {});
                                 }
@@ -630,10 +1208,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(
-                                  'Main Assessment',
-                                  style: tsOneTextTheme.headlineMedium,
-                                ),
+                                textTitleBarChartMainAssessment,
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
                                   child: LegendsListWidget(
@@ -671,10 +1246,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                   ),
                                 ),
 
-                                Text(
-                                  'Human Factor Assessment - Pilot Flying',
-                                  style: tsOneTextTheme.headlineMedium,
-                                ),
+                                textTitleBarChartHumanFactorPFAssessment,
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
                                   child: LegendsListWidget(
@@ -712,10 +1284,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                   ),
                                 ),
 
-                                Text(
-                                  'Human Factor Assessment - Pilot Monitoring',
-                                  style: tsOneTextTheme.headlineMedium,
-                                ),
+                                textTitleBarChartHumanFactorPMAssessment,
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
                                   child: LegendsListWidget(
@@ -757,32 +1326,37 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     double barWidth = 48;
     // building stacked bar chart using fl_chart for each variable saved in mapOfAssessmentVariableResultsCount
     chartLoading = true;
+
     barChartMainAssessment = BarChart(
-      BarChartData(
-        titlesData: FlTitlesData(
-          show: true,
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 60,
-              getTitlesWidget: (value, meta) {
-                return SideTitleWidget(
-                  axisSide: meta.axisSide,
-                  child: Text(
-                    "$value%",
-                  ),
-                );
-              },
-            ),
-          ),
-          bottomTitles: AxisTitles(
+        BarChartData(
+          titlesData: FlTitlesData(
+            show: true,
+            leftTitles: AxisTitles(
               sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 160,
-                  getTitlesWidget: (value, meta) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 48.0),
-                      child: Transform.translate(
+                showTitles: true,
+                reservedSize: 60,
+                getTitlesWidget: (value, meta) {
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Text(
+                      "$value%",
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 160,
+                getTitlesWidget: (value, meta) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 48.0),
+                    child: Transform.translate(
                         offset: const Offset(-40, 10),
                         child: Transform.rotate(
                           angle: -3.14 / 4,
@@ -792,142 +1366,152 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  mapOfAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyCategory],
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  )
+                                    mapOfAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyCategory],
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    )
                                 ),
                                 Text(
-                                  mapOfAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyName],
+                                    mapOfAssessmentVariableResultsCount[value.toInt()][AssessmentVariables.keyName],
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.black,
+                                    )
                                 )
                               ],
                             ),
                           ),
                         )
-                      ),
-                    );
-                  },
+                    ),
+                  );
+                },
               ),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: false,
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
             ),
           ),
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: false,
+          alignment: BarChartAlignment.center,
+          groupsSpace: 52,
+          barGroups: [
+            for (var i = 0; i < mapOfAssessmentVariableResultsCount.length; i++)
+              BarChartGroupData(
+                // showingTooltipIndicators: mapOfAssessmentVariableResultsCount[i]['Name'],
+                x: i,
+                groupVertically: true,
+                barRods: [
+                  BarChartRodData(
+                    fromY: 0,
+                    toY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble(),
+                    color: Colors.red,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble(),
+                    toY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble(),
+                    color: Colors.yellow,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble(),
+                    toY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 3'].toDouble(),
+                    color: Colors.green,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 3'].toDouble(),
+                    toY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 3'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 4'].toDouble(),
+                    color: Colors.blue,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                  BarChartRodData(
+                    fromY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 3'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 4'].toDouble(),
+                    toY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 3'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 4'].toDouble()
+                        + mapOfAssessmentVariableResultsCount[i]['Markers 5'].toDouble(),
+                    color: Colors.purple,
+                    width: barWidth,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(6),
+                      topRight: Radius.circular(6),
+                    ),
+                  ),
+                ],
+                // showingTooltipIndicators: [0],
+              ),
+          ],
+          barTouchData: BarTouchData(
+            enabled: true,
+            touchTooltipData: BarTouchTooltipData(
+              tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+              direction: TooltipDirection.bottom,
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                String variableName = mapOfAssessmentVariableResultsCount[group.x.toInt()][AssessmentVariables.keyName];
+                String markerName = "";
+                if (rodIndex == 0) {
+                  markerName = "Markers 1";
+                } else if (rodIndex == 1) {
+                  markerName = "Markers 2";
+                } else if (rodIndex == 2) {
+                  markerName = "Markers 3";
+                } else if (rodIndex == 3) {
+                  markerName = "Markers 4";
+                } else if (rodIndex == 4) {
+                  markerName = "Markers 5";
+                }
+                return BarTooltipItem(
+                  "$variableName\n$markerName: ${mapOfAssessmentVariableResultsCount[group.x.toInt()][markerName]}%",
+                  const TextStyle(color: Colors.white),
+                );
+              },
             ),
           ),
-        ),
-        alignment: BarChartAlignment.center,
-        groupsSpace: 52,
-        barGroups: [
-          for (var i = 0; i < mapOfAssessmentVariableResultsCount.length; i++)
-            BarChartGroupData(
-              // showingTooltipIndicators: mapOfAssessmentVariableResultsCount[i]['Name'],
-              x: i,
-              groupVertically: true,
-              barRods: [
-                BarChartRodData(
-                  fromY: 0,
-                  toY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble(),
-                  color: Colors.red,
-                  width: barWidth,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(6),
-                    topRight: Radius.circular(6),
-                  ),
-                ),
-                BarChartRodData(
-                  fromY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble(),
-                  toY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble(),
-                  color: Colors.yellow,
-                  width: barWidth,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(6),
-                    topRight: Radius.circular(6),
-                  ),
-                ),
-                BarChartRodData(
-                  fromY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
-                    + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble(),
-                  toY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
-                    + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble()
-                    + mapOfAssessmentVariableResultsCount[i]['Markers 3'].toDouble(),
-                  color: Colors.green,
-                  width: barWidth,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(6),
-                    topRight: Radius.circular(6),
-                  ),
-                ),
-                BarChartRodData(
-                  fromY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 3'].toDouble(),
-                  toY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 3'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 4'].toDouble(),
-                  color: Colors.blue,
-                  width: barWidth,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(6),
-                    topRight: Radius.circular(6),
-                  ),
-                ),
-                BarChartRodData(
-                  fromY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 3'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 4'].toDouble(),
-                  toY: mapOfAssessmentVariableResultsCount[i]['Markers 1'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 2'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 3'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 4'].toDouble()
-                      + mapOfAssessmentVariableResultsCount[i]['Markers 5'].toDouble(),
-                  color: Colors.purple,
-                  width: barWidth,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(6),
-                    topRight: Radius.circular(6),
-                  ),
-                ),
-              ],
-              // showingTooltipIndicators: [0],
-            ),
-        ],
-        barTouchData: BarTouchData(
-          enabled: true,
-          touchTooltipData: BarTouchTooltipData(
-            tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
-            direction: TooltipDirection.bottom,
-            getTooltipItem: (group, groupIndex, rod, rodIndex) {
-              String variableName = mapOfAssessmentVariableResultsCount[group.x.toInt()][AssessmentVariables.keyName];
-              String markerName = "";
-              if (rodIndex == 0) {
-                markerName = "Markers 1";
-              } else if (rodIndex == 1) {
-                markerName = "Markers 2";
-              } else if (rodIndex == 2) {
-                markerName = "Markers 3";
-              } else if (rodIndex == 3) {
-                markerName = "Markers 4";
-              } else if (rodIndex == 4) {
-                markerName = "Markers 5";
-              }
-              return BarTooltipItem(
-                "$variableName\n$markerName: ${mapOfAssessmentVariableResultsCount[group.x.toInt()][markerName]}%",
-                const TextStyle(color: Colors.white),
-              );
-            },
-          ),
-        ),
-      )
+        )
     );
+    textTitleBarChartMainAssessment = Text(
+      'Main Assessment',
+      style: tsOneTextTheme.headlineMedium,
+    );
+
     barChartHumanFactorPFAssessment = BarChart(
         BarChartData(
           titlesData: FlTitlesData(
@@ -1099,6 +1683,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           ),
         )
     );
+    textTitleBarChartHumanFactorPFAssessment = Text(
+      'Human Factor Assessment - Pilot Flying',
+      style: tsOneTextTheme.headlineMedium,
+    );
+
     barChartHumanFactorPMAssessment = BarChart(
         BarChartData(
           titlesData: FlTitlesData(
@@ -1270,6 +1859,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           ),
         )
     );
+    textTitleBarChartHumanFactorPMAssessment = Text(
+      'Human Factor Assessment - Pilot Monitoring',
+      style: tsOneTextTheme.headlineMedium,
+    );
+
     chartLoading = false;
   }
 }
