@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -56,6 +57,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   late List<Map<String, dynamic>> mapOfHumanFactorAssessmentVariableResultsCount;
 
   late bool chartLoading;
+  late bool pdfLoading;
   late bool isChartInitialized;
   late String descBarChart;
 
@@ -94,6 +96,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     mapOfHumanFactorAssessmentVariableResultsCount = [];
 
     chartLoading = true;
+    pdfLoading = false;
     isChartInitialized = false;
     descBarChart = "Assessment Results from ${Util.convertDateTimeDisplay(startDate.toString())} to ${Util.convertDateTimeDisplay(endDate.toString())}";
 
@@ -426,897 +429,912 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return Consumer<AssessmentResultsViewModel>(
       builder: (_, model, child) {
         return SafeArea(
-          child: Scaffold(
-            body: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: Text(
-                              "Analytics",
-                              style: tsOneTextTheme.headlineLarge,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: IconButton(
-                            onPressed: () async {
-                              try{
-                                ScreenshotController screenshotController = ScreenshotController();
-                                double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-
-                                final bytesBarChartMainAssessment = await screenshotController.captureFromWidget(
-                                  MediaQuery(
-                                    data: const MediaQueryData(),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
-                                      child: barChartMainAssessment,
-                                    ),
-                                  ),
-                                  pixelRatio: pixelRatio,
-                                  targetSize: const Size(4200, 1400),
-                                  delay: const Duration(milliseconds: 10),
-                                  context: context,
-                                );
-
-                                if (!context.mounted) return;
-
-                                final bytesBarChartHumanFactorPFAssessment = await screenshotController.captureFromWidget(
-                                  MediaQuery(
-                                    data: const MediaQueryData(),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
-                                      child: barChartHumanFactorPFAssessment,
-                                    ),
-                                  ),
-                                  pixelRatio: pixelRatio,
-                                  targetSize: const Size(2000, 800),
-                                  delay: const Duration(milliseconds: 10),
-                                  context: context,
-                                );
-
-                                if (!context.mounted) return;
-
-                                final bytesBarChartHumanFactorPMAssessment = await screenshotController.captureFromWidget(
-                                  MediaQuery(
-                                    data: const MediaQueryData(),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
-                                      child: barChartHumanFactorPMAssessment,
-                                    ),
-                                  ),
-                                  pixelRatio: pixelRatio,
-                                  targetSize: const Size(2000, 800),
-                                  delay: const Duration(milliseconds: 10),
-                                  context: context,
-                                );
-
-
-                                final font = await rootBundle.load("assets/fonts/Poppins-Regular.ttf");
-                                final ttf = pw.Font.ttf(font);
-                                final pdf = pw.Document();
-
-                                // main assessment page
-                                pdf.addPage(
-                                    pw.Page(
-                                      pageTheme: pw.PageTheme(
-                                        margin: const pw.EdgeInsets.all(16),
-                                        pageFormat: PdfPageFormat.a4.landscape,
-                                      ),
-                                      build: (pw.Context context) => pw.Center(
-                                        child: pw.Padding(
-                                          padding: const pw.EdgeInsets.all(16),
-                                          child: pw.Column(
-                                            mainAxisAlignment: pw.MainAxisAlignment.center,
-                                            crossAxisAlignment: pw.CrossAxisAlignment.center,
-                                            children: [
-                                              pw.Text(
-                                                "Main Assessment",
-                                                style: pw.TextStyle(
-                                                  font: ttf,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              pw.Text(
-                                                descBarChart,
-                                                style: pw.TextStyle(
-                                                  font: ttf,
-                                                  fontSize: 12,
-                                                )
-                                              ),
-                                              pw.Wrap(
-                                                spacing: 16,
-                                                alignment: pw.WrapAlignment.center,
-                                                children: [
-                                                  pw.Row(
-                                                    mainAxisSize: pw.MainAxisSize.min,
-                                                    children: [
-                                                      pw.Container(
-                                                        width: 10,
-                                                        height: 10,
-                                                        decoration: const pw.BoxDecoration(
-                                                          shape: pw.BoxShape.circle,
-                                                          color: PdfColors.red,
-                                                        )
-                                                      ),
-                                                      pw.SizedBox(width: 6),
-                                                      pw.Text(
-                                                        "Markers 1",
-                                                        style: pw.TextStyle(
-                                                          font: ttf,
-                                                          fontSize: 12
-                                                        )
-                                                      )
-                                                    ]
-                                                  ),
-
-                                                  pw.Row(
-                                                    mainAxisSize: pw.MainAxisSize.min,
-                                                    children: [
-                                                        pw.Container(
-                                                            width: 10,
-                                                            height: 10,
-                                                            decoration: const pw.BoxDecoration(
-                                                              shape: pw.BoxShape.circle,
-                                                              color: PdfColors.yellow,
-                                                            )
-                                                        ),
-                                                        pw.SizedBox(width: 6),
-                                                        pw.Text(
-                                                            "Markers 2",
-                                                            style: pw.TextStyle(
-                                                                font: ttf,
-                                                                fontSize: 12
-                                                            )
-                                                        )
-                                                      ]
-                                                  ),
-
-                                                  pw.Row(
-                                                      mainAxisSize: pw.MainAxisSize.min,
-                                                      children: [
-                                                        pw.Container(
-                                                            width: 10,
-                                                            height: 10,
-                                                            decoration: const pw.BoxDecoration(
-                                                              shape: pw.BoxShape.circle,
-                                                              color: PdfColors.green,
-                                                            )
-                                                        ),
-                                                        pw.SizedBox(width: 6),
-                                                        pw.Text(
-                                                            "Markers 3",
-                                                            style: pw.TextStyle(
-                                                                font: ttf,
-                                                                fontSize: 12
-                                                            )
-                                                        )
-                                                      ]
-                                                  ),
-
-                                                  pw.Row(
-                                                      mainAxisSize: pw.MainAxisSize.min,
-                                                      children: [
-                                                        pw.Container(
-                                                            width: 10,
-                                                            height: 10,
-                                                            decoration: const pw.BoxDecoration(
-                                                              shape: pw.BoxShape.circle,
-                                                              color: PdfColors.blue,
-                                                            )
-                                                        ),
-                                                        pw.SizedBox(width: 6),
-                                                        pw.Text(
-                                                            "Markers 4",
-                                                            style: pw.TextStyle(
-                                                                font: ttf,
-                                                                fontSize: 12
-                                                            )
-                                                        )
-                                                      ]
-                                                  ),
-
-                                                  pw.Row(
-                                                      mainAxisSize: pw.MainAxisSize.min,
-                                                      children: [
-                                                        pw.Container(
-                                                            width: 10,
-                                                            height: 10,
-                                                            decoration: const pw.BoxDecoration(
-                                                              shape: pw.BoxShape.circle,
-                                                              color: PdfColors.purple,
-                                                            )
-                                                        ),
-                                                        pw.SizedBox(width: 6),
-                                                        pw.Text(
-                                                            "Markers 5",
-                                                            style: pw.TextStyle(
-                                                                font: ttf,
-                                                                fontSize: 12
-                                                            )
-                                                        )
-                                                      ]
-                                                  ),
-                                                ]
-                                              ),
-                                              pw.Image(
-                                                pw.MemoryImage(bytesBarChartMainAssessment),
-                                              ),
-                                            ]
-                                          ),
-                                        )
-                                      ),
-                                    )
-                                );
-
-                                // human factor pilot flying page
-                                pdf.addPage(
-                                    pw.Page(
-                                      pageTheme: pw.PageTheme(
-                                        margin: const pw.EdgeInsets.all(16),
-                                        pageFormat: PdfPageFormat.a4.landscape,
-                                      ),
-                                      build: (pw.Context context) => pw.Center(
-                                          child: pw.Padding(
-                                            padding: const pw.EdgeInsets.all(16),
-                                            child: pw.Column(
-                                                mainAxisAlignment: pw.MainAxisAlignment.center,
-                                                crossAxisAlignment: pw.CrossAxisAlignment.center,
-                                                children: [
-                                                  pw.Text(
-                                                    "Human Factor - Pilot Flying",
-                                                    style: pw.TextStyle(
-                                                      font: ttf,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                  pw.Text(
-                                                    descBarChart,
-                                                      style: pw.TextStyle(
-                                                        font: ttf,
-                                                        fontSize: 12,
-                                                      )
-                                                  ),
-                                                  pw.Wrap(
-                                                      spacing: 16,
-                                                      alignment: pw.WrapAlignment.center,
-                                                      children: [
-                                                        pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.min,
-                                                            children: [
-                                                              pw.Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const pw.BoxDecoration(
-                                                                    shape: pw.BoxShape.circle,
-                                                                    color: PdfColors.red,
-                                                                  )
-                                                              ),
-                                                              pw.SizedBox(width: 6),
-                                                              pw.Text(
-                                                                  "Markers 1",
-                                                                  style: pw.TextStyle(
-                                                                      font: ttf,
-                                                                      fontSize: 12
-                                                                  )
-                                                              )
-                                                            ]
-                                                        ),
-
-                                                        pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.min,
-                                                            children: [
-                                                              pw.Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const pw.BoxDecoration(
-                                                                    shape: pw.BoxShape.circle,
-                                                                    color: PdfColors.yellow,
-                                                                  )
-                                                              ),
-                                                              pw.SizedBox(width: 6),
-                                                              pw.Text(
-                                                                  "Markers 2",
-                                                                  style: pw.TextStyle(
-                                                                      font: ttf,
-                                                                      fontSize: 12
-                                                                  )
-                                                              )
-                                                            ]
-                                                        ),
-
-                                                        pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.min,
-                                                            children: [
-                                                              pw.Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const pw.BoxDecoration(
-                                                                    shape: pw.BoxShape.circle,
-                                                                    color: PdfColors.green,
-                                                                  )
-                                                              ),
-                                                              pw.SizedBox(width: 6),
-                                                              pw.Text(
-                                                                  "Markers 3",
-                                                                  style: pw.TextStyle(
-                                                                      font: ttf,
-                                                                      fontSize: 12
-                                                                  )
-                                                              )
-                                                            ]
-                                                        ),
-
-                                                        pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.min,
-                                                            children: [
-                                                              pw.Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const pw.BoxDecoration(
-                                                                    shape: pw.BoxShape.circle,
-                                                                    color: PdfColors.blue,
-                                                                  )
-                                                              ),
-                                                              pw.SizedBox(width: 6),
-                                                              pw.Text(
-                                                                  "Markers 4",
-                                                                  style: pw.TextStyle(
-                                                                      font: ttf,
-                                                                      fontSize: 12
-                                                                  )
-                                                              )
-                                                            ]
-                                                        ),
-
-                                                        pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.min,
-                                                            children: [
-                                                              pw.Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const pw.BoxDecoration(
-                                                                    shape: pw.BoxShape.circle,
-                                                                    color: PdfColors.purple,
-                                                                  )
-                                                              ),
-                                                              pw.SizedBox(width: 6),
-                                                              pw.Text(
-                                                                  "Markers 5",
-                                                                  style: pw.TextStyle(
-                                                                      font: ttf,
-                                                                      fontSize: 12
-                                                                  )
-                                                              )
-                                                            ]
-                                                        ),
-                                                      ]
-                                                  ),
-                                                  pw.Image(
-                                                    pw.MemoryImage(bytesBarChartHumanFactorPFAssessment),
-                                                  ),
-                                                ]
-                                            ),
-                                          )
-                                      ),
-                                    )
-                                );
-
-                                // human factor pilot monitoring page
-                                pdf.addPage(
-                                    pw.Page(
-                                      pageTheme: pw.PageTheme(
-                                        margin: const pw.EdgeInsets.all(16),
-                                        pageFormat: PdfPageFormat.a4.landscape,
-                                      ),
-                                      build: (pw.Context context) => pw.Center(
-                                          child: pw.Padding(
-                                            padding: const pw.EdgeInsets.all(16),
-                                            child: pw.Column(
-                                                mainAxisAlignment: pw.MainAxisAlignment.center,
-                                                crossAxisAlignment: pw.CrossAxisAlignment.center,
-                                                children: [
-                                                  pw.Text(
-                                                    "Human Factor - Pilot Monitoring",
-                                                    style: pw.TextStyle(
-                                                      font: ttf,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                  pw.Text(
-                                                    descBarChart,
-                                                    style: pw.TextStyle(
-                                                      font: ttf,
-                                                      fontSize: 12,
-                                                    )
-                                                  ),
-                                                  pw.Wrap(
-                                                      spacing: 16,
-                                                      alignment: pw.WrapAlignment.center,
-                                                      children: [
-                                                        pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.min,
-                                                            children: [
-                                                              pw.Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const pw.BoxDecoration(
-                                                                    shape: pw.BoxShape.circle,
-                                                                    color: PdfColors.red,
-                                                                  )
-                                                              ),
-                                                              pw.SizedBox(width: 6),
-                                                              pw.Text(
-                                                                  "Markers 1",
-                                                                  style: pw.TextStyle(
-                                                                      font: ttf,
-                                                                      fontSize: 12
-                                                                  )
-                                                              )
-                                                            ]
-                                                        ),
-
-                                                        pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.min,
-                                                            children: [
-                                                              pw.Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const pw.BoxDecoration(
-                                                                    shape: pw.BoxShape.circle,
-                                                                    color: PdfColors.yellow,
-                                                                  )
-                                                              ),
-                                                              pw.SizedBox(width: 6),
-                                                              pw.Text(
-                                                                  "Markers 2",
-                                                                  style: pw.TextStyle(
-                                                                      font: ttf,
-                                                                      fontSize: 12
-                                                                  )
-                                                              )
-                                                            ]
-                                                        ),
-
-                                                        pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.min,
-                                                            children: [
-                                                              pw.Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const pw.BoxDecoration(
-                                                                    shape: pw.BoxShape.circle,
-                                                                    color: PdfColors.green,
-                                                                  )
-                                                              ),
-                                                              pw.SizedBox(width: 6),
-                                                              pw.Text(
-                                                                  "Markers 3",
-                                                                  style: pw.TextStyle(
-                                                                      font: ttf,
-                                                                      fontSize: 12
-                                                                  )
-                                                              )
-                                                            ]
-                                                        ),
-
-                                                        pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.min,
-                                                            children: [
-                                                              pw.Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const pw.BoxDecoration(
-                                                                    shape: pw.BoxShape.circle,
-                                                                    color: PdfColors.blue,
-                                                                  )
-                                                              ),
-                                                              pw.SizedBox(width: 6),
-                                                              pw.Text(
-                                                                  "Markers 4",
-                                                                  style: pw.TextStyle(
-                                                                      font: ttf,
-                                                                      fontSize: 12
-                                                                  )
-                                                              )
-                                                            ]
-                                                        ),
-
-                                                        pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.min,
-                                                            children: [
-                                                              pw.Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const pw.BoxDecoration(
-                                                                    shape: pw.BoxShape.circle,
-                                                                    color: PdfColors.purple,
-                                                                  )
-                                                              ),
-                                                              pw.SizedBox(width: 6),
-                                                              pw.Text(
-                                                                  "Markers 5",
-                                                                  style: pw.TextStyle(
-                                                                      font: ttf,
-                                                                      fontSize: 12
-                                                                  )
-                                                              )
-                                                            ]
-                                                        ),
-                                                      ]
-                                                  ),
-                                                  pw.Image(
-                                                    pw.MemoryImage(bytesBarChartHumanFactorPMAssessment),
-                                                  ),
-                                                ]
-                                            ),
-                                          )
-                                      ),
-                                    )
-                                );
-
-                                final directory = await getApplicationDocumentsDirectory();
-                                final fileName = "tsone_analytics_report_${Util.convertDateTimeDisplay(DateTime.now().toString(), 'yyyy-MM-dd-HH:mm:ss')}";
-                                final filePath = '${directory.path}/$fileName.pdf';
-                                final file = File(filePath);
-                                await file.writeAsBytes(await pdf.save());
-
-                                final destinationDirectory = await getExternalStorageDirectory();
-                                log(destinationDirectory!.path);
-                                final destinationPath = '${destinationDirectory.path}/$fileName.pdf';
-                                await file.copy(destinationPath);
-
-                                file.delete();
-
-                                await OpenFile.open(destinationPath);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('PDF file saved to downloads folder'),
-                                  ),
-                                );
-                              }
-                              catch (e) {
-                                print("Exception occurred on analytics screen: $e");
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Error occurred while saving PDF file'),
-                                  ),
-                                );
-                              }
-                            },
-                            icon: const Icon(Icons.download),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Start Date',
-                                focusColor: TsOneColor.primary,
-                              ),
-                              readOnly: true,
-                              controller: TextEditingController(
-                                text: Util.convertDateTimeDisplay(startDate.toString(), "dd MMM yyyy"),
-                              ),
-                              onTap: () {
-                                _selectStartingDate(context);
-                                FocusScope.of(context).unfocus();
-                              },
-                            ),
-                          ),
-                          /*
-                          Expanded(
-                            flex: 2,
-                            child: IconButton(
-                                onPressed: () {
-                                  getAllAssessmentResults();
-                                },
-                                icon: const Icon(Icons.search)
-                            ),
-                          )
-                           */
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'End Date',
-                                focusColor: TsOneColor.primary,
-                              ),
-                              readOnly: true,
-                              controller: TextEditingController(
-                                text: Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy"),
-                              ),
-                              onTap: () {
-                                _selectEndingDate(context);
-                                FocusScope.of(context).unfocus();
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Row(
-                        children: [
-                          !isSearchingByUser
-                          ? Expanded(
-                            flex: 4,
-                            child: DropdownButtonFormField(
-                              value: rank,
-                              items: rankList.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (newValue) {
-                                setState(() {
-                                  rank = newValue.toString();
-                                  descBarChart = "Assessment Results from ${Util.convertDateTimeDisplay(startDate.toString())} to ${Util.convertDateTimeDisplay(endDate.toString())}"
-                                      "\nFor the rank of $rank";
-                                });
-                                filterAssessmentResults();
-                              },
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Rank',
-                                focusColor: TsOneColor.primary,
-                              ),
-                            ),
-                          )
-                          : Container(),
-                          !isSearchingByUser
-                          ? Expanded(
-                            flex: 1,
-                            child: Container(),
-                          )
-                          : Container(),
-                          Expanded(
-                            flex: 10,
-                            child: TypeAheadFormField<UserModel>(
-                              hideSuggestionsOnKeyboardHide: false,
-                              textFieldConfiguration: TextFieldConfiguration(
-                                controller: nameTextController,
-                                onTap: () {
-                                  // clear the text field
-                                  nameTextController.clear();
-
-                                  if(nameTextController.text.isEmpty) {
-                                    setState(() {
-                                      isSearchingByUser = false;
-                                    });
-                                    filterAssessmentResults();
-                                  }
-
-                                  // clear the selected user
-                                  examineeStaffIDNo = Util.defaultIntIfNull;
-
-                                  // refresh the UI
-                                  setState(() {});
-                                },
-                                onChanged: (value) {
-                                  if(value.isEmpty) {
-                                    setState(() {
-                                      isSearchingByUser = false;
-                                    });
-                                  }
-                                  else{
-                                    setState(() {
-                                      isSearchingByUser = true;
-                                    });
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  labelText: 'Name',
-                                  suffixIcon: IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.search),
-                                  ),
-                                ),
-                              ),
-                              suggestionsCallback: (pattern) async {
-                                // wait for the user finish typing
-                                Future.delayed(const Duration(milliseconds: 500));
-                                if(pattern.isNotEmpty) {
-                                  usersSearched = await userViewModel.getUsersBySearchName(pattern.toTitleCase(), 5);
-                                  return usersSearched;
-                                } else {
-                                  return [];
-                                }
-                              },
-                              itemBuilder: (context, UserModel suggestion) {
-                                return ListTile(
-                                  title: Text(suggestion.name),
-                                );
-                              },
-                              noItemsFoundBuilder: (context) {
-                                return const SizedBox(
-                                    height: 100,
-                                    child: Center(
-                                      child: Text(
-                                        'No users found.',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    )
-                                );
-                              },
-                              onSuggestionSelected: (UserModel? suggestion) {
-                                if (suggestion != null) {
-                                  // set the selected user id no to be searched in assessment results collection
-                                  examineeStaffIDNo = suggestion.idNo;
-
-                                  // set the text field to be the selected user's name
-                                  nameTextController.text = "${suggestion.rank} ${suggestion.name}";
-
-                                  // run the filter function
-                                  filterAssessmentResults();
-
-                                  descBarChart = "Assessment Results from ${Util.convertDateTimeDisplay(startDate.toString())} to ${Util.convertDateTimeDisplay(endDate.toString())}"
-                                      "\nFor the flight crew ${nameTextController.text}";
-
-                                  // refresh the UI
-                                  setState(() {});
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    model.isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Column(
-                        children: [
-                          Text("Currently showing analytics of ${assessmentResultsFilteredByDate.length} assessment results for "
-                              "${isSearchingByUser
-                              ? "\"${nameTextController.text}\" "
-                              : rank == rankList[0] ? "all ranks " : "the rank of $rank "
-                              }"
-                              "from ${Util.convertDateTimeDisplay(startDate.toString(), "dd MMM yyyy")} "
-                              "to ${Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy")}."),
-                          chartLoading? const Padding(
-                            padding: EdgeInsets.only(top: 16.0),
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          ) : Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+          child: ProgressHUD(
+            backgroundColor: tsOneColorScheme.surface,
+            indicatorColor: tsOneColorScheme.primary,
+            textStyle: tsOneTextTheme.headlineSmall!,
+            child: Builder(
+              builder: (context) {
+                return Scaffold(
+                  body: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
                               children: [
-                                textTitleBarChartMainAssessment,
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
-                                  child: LegendsListWidget(
-                                    legends: [
-                                      Legend('Markers 1', Colors.red),
-                                      Legend('Markers 2', Colors.yellow),
-                                      Legend('Markers 3', Colors.green),
-                                      Legend('Markers 4', Colors.blue),
-                                      Legend('Markers 5', Colors.purple),
-                                    ],
-                                  ),
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: SizedBox(
-                                    width: 4200,
-                                    height: 600,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
-                                      child: barChartMainAssessment,
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 16.0),
+                                    child: Text(
+                                      "Analytics",
+                                      style: tsOneTextTheme.headlineLarge,
                                     ),
                                   ),
                                 ),
-
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 32.0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Divider(
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                textTitleBarChartHumanFactorPFAssessment,
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
-                                  child: LegendsListWidget(
-                                    legends: [
-                                      Legend('Markers 1', Colors.red),
-                                      Legend('Markers 2', Colors.yellow),
-                                      Legend('Markers 3', Colors.green),
-                                      Legend('Markers 4', Colors.blue),
-                                      Legend('Markers 5', Colors.purple),
-                                    ],
-                                  ),
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: SizedBox(
-                                    width: 2000,
-                                    height: 600,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
-                                      child: barChartHumanFactorPFAssessment,
-                                    ),
-                                  ),
-                                ),
+                                  padding: const EdgeInsets.only(bottom: 16.0),
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      final progress = ProgressHUD.of(context);
+                                      progress?.showWithText("Generating PDF");
+                                      pdfLoading = true;
+                                      try{
+                                        ScreenshotController screenshotController = ScreenshotController();
+                                        double pixelRatio = MediaQuery.of(context).devicePixelRatio;
 
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 32.0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Divider(
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                        final bytesBarChartMainAssessment = await screenshotController.captureFromWidget(
+                                          MediaQuery(
+                                            data: const MediaQueryData(),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                              child: barChartMainAssessment,
+                                            ),
+                                          ),
+                                          pixelRatio: pixelRatio,
+                                          targetSize: const Size(4200, 1400),
+                                          delay: const Duration(milliseconds: 10),
+                                          context: context,
+                                        );
 
-                                textTitleBarChartHumanFactorPMAssessment,
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
-                                  child: LegendsListWidget(
-                                    legends: [
-                                      Legend('Markers 1', Colors.red),
-                                      Legend('Markers 2', Colors.yellow),
-                                      Legend('Markers 3', Colors.green),
-                                      Legend('Markers 4', Colors.blue),
-                                      Legend('Markers 5', Colors.purple),
-                                    ],
-                                  ),
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: SizedBox(
-                                    width: 2000,
-                                    height: 600,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
-                                      child: barChartHumanFactorPMAssessment,
-                                    ),
+                                        if (!context.mounted) return;
+
+                                        final bytesBarChartHumanFactorPFAssessment = await screenshotController.captureFromWidget(
+                                          MediaQuery(
+                                            data: const MediaQueryData(),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                              child: barChartHumanFactorPFAssessment,
+                                            ),
+                                          ),
+                                          pixelRatio: pixelRatio,
+                                          targetSize: const Size(2000, 800),
+                                          delay: const Duration(milliseconds: 10),
+                                          context: context,
+                                        );
+
+                                        if (!context.mounted) return;
+
+                                        final bytesBarChartHumanFactorPMAssessment = await screenshotController.captureFromWidget(
+                                          MediaQuery(
+                                            data: const MediaQueryData(),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                              child: barChartHumanFactorPMAssessment,
+                                            ),
+                                          ),
+                                          pixelRatio: pixelRatio,
+                                          targetSize: const Size(2000, 800),
+                                          delay: const Duration(milliseconds: 10),
+                                          context: context,
+                                        );
+
+
+                                        final font = await rootBundle.load("assets/fonts/Poppins-Regular.ttf");
+                                        final ttf = pw.Font.ttf(font);
+                                        final pdf = pw.Document();
+
+                                        // main assessment page
+                                        pdf.addPage(
+                                            pw.Page(
+                                              pageTheme: pw.PageTheme(
+                                                margin: const pw.EdgeInsets.all(16),
+                                                pageFormat: PdfPageFormat.a4.landscape,
+                                              ),
+                                              build: (pw.Context context) => pw.Center(
+                                                  child: pw.Padding(
+                                                    padding: const pw.EdgeInsets.all(16),
+                                                    child: pw.Column(
+                                                        mainAxisAlignment: pw.MainAxisAlignment.center,
+                                                        crossAxisAlignment: pw.CrossAxisAlignment.center,
+                                                        children: [
+                                                          pw.Text(
+                                                            "Main Assessment",
+                                                            style: pw.TextStyle(
+                                                              font: ttf,
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          pw.Text(
+                                                              descBarChart,
+                                                              style: pw.TextStyle(
+                                                                font: ttf,
+                                                                fontSize: 12,
+                                                              )
+                                                          ),
+                                                          pw.Wrap(
+                                                              spacing: 16,
+                                                              alignment: pw.WrapAlignment.center,
+                                                              children: [
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.red,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 1",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.yellow,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 2",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.green,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 3",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.blue,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 4",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.purple,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 5",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+                                                              ]
+                                                          ),
+                                                          pw.Image(
+                                                            pw.MemoryImage(bytesBarChartMainAssessment),
+                                                          ),
+                                                        ]
+                                                    ),
+                                                  )
+                                              ),
+                                            )
+                                        );
+
+                                        // human factor pilot flying page
+                                        pdf.addPage(
+                                            pw.Page(
+                                              pageTheme: pw.PageTheme(
+                                                margin: const pw.EdgeInsets.all(16),
+                                                pageFormat: PdfPageFormat.a4.landscape,
+                                              ),
+                                              build: (pw.Context context) => pw.Center(
+                                                  child: pw.Padding(
+                                                    padding: const pw.EdgeInsets.all(16),
+                                                    child: pw.Column(
+                                                        mainAxisAlignment: pw.MainAxisAlignment.center,
+                                                        crossAxisAlignment: pw.CrossAxisAlignment.center,
+                                                        children: [
+                                                          pw.Text(
+                                                            "Human Factor - Pilot Flying",
+                                                            style: pw.TextStyle(
+                                                              font: ttf,
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          pw.Text(
+                                                              descBarChart,
+                                                              style: pw.TextStyle(
+                                                                font: ttf,
+                                                                fontSize: 12,
+                                                              )
+                                                          ),
+                                                          pw.Wrap(
+                                                              spacing: 16,
+                                                              alignment: pw.WrapAlignment.center,
+                                                              children: [
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.red,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 1",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.yellow,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 2",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.green,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 3",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.blue,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 4",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.purple,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 5",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+                                                              ]
+                                                          ),
+                                                          pw.Image(
+                                                            pw.MemoryImage(bytesBarChartHumanFactorPFAssessment),
+                                                          ),
+                                                        ]
+                                                    ),
+                                                  )
+                                              ),
+                                            )
+                                        );
+
+                                        // human factor pilot monitoring page
+                                        pdf.addPage(
+                                            pw.Page(
+                                              pageTheme: pw.PageTheme(
+                                                margin: const pw.EdgeInsets.all(16),
+                                                pageFormat: PdfPageFormat.a4.landscape,
+                                              ),
+                                              build: (pw.Context context) => pw.Center(
+                                                  child: pw.Padding(
+                                                    padding: const pw.EdgeInsets.all(16),
+                                                    child: pw.Column(
+                                                        mainAxisAlignment: pw.MainAxisAlignment.center,
+                                                        crossAxisAlignment: pw.CrossAxisAlignment.center,
+                                                        children: [
+                                                          pw.Text(
+                                                            "Human Factor - Pilot Monitoring",
+                                                            style: pw.TextStyle(
+                                                              font: ttf,
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          pw.Text(
+                                                              descBarChart,
+                                                              style: pw.TextStyle(
+                                                                font: ttf,
+                                                                fontSize: 12,
+                                                              )
+                                                          ),
+                                                          pw.Wrap(
+                                                              spacing: 16,
+                                                              alignment: pw.WrapAlignment.center,
+                                                              children: [
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.red,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 1",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.yellow,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 2",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.green,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 3",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.blue,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 4",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+
+                                                                pw.Row(
+                                                                    mainAxisSize: pw.MainAxisSize.min,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                          width: 10,
+                                                                          height: 10,
+                                                                          decoration: const pw.BoxDecoration(
+                                                                            shape: pw.BoxShape.circle,
+                                                                            color: PdfColors.purple,
+                                                                          )
+                                                                      ),
+                                                                      pw.SizedBox(width: 6),
+                                                                      pw.Text(
+                                                                          "Markers 5",
+                                                                          style: pw.TextStyle(
+                                                                              font: ttf,
+                                                                              fontSize: 12
+                                                                          )
+                                                                      )
+                                                                    ]
+                                                                ),
+                                                              ]
+                                                          ),
+                                                          pw.Image(
+                                                            pw.MemoryImage(bytesBarChartHumanFactorPMAssessment),
+                                                          ),
+                                                        ]
+                                                    ),
+                                                  )
+                                              ),
+                                            )
+                                        );
+
+                                        final directory = await getApplicationDocumentsDirectory();
+                                        final fileName = "tsone_analytics_report_${Util.convertDateTimeDisplay(DateTime.now().toString(), 'yyyy-MM-dd-HH:mm:ss')}";
+                                        final filePath = '${directory.path}/$fileName.pdf';
+                                        final file = File(filePath);
+                                        await file.writeAsBytes(await pdf.save());
+
+                                        final destinationDirectory = await getExternalStorageDirectory();
+                                        log(destinationDirectory!.path);
+                                        final destinationPath = '${destinationDirectory.path}/$fileName.pdf';
+                                        await file.copy(destinationPath);
+
+                                        file.delete();
+
+                                        await OpenFile.open(destinationPath);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('PDF file saved to downloads folder'),
+                                          ),
+                                        );
+                                      }
+                                      catch (e) {
+                                        print("Exception occurred on analytics screen: $e");
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Error occurred while saving PDF file'),
+                                          ),
+                                        );
+                                      }
+                                      progress?.dismiss();
+                                      pdfLoading = false;
+                                    },
+                                    icon: const Icon(Icons.download),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                  ],
-                ),
-              ]),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        labelText: 'Start Date',
+                                        focusColor: TsOneColor.primary,
+                                      ),
+                                      readOnly: true,
+                                      controller: TextEditingController(
+                                        text: Util.convertDateTimeDisplay(startDate.toString(), "dd MMM yyyy"),
+                                      ),
+                                      onTap: () {
+                                        _selectStartingDate(context);
+                                        FocusScope.of(context).unfocus();
+                                      },
+                                    ),
+                                  ),
+                                  /*
+                            Expanded(
+                              flex: 2,
+                              child: IconButton(
+                                  onPressed: () {
+                                    getAllAssessmentResults();
+                                  },
+                                  icon: const Icon(Icons.search)
+                              ),
+                            )
+                             */
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        labelText: 'End Date',
+                                        focusColor: TsOneColor.primary,
+                                      ),
+                                      readOnly: true,
+                                      controller: TextEditingController(
+                                        text: Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy"),
+                                      ),
+                                      onTap: () {
+                                        _selectEndingDate(context);
+                                        FocusScope.of(context).unfocus();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: Row(
+                                children: [
+                                  !isSearchingByUser
+                                      ? Expanded(
+                                    flex: 4,
+                                    child: DropdownButtonFormField(
+                                      value: rank,
+                                      items: rankList.map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          rank = newValue.toString();
+                                          descBarChart = "Assessment Results from ${Util.convertDateTimeDisplay(startDate.toString())} to ${Util.convertDateTimeDisplay(endDate.toString())}"
+                                              "\nFor the rank of $rank";
+                                        });
+                                        filterAssessmentResults();
+                                      },
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        labelText: 'Rank',
+                                        focusColor: TsOneColor.primary,
+                                      ),
+                                    ),
+                                  )
+                                      : Container(),
+                                  !isSearchingByUser
+                                      ? Expanded(
+                                    flex: 1,
+                                    child: Container(),
+                                  )
+                                      : Container(),
+                                  Expanded(
+                                    flex: 10,
+                                    child: TypeAheadFormField<UserModel>(
+                                      hideSuggestionsOnKeyboardHide: false,
+                                      textFieldConfiguration: TextFieldConfiguration(
+                                        controller: nameTextController,
+                                        onTap: () {
+                                          // clear the text field
+                                          nameTextController.clear();
+
+                                          if(nameTextController.text.isEmpty) {
+                                            setState(() {
+                                              isSearchingByUser = false;
+                                            });
+                                            filterAssessmentResults();
+                                          }
+
+                                          // clear the selected user
+                                          examineeStaffIDNo = Util.defaultIntIfNull;
+
+                                          // refresh the UI
+                                          setState(() {});
+                                        },
+                                        onChanged: (value) {
+                                          if(value.isEmpty) {
+                                            setState(() {
+                                              isSearchingByUser = false;
+                                            });
+                                          }
+                                          else{
+                                            setState(() {
+                                              isSearchingByUser = true;
+                                            });
+                                          }
+                                        },
+                                        decoration: InputDecoration(
+                                          border: const OutlineInputBorder(),
+                                          labelText: 'Name',
+                                          suffixIcon: IconButton(
+                                            onPressed: () {},
+                                            icon: const Icon(Icons.search),
+                                          ),
+                                        ),
+                                      ),
+                                      suggestionsCallback: (pattern) async {
+                                        // wait for the user finish typing
+                                        Future.delayed(const Duration(milliseconds: 500));
+                                        if(pattern.isNotEmpty) {
+                                          usersSearched = await userViewModel.getUsersBySearchName(pattern.toTitleCase(), 5);
+                                          return usersSearched;
+                                        } else {
+                                          return [];
+                                        }
+                                      },
+                                      itemBuilder: (context, UserModel suggestion) {
+                                        return ListTile(
+                                          title: Text(suggestion.name),
+                                        );
+                                      },
+                                      noItemsFoundBuilder: (context) {
+                                        return const SizedBox(
+                                            height: 100,
+                                            child: Center(
+                                              child: Text(
+                                                'No users found.',
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            )
+                                        );
+                                      },
+                                      onSuggestionSelected: (UserModel? suggestion) {
+                                        if (suggestion != null) {
+                                          // set the selected user id no to be searched in assessment results collection
+                                          examineeStaffIDNo = suggestion.idNo;
+
+                                          // set the text field to be the selected user's name
+                                          nameTextController.text = "${suggestion.rank} ${suggestion.name}";
+
+                                          // run the filter function
+                                          filterAssessmentResults();
+
+                                          descBarChart = "Assessment Results from ${Util.convertDateTimeDisplay(startDate.toString())} to ${Util.convertDateTimeDisplay(endDate.toString())}"
+                                              "\nFor the flight crew ${nameTextController.text}";
+
+                                          // refresh the UI
+                                          setState(() {});
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            model.isLoading
+                                ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                                : Column(
+                              children: [
+                                Text("Currently showing analytics of ${assessmentResultsFilteredByDate.length} assessment results for "
+                                    "${isSearchingByUser
+                                    ? "\"${nameTextController.text}\" "
+                                    : rank == rankList[0] ? "all ranks " : "the rank of $rank "
+                                }"
+                                    "from ${Util.convertDateTimeDisplay(startDate.toString(), "dd MMM yyyy")} "
+                                    "to ${Util.convertDateTimeDisplay(endDate.toString(), "dd MMM yyyy")}."),
+                                chartLoading? const Padding(
+                                  padding: EdgeInsets.only(top: 16.0),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ) : Padding(
+                                  padding: const EdgeInsets.only(top: 16.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      textTitleBarChartMainAssessment,
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
+                                        child: LegendsListWidget(
+                                          legends: [
+                                            Legend('Markers 1', Colors.red),
+                                            Legend('Markers 2', Colors.yellow),
+                                            Legend('Markers 3', Colors.green),
+                                            Legend('Markers 4', Colors.blue),
+                                            Legend('Markers 5', Colors.purple),
+                                          ],
+                                        ),
+                                      ),
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: SizedBox(
+                                          width: 4200,
+                                          height: 600,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                            child: barChartMainAssessment,
+                                          ),
+                                        ),
+                                      ),
+
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 32.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Divider(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      textTitleBarChartHumanFactorPFAssessment,
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
+                                        child: LegendsListWidget(
+                                          legends: [
+                                            Legend('Markers 1', Colors.red),
+                                            Legend('Markers 2', Colors.yellow),
+                                            Legend('Markers 3', Colors.green),
+                                            Legend('Markers 4', Colors.blue),
+                                            Legend('Markers 5', Colors.purple),
+                                          ],
+                                        ),
+                                      ),
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: SizedBox(
+                                          width: 2000,
+                                          height: 600,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                            child: barChartHumanFactorPFAssessment,
+                                          ),
+                                        ),
+                                      ),
+
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 32.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Divider(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      textTitleBarChartHumanFactorPMAssessment,
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 16.0, right: 16.0, left: 16.0),
+                                        child: LegendsListWidget(
+                                          legends: [
+                                            Legend('Markers 1', Colors.red),
+                                            Legend('Markers 2', Colors.yellow),
+                                            Legend('Markers 3', Colors.green),
+                                            Legend('Markers 4', Colors.blue),
+                                            Legend('Markers 5', Colors.purple),
+                                          ],
+                                        ),
+                                      ),
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: SizedBox(
+                                          width: 2000,
+                                          height: 600,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(top: 30.0, bottom: 45.0, left: 0.0),
+                                            child: barChartHumanFactorPMAssessment,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ]),
+                    ),
+                  ),
+                );
+              },
             ),
-          ),
-        ));
+          )
+        );
       },
     );
   }
