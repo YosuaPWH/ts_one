@@ -170,8 +170,8 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
   void calculateOverallPerformance() {
     _newAssessment.setOverallPerformance1();
     _newAssessment.setOverallPerformance2();
-    print("Overall Performance 1: ${_newAssessment.overallPerformance1}");
-    print("Overall Performance 2: ${_newAssessment.overallPerformance2}");
+    log("Overall Performance 1: ${_newAssessment.overallPerformance1}");
+    log("Overall Performance 2: ${_newAssessment.overallPerformance2}");
   }
 
   @override
@@ -1351,7 +1351,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
       );
     }
 
-    print(inputs1HumanFactor.toString());
+    log(inputs1HumanFactor.toString());
 
     return expansionTiles;
   }

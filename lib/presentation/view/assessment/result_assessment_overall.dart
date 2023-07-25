@@ -87,7 +87,6 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
   //         imgTemp = File(_croppedImage!.path);
   //         _image = imgTemp;
   //       });
-  //       // print("HALOOOO image: ${_image!.path}");
   //     }
   //     else{
   //       setState(() {

@@ -52,7 +52,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       }
     }
     catch(e){
-      print(e.toString());
+      log("Exception on assessment results repo: ${e.toString()}");
     }
     return assessmentResultsList;
   }
@@ -79,7 +79,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       }
     }
     catch(e){
-      print(e.toString());
+      log("Exception on assessment results repo: ${e.toString()}");
     }
     return assessmentResultsList;
   }
@@ -108,7 +108,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       }
     }
     catch(e){
-      print(e.toString());
+      log("Exception on assessment results repo: ${e.toString()}");
     }
     return assessmentResultsList;
   }

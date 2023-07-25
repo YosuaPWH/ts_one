@@ -63,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void getAssessmentResults() async {
     assessmentResults = await viewModel.getAssessmentResultsByCurrentUserNotConfirm();
-    print("dwada ${assessmentResults.length}");
   }
 
   @override

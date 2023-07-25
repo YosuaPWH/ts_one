@@ -540,7 +540,6 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    print("pada $_newAssessment");
                     if (_formKey.currentState!.validate()) {
                       Navigator.pushNamed(
                         context,

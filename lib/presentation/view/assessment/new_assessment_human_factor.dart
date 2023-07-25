@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
@@ -83,8 +82,8 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
   void calculateOverallPerformance() {
     _newAssessment.setOverallPerformance1();
     _newAssessment.setOverallPerformance2();
-    print("Overall Performance 1: ${_newAssessment.overallPerformance1}");
-    print("Overall Performance 2: ${_newAssessment.overallPerformance2}");
+    log("Overall Performance 1: ${_newAssessment.overallPerformance1}");
+    log("Overall Performance 2: ${_newAssessment.overallPerformance2}");
   }
 
   @override

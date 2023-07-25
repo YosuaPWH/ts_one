@@ -1019,7 +1019,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                         );
                                       }
                                       catch(e){
-                                        print('Error exporting to Excel: $e');
+                                        log('Error exporting to Excel: $e');
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           const SnackBar(
                                             content: Text("Error exporting to Excel"),
@@ -1573,7 +1573,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                         );
                                       }
                                       catch (e) {
-                                        print("Exception occurred on analytics screen: $e");
+                                        log("Exception occurred on analytics screen: $e");
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           const SnackBar(
                                             content: Text('Error occurred while saving PDF file'),
