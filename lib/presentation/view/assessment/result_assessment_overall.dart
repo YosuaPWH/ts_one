@@ -29,6 +29,62 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
     super.initState();
   }
 
+  // @override
+  // void dispose() {
+  //   _tabController.dispose();
+  //   super.dispose();
+  // }
+
+  // Future getImage() async {
+  //   _pickedImage = await imagePicker.pickImage(
+  //     source: ImageSource.gallery,
+  //     imageQuality: 50,
+  //   );
+  //   if (_pickedImage == null) return;
+  //   File? imgTemp;
+  //
+  //   if(_pickedImage != null) {
+  //     final croppedFile = await ImageCropper().cropImage(
+  //       sourcePath: _pickedImage!.path,
+  //       compressFormat: ImageCompressFormat.png,
+  //       compressQuality: 100,
+  //       aspectRatioPresets: [
+  //         CropAspectRatioPreset.square,
+  //       ],
+  //       uiSettings: [
+  //         AndroidUiSettings(
+  //           statusBarColor: tsOneColorScheme.onSecondary,
+  //           toolbarTitle: "Crop Image",
+  //           toolbarColor: tsOneColorScheme.secondary,
+  //           toolbarWidgetColor: tsOneColorScheme.onSurface,
+  //           initAspectRatio: CropAspectRatioPreset.square,
+  //           activeControlsWidgetColor: tsOneColorScheme.primary,
+  //           lockAspectRatio: true,
+  //         ),
+  //         IOSUiSettings(
+  //           title: "Crop Image",
+  //         ),
+  //         WebUiSettings(
+  //             context: context
+  //         ),
+  //       ],
+  //     );
+  //     if (croppedFile != null) {
+  //       setState(() {
+  //         _croppedImage = croppedFile;
+  //         imgTemp = File(_croppedImage!.path);
+  //         _image = imgTemp;
+  //       });
+  //     }
+  //     else{
+  //       setState(() {
+  //         _pickedImage = null;
+  //         imgTemp = null;
+  //       });
+  //     }
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
