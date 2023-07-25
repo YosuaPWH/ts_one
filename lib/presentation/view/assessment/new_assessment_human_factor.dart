@@ -22,13 +22,13 @@ class NewAssessmentHumanFactor extends StatefulWidget {
 
 class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
   late AssessmentViewModel viewModel;
-  late AssessmentPeriod dataAssessmentPeriod;
+  late AssessmentPeriod dataAssessmentPeriodHumanFactor;
   late NewAssessment _newAssessment;
-  late List<AssessmentVariables> assessmentVariables;
-  late List<String> assessmentCategories;
+  late List<AssessmentVariables> assessmentVariablesHumanFactor;
+  late List<String> assessmentCategoriesHumanFactor;
   late List<String> manualAssessmentCategories;
-  late List<Map<String, dynamic>> inputs1;
-  late List<Map<String, dynamic>> inputs2;
+  late List<Map<String, dynamic>> inputs1HumanFactor;
+  late List<Map<String, dynamic>> inputs2HumanFactor;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -37,12 +37,12 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
     _newAssessment = widget.dataCandidate;
     _newAssessment.assessmentVariablesFlightsHumanFactor1 = [];
     _newAssessment.assessmentVariablesFlightsHumanFactor2 = [];
-    dataAssessmentPeriod = AssessmentPeriod();
-    assessmentVariables = [];
-    assessmentCategories = [];
+    dataAssessmentPeriodHumanFactor = AssessmentPeriod();
+    assessmentVariablesHumanFactor = [];
+    assessmentCategoriesHumanFactor = [];
     manualAssessmentCategories = AssessmentVariables.aircraftSystemCategory;
-    inputs1 = [];
-    inputs2 = [];
+    inputs1HumanFactor = [];
+    inputs2HumanFactor = [];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getAllAssessment();
@@ -52,18 +52,18 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
   }
 
   void getAllAssessment() async {
-    assessmentVariables.clear();
-    assessmentCategories.clear();
+    assessmentVariablesHumanFactor.clear();
+    assessmentCategoriesHumanFactor.clear();
     _newAssessment.assessmentVariablesFlightsHumanFactor1.clear();
     _newAssessment.assessmentVariablesFlightsHumanFactor2.clear();
 
-    dataAssessmentPeriod = await viewModel.getAllHumanFactorAssessmentVariablesFromLastPeriod();
+    dataAssessmentPeriodHumanFactor = await viewModel.getAllHumanFactorAssessmentVariablesFromLastPeriod();
 
-    for (var assessmentVariable in dataAssessmentPeriod.assessmentVariables) {
-      if (!assessmentCategories.contains(assessmentVariable.category)) {
-        assessmentCategories.add(assessmentVariable.category);
+    for (var assessmentVariable in dataAssessmentPeriodHumanFactor.assessmentVariables) {
+      if (!assessmentCategoriesHumanFactor.contains(assessmentVariable.category)) {
+        assessmentCategoriesHumanFactor.add(assessmentVariable.category);
       }
-      assessmentVariables.add(assessmentVariable);
+      assessmentVariablesHumanFactor.add(assessmentVariable);
 
       _newAssessment.assessmentVariablesFlightsHumanFactor1.add(AssessmentVariableResults(
         assessmentVariableId: assessmentVariable.id,
@@ -171,15 +171,15 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
   }
 
   List<Widget> _expansionTilesForNewAssessmentHumanFactorVariables() {
-    inputs1.clear();
-    inputs2.clear();
+    inputs1HumanFactor.clear();
+    inputs2HumanFactor.clear();
     List<Widget> expansionTiles = [];
     int indexOfVariable = 0;
     int startingIndexForInputsList = 0;
 
-    for (var assessmentCategory in assessmentCategories) {
+    for (var assessmentCategory in assessmentCategoriesHumanFactor) {
       startingIndexForInputsList = indexOfVariable;
-      for (var assessmentVariable in assessmentVariables) {
+      for (var assessmentVariable in assessmentVariablesHumanFactor) {
         if (assessmentVariable.category == assessmentCategory) {
           buildInputFlightCrew1(assessmentVariable, indexOfVariable);
           buildInputFlightCrew2(assessmentVariable, indexOfVariable);
@@ -223,12 +223,12 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
                     ),
                     child: Column(
                       children: [
-                        for (var i = startingIndexForInputsList; i < inputs1.length; i++)
+                        for (var i = startingIndexForInputsList; i < inputs1HumanFactor.length; i++)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                inputs1[i]["assessmentName"],
+                                inputs1HumanFactor[i]["assessmentName"],
                                 style: tsOneTextTheme.headlineMedium,
                               ),
                               const Text("Crew 1"),
@@ -243,7 +243,7 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
                                         child: ListTileTheme(
                                           horizontalTitleGap: 0.0,
                                           contentPadding: EdgeInsets.zero,
-                                          child: inputs1[i]["checkbox"],
+                                          child: inputs1HumanFactor[i]["checkbox"],
                                         ),
                                       ),
                                       !value
@@ -253,13 +253,13 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
                                             children: [
                                               Flexible(
                                                   flex: 5,
-                                                  child: inputs1[i]["dropdown1"]
+                                                  child: inputs1HumanFactor[i]["dropdown1"]
                                               ),
                                               const SizedBox(
                                                 width: 3,
                                               ),
                                               Flexible(
-                                                  flex: 3, child: inputs1[i]["dropdown2"]
+                                                  flex: 3, child: inputs1HumanFactor[i]["dropdown2"]
                                               ),
                                             ],
                                           )
@@ -281,7 +281,7 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
                                         child: ListTileTheme(
                                           horizontalTitleGap: 0.0,
                                           contentPadding: EdgeInsets.zero,
-                                          child: inputs2[i]["checkbox"],
+                                          child: inputs2HumanFactor[i]["checkbox"],
                                         ),
                                       ),
                                       !value
@@ -291,13 +291,13 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
                                             children: [
                                               Flexible(
                                                   flex: 5,
-                                                  child: inputs2[i]["dropdown1"]
+                                                  child: inputs2HumanFactor[i]["dropdown1"]
                                               ),
                                               const SizedBox(
                                                 width: 3,
                                               ),
                                               Flexible(
-                                                  flex: 3, child: inputs2[i]["dropdown2"]
+                                                  flex: 3, child: inputs2HumanFactor[i]["dropdown2"]
                                               ),
                                             ],
                                           )
@@ -494,7 +494,7 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
       );
     }
 
-    inputs1.add({
+    inputs1HumanFactor.add({
       "checkbox": checkbox,
       "dropdown1": dropdown1,
       "dropdown2": dropdown2,
@@ -671,7 +671,7 @@ class _NewAssessmentHumanFactorState extends State<NewAssessmentHumanFactor> {
       );
     }
 
-    inputs2.add({
+    inputs2HumanFactor.add({
       "checkbox": checkbox,
       "dropdown1": dropdown1,
       "dropdown2": dropdown2,
