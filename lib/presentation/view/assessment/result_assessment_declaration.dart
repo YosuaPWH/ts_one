@@ -360,15 +360,15 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
 
                               } else {
                                 String signatureUrl = await _userViewModel.uploadSignature(
-                                    _assessmentResults.examinerStaffIDNo,
+                                    _assessmentResults.examineeStaffIDNo,
                                     _assessmentResults.date,
                                     _assessmentResults.signatureBytes);
-                                _assessmentResults.examinerSignatureUrl = signatureUrl;
+                                _assessmentResults.examineeSignatureUrl = signatureUrl;
 
                                 // Store UserSignature in remote to be used later in the app
                                 _userSignatures = UserSignatures(
                                   urlSignature: signatureUrl,
-                                  staffId: _assessmentResults.examinerStaffIDNo,
+                                  staffId: _assessmentResults.examineeStaffIDNo,
                                 );
                                 _userSignatures = await _userViewModel.addSignature(_userSignatures);
 

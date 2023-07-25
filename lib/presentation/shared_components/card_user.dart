@@ -61,7 +61,7 @@ class _CardUserState extends State<CardUser> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        _assessmentResults.examinerStaffIDNo.toString(),
+                        _assessmentResults.examineeStaffIDNo.toString(),
                         style: const TextStyle(fontWeight: FontWeight.normal),
                       ),
                       Text(
