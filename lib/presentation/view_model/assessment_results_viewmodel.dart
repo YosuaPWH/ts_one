@@ -1,4 +1,7 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:developer';
+
 import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
@@ -18,7 +21,7 @@ class AssessmentResultsViewModel extends LoadingViewModel{
       isLoading = false;
     }
     catch(e){
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
     return assessmentResultsList;
@@ -32,7 +35,7 @@ class AssessmentResultsViewModel extends LoadingViewModel{
       isLoading = false;
     }
     catch(e){
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
     return assessmentResultsList;
@@ -60,7 +63,7 @@ class AssessmentResultsViewModel extends LoadingViewModel{
       isLoading = false;
     }
     catch(e){
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
     return assessmentResultsList;
@@ -74,7 +77,7 @@ class AssessmentResultsViewModel extends LoadingViewModel{
       isLoading = false;
     }
     catch(e){
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
     return assessmentResults;
@@ -102,7 +105,7 @@ class AssessmentResultsViewModel extends LoadingViewModel{
       isLoading = false;
     }
     catch(e){
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
     return assessmentVariableResults;
@@ -115,7 +118,7 @@ class AssessmentResultsViewModel extends LoadingViewModel{
       isLoading = false;
     }
     catch(e){
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
   }

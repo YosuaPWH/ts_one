@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -267,8 +269,8 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
   }
 
   void _buildInput(int index) {
-    // print("Message from AddAssessmentPeriodView: Index of assessmentVariables list $index");
-    // print("Message from AddAssessmentPeriodView: Length of inputs list ${inputs.length}");
+    // log(message)("Message from AddAssessmentPeriodView: Index of assessmentVariables list $index");
+    // log(message)("Message from AddAssessmentPeriodView: Length of inputs list ${inputs.length}");
 
     // add new item of AssessmentVariable to AssessmentPeriod
     assessmentPeriod.assessmentVariables.add(
@@ -317,12 +319,12 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          print("Bef. category value of ${assessmentPeriod.assessmentVariables[index].name}: ${assessmentPeriod.assessmentVariables[index].category}");
+          log("Bef. category value of ${assessmentPeriod.assessmentVariables[index].name}: ${assessmentPeriod.assessmentVariables[index].category}");
           setState(() {
             assessmentPeriod.assessmentVariables[index].category = value.toString();
           });
-          print("Aft. category value of ${assessmentPeriod.assessmentVariables[index].name}: ${assessmentPeriod.assessmentVariables[index].category}");
-          print("--------");
+          log("Aft. category value of ${assessmentPeriod.assessmentVariables[index].name}: ${assessmentPeriod.assessmentVariables[index].category}");
+          log("--------");
         },
         items: const [
           DropdownMenuItem(
@@ -398,12 +400,12 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: (value) {
-          print("Bef. type of assessment value of ${assessmentPeriod.assessmentVariables[index].name}: $value");
+          log("Bef. type of assessment value of ${assessmentPeriod.assessmentVariables[index].name}: $value");
           setState(() {
             assessmentPeriod.assessmentVariables[index].typeOfAssessment = value.toString();
           });
-          print("Aft. type of assessment value of ${assessmentPeriod.assessmentVariables[index].name}: ${assessmentPeriod.assessmentVariables[index].typeOfAssessment}");
-          print("--------");
+          log("Aft. type of assessment value of ${assessmentPeriod.assessmentVariables[index].name}: ${assessmentPeriod.assessmentVariables[index].typeOfAssessment}");
+          log("--------");
         },
         items: const [
           DropdownMenuItem(
@@ -432,7 +434,7 @@ class _AddAssessmentPeriodViewState extends State<AddAssessmentPeriodView> {
               title: const Text('Applicable for Flight TS-1'),
               value: assessmentPeriod.assessmentVariables[index].applicableForFlight,
               onChanged: (value) {
-                print("Message from AddAssessmentPeriodView: ${assessmentPeriod.assessmentVariables}");
+                log("Message from AddAssessmentPeriodView: ${assessmentPeriod.assessmentVariables}");
                 setState(() {
                   assessmentPeriod.assessmentVariables[index].applicableForFlight = value!;
                 });

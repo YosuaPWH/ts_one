@@ -119,7 +119,6 @@ class _ResultAssessmentDeclarationState extends State<ResultAssessmentDeclaratio
           imgTemp = File(_croppedImage!.path);
           _image = imgTemp;
         });
-        // print("HALOOOO image: ${_image!.path}");
       } else {
         setState(() {
           _pickedImage = null;

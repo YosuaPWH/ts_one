@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/presentation/routes.dart';
-import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
 import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
 
 import '../../theme.dart';
@@ -473,7 +472,7 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                 assessmentFlightDetails2Error = true;
                               }
                               if (_formKey.currentState!.validate() && !assessmentFlightDetails1Error && !assessmentFlightDetails2Error) {
-                                print("From newAssessmentFlightDetails $dataCandidate");
+                                log("From newAssessmentFlightDetails $dataCandidate");
                                 Navigator.pushNamed(context, NamedRoute.newAssessmentVariables, arguments: dataCandidate);
                               }
                             },
