@@ -22,7 +22,7 @@ class AssessmentViewModel extends LoadingViewModel {
       assessmentPeriods = await repo.getAllAssessmentPeriods();
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      print("Exception on AssessmentViewModel: $e");
       isLoading = false;
     }
     return assessmentPeriods;
@@ -35,7 +35,7 @@ class AssessmentViewModel extends LoadingViewModel {
       assessmentPeriod = await repo.getAssessmentPeriodById(id);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      print("Exception on AssessmentViewModel: $e");
       isLoading = false;
     }
     return assessmentPeriod;
@@ -132,7 +132,7 @@ class AssessmentViewModel extends LoadingViewModel {
       assessmentPeriod = await repo.addAssessmentPeriod(assessmentPeriodModel);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      print("Exception on AssessmentViewModel: $e");
       isLoading = false;
     }
     return assessmentPeriod;
@@ -145,7 +145,7 @@ class AssessmentViewModel extends LoadingViewModel {
       assessmentPeriod = await repo.updateAssessmentPeriod(assessmentPeriodModel);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      print("Exception on AssessmentViewModel: $e");
       isLoading = false;
     }
     return assessmentPeriod;
@@ -157,7 +157,7 @@ class AssessmentViewModel extends LoadingViewModel {
       await repo.deleteAssessmentPeriodById(id);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      print("Exception on AssessmentViewModel: $e");
       isLoading = false;
     }
   }

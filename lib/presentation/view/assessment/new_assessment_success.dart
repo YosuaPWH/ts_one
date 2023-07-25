@@ -24,7 +24,7 @@ class _NewAssessmentSuccessState extends State<NewAssessmentSuccess> {
     // _newAssessment = widget.newAssessment;
 
     super.initState();
-    // return backToHome();
+    return backToHome();
   }
 
   void backToHome() {
@@ -45,16 +45,10 @@ class _NewAssessmentSuccessState extends State<NewAssessmentSuccess> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                "The assessment has already been recorded.",
+                "Your assessment has already been recorded.",
                 style: TextStyle(fontSize: 20),
                 textAlign: TextAlign.center,
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(context, NamedRoute.home, (route) => false);
-              },
-              child: const Text('Back to Home'),
             ),
             // Image(
             //     image: Image.memory(_newAssessment.signature!).image,

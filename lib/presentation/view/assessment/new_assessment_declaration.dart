@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -105,6 +104,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
           imgTemp = File(_croppedImage!.path);
           _image = imgTemp;
         });
+        // print("HALOOOO image: ${_image!.path}");
       }
       else{
         setState(() {
@@ -527,7 +527,7 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                               _newAssessment.signatureBytes = await _image!.readAsBytes();
                             }
 
-                            log(_newAssessment.signatureBytes.toString());
+                            print(_newAssessment.signatureBytes);
 
                             if(_formKey.currentState!.validate()) {
                               String signatureUrl = await _userViewModel.uploadSignature(

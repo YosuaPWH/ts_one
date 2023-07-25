@@ -42,8 +42,8 @@ class AssessmentVariables with ChangeNotifier {
   static const String keySituationalAwareness = "Situational Awareness";
   static const String keyDecisionMaking = "Decision Making";
   static const String keyCustomerFocus = "Customer Focus";
-  static const String keyAbnormalEmergencyProcedure = "Abnormal or Emer.Proc";
-  static const String keyAircraftSystemProcedures = "Aircraft System or Procedures";
+  static const String keyAbnormalEmergencyProcedure = "Abnormal/Emer.Proc";
+  static const String keyAircraftSystemProcedures = "Aircraft System/Procedures";
 
   // all the keys for satisfactory
   static const String keySatisfactory = "Satisfactory";

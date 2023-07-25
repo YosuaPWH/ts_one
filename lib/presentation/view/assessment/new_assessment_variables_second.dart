@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
@@ -32,9 +30,9 @@ class _NewAssessmentVariablesSecondState extends State<NewAssessmentVariablesSec
 
   @override
   Widget build(BuildContext context) {
-    log("flightDetails: ${widget.dataAssessmentFlightDetails.toString()}");
-    log("dataCandidate: ${widget.dataCandidate.toString()}");
-    log("dataAssessmentVariables: ${widget.dataAssessmentVariables}");
+    debugPrint("flightDetails: ${widget.dataAssessmentFlightDetails.toString()}");
+    debugPrint("dataCandidate: ${widget.dataCandidate.toString()}");
+    debugPrint("dataAssessmentVariables: ${widget.dataAssessmentVariables}");
 
     return Scaffold(
       appBar: AppBar(

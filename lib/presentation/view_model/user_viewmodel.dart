@@ -1,6 +1,7 @@
-import 'dart:developer';
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/data/users/user_signatures.dart';
 import 'package:ts_one/data/users/users.dart';
@@ -29,7 +30,7 @@ class UserViewModel extends LoadingViewModel {
       }
       isLoading = false;
     } catch (e) {
-      log("Exception on UserViewModel: $e");
+      print("Exception on UserViewModel: $e");
       isLoading = false;
     }
     return userAuth;
@@ -45,7 +46,7 @@ class UserViewModel extends LoadingViewModel {
       }
       isLoading = false;
     } catch (e) {
-      log("Exception on UserViewModel: $e");
+      print("Exception on UserViewModel: $e");
       isLoading = false;
     }
     return userAuth;
@@ -56,7 +57,7 @@ class UserViewModel extends LoadingViewModel {
       repo.logout();
       userPreferences.clearUser();
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
     }
   }
 
@@ -81,7 +82,7 @@ class UserViewModel extends LoadingViewModel {
 
       isLoading = false;
     } catch (e) {
-      log("Exception on UserViewModel: $e");
+      print("Exception on UserViewModel: $e");
       isLoading = false;
     }
 
@@ -95,7 +96,7 @@ class UserViewModel extends LoadingViewModel {
       userModel = await repo.getUserByIDNo(idNo);
       isLoading = false;
     } catch (e) {
-      log("Exception on UserViewModel: $e");
+      print("Exception on UserViewModel: $e");
       isLoading = false;
     }
     return userModel;
@@ -108,7 +109,7 @@ class UserViewModel extends LoadingViewModel {
       users = await repo.getUsersBySearchName(searchName, searchLimit);
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
       isLoading = false;
     }
     return users;
@@ -122,7 +123,7 @@ class UserViewModel extends LoadingViewModel {
       reset();
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
       isLoading = false;
     }
     return newUserModel;
@@ -136,7 +137,7 @@ class UserViewModel extends LoadingViewModel {
       reset();
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
       isLoading = false;
     }
     return newUserModel;
@@ -149,7 +150,7 @@ class UserViewModel extends LoadingViewModel {
       reset();
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
       isLoading = false;
     }
   }
@@ -161,7 +162,7 @@ class UserViewModel extends LoadingViewModel {
       downloadURL = await repo.uploadSignature(idUser, assessmentDate, signatureBytes);
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
       isLoading = false;
     }
     return downloadURL;
@@ -174,7 +175,7 @@ class UserViewModel extends LoadingViewModel {
       newUserSignatures = await repo.addSignature(userSignatures);
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
       isLoading = false;
     }
     return newUserSignatures;
@@ -187,7 +188,7 @@ class UserViewModel extends LoadingViewModel {
       userSignature = await repo.getSignature(staffIDNo);
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
       isLoading = false;
     }
     return userSignature;

@@ -77,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
     log("dwadaw${assessmentResultsNotConfirmedByCPTS.length}");
 
     assessmentResults = await viewModel.getAssessmentResultsByCurrentUserNotConfirm();
+    print("dwada ${assessmentResults.length}");
   }
 
   @override

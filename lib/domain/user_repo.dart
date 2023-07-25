@@ -68,7 +68,7 @@ class UserRepoImpl implements UserRepo {
             .where(UserModel.keyEmail, isEqualTo: email)
             .get();
 
-        log(userData.docs.first.data().toString());
+        print(userData.docs.first.data());
 
         // create user model from firebase user and user data from firestore
         UserModel userModel = UserModel.fromFirebaseUser(userData.docs.first.data());
@@ -78,7 +78,7 @@ class UserRepoImpl implements UserRepo {
         userAuth.userCredential = userCredential;
       }
     } catch (e) {
-      log("Exception un UserRepo: $e");
+      print("Exception un UserRepo: $e");
     }
     return userAuth;
   }
@@ -135,15 +135,15 @@ class UserRepoImpl implements UserRepo {
       if (e.code == 'account-exists-with-different-credential') {
         userAuth.errorMessage =
             'The account already exists with a different credential.';
-        log(e.toString());
+        print(e.toString());
       } else if (e.code == 'invalid-credential') {
         userAuth.errorMessage =
             'Error occurred while accessing credentials. Try again.';
-        log(e.toString());
+        print(e.toString());
       }
     } catch (e) {
       userAuth.errorMessage = 'Error occurred using Google Sign-In. Try again.';
-      log("repoyos" + e.toString());
+      print("repoyos" + e.toString());
     }
 
     return userAuth;
@@ -154,7 +154,7 @@ class UserRepoImpl implements UserRepo {
     try {
       return await _auth!.signOut();
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
     }
   }
 
@@ -195,7 +195,7 @@ class UserRepoImpl implements UserRepo {
               UserModel.fromFirebaseUser(e.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      log("Exception in UserRepo getUsersPaginated: $e");
+      print("Exception in UserRepo getUsersPaginated: $e");
     }
 
     return users;
@@ -213,7 +213,7 @@ class UserRepoImpl implements UserRepo {
       // create user model from firebase user and user data from firestore
       user = UserModel.fromFirebaseUser(userData.data()!);
     } catch (e) {
-      log("Exception in UserRepo getUserByEmail: $e");
+      print("Exception in UserRepo getUserByIdNo: $e");
     }
 
     return user;
@@ -242,7 +242,7 @@ class UserRepoImpl implements UserRepo {
               UserModel.fromFirebaseUser(e.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
     }
 
     return users;
@@ -268,7 +268,7 @@ class UserRepoImpl implements UserRepo {
       // create user model from firebase user and user data from firestore
       newUserModel = UserModel.fromFirebaseUser(userData.data()!);
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
     }
 
     return newUserModel;
@@ -316,7 +316,7 @@ class UserRepoImpl implements UserRepo {
         updatedUser = UserModel.fromFirebaseUser(userData.data()!);
       }
     } catch (e) {
-      log("Exception in UserRepo on updateUser: $e");
+      print("Exception in UserRepo on updateUser: $e");
     }
 
     return updatedUser;
@@ -353,9 +353,9 @@ class UserRepoImpl implements UserRepo {
       downloadURL = await snapshot.ref.getDownloadURL();
     }
     catch (e) {
-      log("Exception on UserRepo: ${e.toString()}");
+      print("Exception on UserRepo: ${e.toString()}");
     }
-    log("Message from UserRepo: $downloadURL");
+    print("Message from UserRepo: $downloadURL");
     return downloadURL;
   }
 
@@ -371,7 +371,7 @@ class UserRepoImpl implements UserRepo {
       newUserSignatures = userSignatures;
     }
     catch (e) {
-      log(e.toString());
+      print(e.toString());
     }
 
     return newUserSignatures;
@@ -381,17 +381,20 @@ class UserRepoImpl implements UserRepo {
   Future<UserSignatures> getSignature(int staffIDNo) async {
     UserSignatures userSignatures = UserSignatures();
     try {
+      log("DADAAA");
       final snapshot = await _db!
           .collection(UserSignatures.firebaseCollection)
           .where(UserSignatures.keyStaffId, isEqualTo: staffIDNo)
-          .orderBy(UserSignatures.keyDateUploaded, descending: true)
+          // .orderBy(UserSignatures.keyDateUploaded, descending: true)
           .get();
 
       // get the first signature
       userSignatures = UserSignatures.fromFirebase(snapshot.docs.first.data());
+      log("DAD  =>$userSignatures");
+      log("TERAKHIR => ${UserSignatures.fromFirebase(snapshot.docs.last.data())}");
     }
     catch (e) {
-      log(e.toString());
+      print(e.toString());
     }
     return userSignatures;
   }
