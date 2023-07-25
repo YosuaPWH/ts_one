@@ -300,7 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         isCPTS
                             ? Text(
-                                data.examinerStaffIDNo.toString(),
+                                data.examineeStaffIDNo.toString(),
                                 style: const TextStyle(color: TsOneColor.secondary),
                                 overflow: TextOverflow.ellipsis,
                               )

@@ -56,7 +56,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
   }
 
   void getExaminee() async {
-    _examinee = await userViewModel.getUserByIDNo(_assessmentResults.examinerStaffIDNo.toString());
+    _examinee = await userViewModel.getUserByIDNo(_assessmentResults.examineeStaffIDNo.toString());
   }
 
   void getAllResultAssessmentVariablesById(String idAssessment) async {
@@ -220,7 +220,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
                   ),
                 ),
                 Text(
-                  _assessmentResults.examinerStaffIDNo.toString(),
+                  _assessmentResults.examineeStaffIDNo.toString(),
                   style: const TextStyle(color: TsOneColor.onSecondary),
                   overflow: TextOverflow.ellipsis,
                 ),

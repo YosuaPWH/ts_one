@@ -69,7 +69,8 @@ class NewAssessment with ChangeNotifier {
   double overallPerformance1 = 0.0;
   String notes1 = "";
   String declaration1 = "";
-  String rank1 = "";
+  String nameExaminee1 = Util.defaultStringIfNull;
+  String rankExaminee1 = Util.defaultStringIfNull;
 
   // Flight Crew 2
   int idNo2 = Util.defaultIntIfNull;
@@ -81,7 +82,8 @@ class NewAssessment with ChangeNotifier {
   double overallPerformance2 = 0.0;
   String notes2 = "";
   String declaration2 = "";
-  String rank2 = "";
+  String nameExaminee2 = Util.defaultStringIfNull;
+  String rankExaminee2 = Util.defaultStringIfNull;
 
   String aircraftType = "";
   String airportAndRoute = "";

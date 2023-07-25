@@ -16,9 +16,13 @@ abstract class AssessmentResultsRepo{
 
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm();
 
+  Future<List<AssessmentResults>> getAssessmentResultsNotConfirmByCPTS();
+
   Future<List<AssessmentVariableResults>> getAssessmentVariableResult(String idAssessment);
 
   Future<void> updateAssessmentResultForExaminee(AssessmentResults assessmentResults);
+
+  Future<List<AssessmentResults>> getAllAssessmentResultsPaging(int startAt, String sortBy);
 }
 
 class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
@@ -138,14 +142,41 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     return assessmentResults;
   }
 
+  @override
+  Future<List<AssessmentResults>> getAssessmentResultsNotConfirmByCPTS() async {
+    List<AssessmentResults> assessmentResults = [];
+
+    try {
+      await _db!
+          .collection(AssessmentResults.firebaseCollection)
+      // .where(AssessmentResults.keyConfirmedByExaminer, isEqualTo: true)
+          .where(AssessmentResults.keyConfirmedByInstructor, isEqualTo: true)
+          .where(AssessmentResults.keyConfirmedByCPTS, isEqualTo: false)
+          .get()
+          .then((value) {
+        for (var element in value.docs) {
+          assessmentResults.add(AssessmentResults.fromFirebase(element.data()));
+        }
+      });
+    } catch (e) {
+      log(
+          "Exception in AssessmentResultRepo on getAssessmentResultsNotConfirmByCPTS: $e");
+      log(
+          "Exception in AssessmentResultRepo on getAssessmentResultsByCurrentUserNotConfirm: $e");
+    }
+
+    return assessmentResults;
+  }
+
   int assessmentVariableCollectionComparator(DocumentSnapshot a,
       DocumentSnapshot b) {
-    final idA = int.parse(a.id
-        .split('-')[4]); // Extract the numerical part from the ID of document A
-    final idB = int.parse(b.id
-        .split('-')[4]); // Extract the numerical part from the ID of document B
+    final idA = int.tryParse(a.id.split('-')[4]); // Extract the numerical part from the ID of document A
+    final idB = int.tryParse(b.id.split('-')[4]); // Extract the numerical part from the ID of document B
 
-    return idA.compareTo(idB);
+    if (idA != null && idB != null) {
+      return idA.compareTo(idB);
+    }
+    return 0;
   }
 
   @override
@@ -173,6 +204,60 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     }
 
     return assessmentVariableResults;
+  }
+
+  String rememberSortBy = "";
+  static DocumentSnapshot? lastDocument;
+
+  @override
+  Future<List<AssessmentResults>> getAllAssessmentResultsPaging(int startAt, sortBy) async {
+    List<AssessmentResults> assessmentResultsList = [];
+
+    try {
+      log("sortBy: $sortBy dan rememberSortBy: $rememberSortBy");
+
+      // if rememberSortBy != sortBy, reset lastDocument
+      if (rememberSortBy != sortBy) {
+        lastDocument = null;
+      }
+
+      // if lastDocument == null, reset data that already sorting
+      if (lastDocument == null) {
+        await _db!
+            .collection(AssessmentResults.firebaseCollection)
+            .where(AssessmentResults.keyConfirmedByInstructor, isEqualTo: true)
+            .orderBy(sortBy == "initial" ? AssessmentResults.keyExamineeStaffIDNo : sortBy)
+            .limit(10)
+            .get()
+            .then((value) {
+          for (var element in value.docs) {
+            assessmentResultsList.add(AssessmentResults.fromFirebase(element.data()));
+          }
+          rememberSortBy = sortBy;
+          lastDocument = value.docs.last;
+        });
+      } else {
+        await _db!
+            .collection(AssessmentResults.firebaseCollection)
+            .where(AssessmentResults.keyConfirmedByInstructor, isEqualTo: true)
+            .orderBy(sortBy == "initial" ? AssessmentResults.keyExamineeStaffIDNo : sortBy)
+            .startAfterDocument(lastDocument!)
+            .limit(10)
+            .get()
+            .then((value) {
+          for (var element in value.docs) {
+            assessmentResultsList.add(AssessmentResults.fromFirebase(element.data()));
+          }
+          lastDocument = value.docs.last;
+        });
+      }
+
+    } catch (e) {
+      log("Exception in AssessmentResultRepo on getAllAssessmentResultsPaging: $e");
+      log("Exception in AssessmentResultRepo on updateAssessmentResultForExaminee: $e");
+    }
+
+    return assessmentResultsList;
   }
 
   @override
