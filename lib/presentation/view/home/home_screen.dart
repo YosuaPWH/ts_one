@@ -74,7 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void getAssessmentResults() async {
-    if (userPreferences.getPrivileges().contains(UserModel.keyPrivilegeViewAllAssessments)) {
+    if (userPreferences.getPrivileges().contains(UserModel.keyPrivilegeViewAllAssessments) &&
+        userPreferences.getInstructor().contains(UserModel.keyCPTS)) {
       assessmentResultsNotConfirmedByCPTS = await viewModel.getAssessmentResultsNotConfirmByCPTS();
       _isCPTS = true;
     }

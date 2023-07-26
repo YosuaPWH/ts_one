@@ -56,7 +56,7 @@ class UserModel with ChangeNotifier {
 
   /** ALL SUBPOSITIONS */
   static String keySubPositionCCP = "CCP"; // chief check pilot
-  static String keySubPositionCPTS = "CPTS"; // chief pilot training standards
+  static String keyCPTS = "CPTS"; // chief pilot training standards
   static String keySubPositionFIA = "FIA"; // flight instructor assistant
   static String keySubPositionFIS = "FIS"; // flight instructor
   static String keySubPositionPGI = "PGI"; // pilot ground instructor
