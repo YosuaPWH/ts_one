@@ -165,8 +165,8 @@ class AssessmentResultsViewModel extends LoadingViewModel{
       message = await repo.makePDFSimulator(assessmentResults);
     } catch (e) {
       print("Exception on AssessmentResultsViewModel: $e");
-      isLoading = false;
     }
+    isLoading = false;
     return message;
   }
 }
