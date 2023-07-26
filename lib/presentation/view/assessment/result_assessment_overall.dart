@@ -44,32 +44,23 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0, top: 8.0),
-                      child: TextField(
-                        enabled: false,
-                        style: const TextStyle(
-                          color: TsOneColor.onSecondary,
-                        ),
-                        controller: TextEditingController(
-                          text: _assessmentResults.overallPerformance.round().toString()
-                        ),
-                        decoration: const InputDecoration(
-                          disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.green)
+                        padding: const EdgeInsets.only(bottom: 16.0, top: 8.0),
+                        child: TextField(
+                          enabled: false,
+                          style: const TextStyle(
+                            color: TsOneColor.onSecondary,
                           ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.green)
-                          ),
-                          hintMaxLines: 1,
-                          label: Text(
-                            "Overall Performance",
-                            style: TextStyle(
-                              fontSize: 12, color: Colors.green
+                          controller: TextEditingController(text: _assessmentResults.overallPerformance.round().toString()),
+                          decoration: const InputDecoration(
+                            disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.green)),
+                            border: OutlineInputBorder(borderSide: BorderSide(color: Colors.green)),
+                            hintMaxLines: 1,
+                            label: Text(
+                              "Overall Performance",
+                              style: TextStyle(fontSize: 12, color: Colors.green),
                             ),
                           ),
-                        ),
-                      )
-                    ),
+                        )),
                     TextField(
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
@@ -78,18 +69,15 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
                       style: const TextStyle(
                         color: TsOneColor.onSecondary,
                       ),
-                      controller: TextEditingController(
-                        text: _assessmentResults.notes
-                      ),
+                      controller: TextEditingController(text: _assessmentResults.notes),
                       decoration: const InputDecoration(
-                        disabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green)
-                        ),
+                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.green)),
                         border: OutlineInputBorder(),
                         label: Text(
                           "Overall Performance",
                           style: TextStyle(
-                            fontSize: 12, color: Colors.green,
+                            fontSize: 12,
+                            color: Colors.green,
                           ),
                         ),
                       ),
@@ -101,27 +89,30 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
                 ),
               ),
             ),
-            _assessmentResults.isFromHistory ? const SizedBox() :
+            // _assessmentResults.isFromHistory
+            //     ? const SizedBox()
+            //     :
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, NamedRoute.resultAssessmentDeclaration, arguments: _assessmentResults);
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                backgroundColor: TsOneColor.primary,
-              ),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 48,
-                child: const Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Next",
-                    style: TextStyle(color: TsOneColor.secondary),
+                    onPressed: () {
+                      Navigator.pushNamed(context, _assessmentResults.isFromHistory ? NamedRoute.template : NamedRoute.resultAssessmentDeclaration,
+                          arguments: _assessmentResults);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      backgroundColor: TsOneColor.primary,
+                    ),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: 48,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          _assessmentResults.isFromHistory ? "Download" :"Next",
+                          style: const TextStyle(color: TsOneColor.secondary),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
           ],
         ),
       ),

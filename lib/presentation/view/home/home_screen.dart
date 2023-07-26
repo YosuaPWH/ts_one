@@ -233,6 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: InkWell(
             onTap: () {
               data.isCPTS = isCPTS;
+              data.isFromHistory = false;
               Navigator.pushNamed(context, NamedRoute.resultAssessmentVariables, arguments: data);
             },
             child: Padding(

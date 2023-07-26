@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/data/users/user_signatures.dart';
 import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/util/util.dart';
@@ -27,6 +26,8 @@ abstract class UserRepo {
 
   Future<List<UserModel>> getUsersBySearchName(
       String searchName, int searchLimit);
+
+  Future<List<UserModel>> getUserBySearchIdNo(String searchId, int searchLimit);
 
   Future<UserModel> addUser(UserModel userModel);
 
@@ -246,6 +247,12 @@ class UserRepoImpl implements UserRepo {
     }
 
     return users;
+  }
+
+  @override
+  Future<List<UserModel>> getUserBySearchIdNo(String searchId, int searchLimit) {
+    // TODO: implement getUserBySearchIdNo
+    throw UnimplementedError();
   }
 
   @override
