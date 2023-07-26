@@ -1,12 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:ts_one/data/assessments/assessment_flight_details.dart';
-import 'package:ts_one/data/assessments/assessment_period.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
-import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
-import 'package:ts_one/main.dart';
 import 'package:ts_one/presentation/main_view.dart';
 import 'package:ts_one/presentation/view/assessment/add_assessment_period.dart';
 import 'package:ts_one/presentation/view/assessment/all_assessment_periods.dart';
@@ -19,11 +13,11 @@ import 'package:ts_one/presentation/view/assessment/new_assessment_overall_perfo
 import 'package:ts_one/presentation/view/assessment/new_assessment_success.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_simulator_flight.dart';
 import 'package:ts_one/presentation/view/assessment/new_assessment_variables.dart';
-import 'package:ts_one/presentation/view/assessment/new_assessment_variables_second.dart';
 import 'package:ts_one/presentation/view/assessment/result_assessment_declaration.dart';
 import 'package:ts_one/presentation/view/assessment/result_assessment_overall.dart';
 import 'package:ts_one/presentation/view/assessment/result_assessment_variables.dart';
 import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
+import 'package:ts_one/presentation/view/history/template_tsone.dart';
 import 'package:ts_one/presentation/view/users/add_user.dart';
 import 'package:ts_one/presentation/view/users/all_users.dart';
 import 'package:ts_one/presentation/view/users/detail_user.dart';
@@ -178,6 +172,14 @@ class AppRoutes {
           settings: settings,
         );
 
+      case NamedRoute.template:
+        return MaterialPageRoute<void>(
+          builder: (_) => TemplateTSOne(
+            assessmentResults: settings.arguments as AssessmentResults,
+          ),
+          settings: settings,
+        );
+
       default:
         return MaterialPageRoute<void>(
           builder: (_) => _UndefinedView(name: settings.name),
@@ -203,6 +205,8 @@ class _UndefinedView extends StatelessWidget {
 
 class NamedRoute {
   NamedRoute._();
+
+  static const String template = '/template';
 
   static const String main = '/';
   static const String login = '/login';

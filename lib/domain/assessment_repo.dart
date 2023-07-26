@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
-import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 
 abstract class AssessmentRepo {
@@ -60,7 +59,6 @@ class AssessmentRepoImpl implements AssessmentRepo {
   @override
   Future<List<AssessmentPeriod>> getAllAssessmentPeriods() async {
     List<AssessmentPeriod> assessmentPeriods = [];
-    List<AssessmentVariables> assessmentVariables = [];
 
     try {
       // get all assessment periods by sorting from the latest "period" to the oldest

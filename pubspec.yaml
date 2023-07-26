@@ -73,6 +73,7 @@ dependencies:
   path_provider: ^2.0.15
   fl_chart: ^0.63.0
   infinite_scroll_pagination: ^3.2.0
+  syncfusion_flutter_pdf: ^22.1.39
   pdf: ^3.10.4
   open_file: ^3.3.2
   open_file_plus: ^3.4.1
@@ -99,6 +100,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/documents/
 
   fonts:
     - family: Poppins

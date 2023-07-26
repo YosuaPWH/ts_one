@@ -28,7 +28,6 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
   bool isCPTS = false;
   late List<AssessmentVariableResults> assessmentVariableResults;
   late UserModel _instructor;
-  late UserModel _examinee;
   late Map<String, dynamic> assessmentCategories;
 
   @override
@@ -39,12 +38,10 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     _assessmentResults = widget.assessmentResults;
     assessmentCategories = {};
     _instructor = UserModel();
-    _examinee = UserModel();
     isCPTS = _assessmentResults.isCPTS;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getInstructor();
-      getExaminee();
       getAllResultAssessmentVariablesById(_assessmentResults.id);
     });
 
@@ -55,12 +52,10 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     _instructor = await userViewModel.getUserByIDNo(_assessmentResults.instructorStaffIDNo.toString());
   }
 
-  void getExaminee() async {
-    _examinee = await userViewModel.getUserByIDNo(_assessmentResults.examineeStaffIDNo.toString());
-  }
-
   void getAllResultAssessmentVariablesById(String idAssessment) async {
     assessmentVariableResults = await viewModel.getAssessmentVariableResult(idAssessment);
+
+    _assessmentResults.variableResults = assessmentVariableResults;
 
     for (var assessmentVariable in assessmentVariableResults) {
       if (!assessmentCategories.containsKey(assessmentVariable.assessmentVariableCategory)) {
@@ -225,7 +220,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  _examinee.name,
+                  _assessmentResults.examineeName,
                   style: const TextStyle(color: TsOneColor.onSecondary),
                   overflow: TextOverflow.ellipsis,
                 ),
