@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ts_one/data/users/user_preferences.dart';
+import 'package:ts_one/data/users/users.dart';
+import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/view/analytics/analytics_screen.dart';
 
 import 'view/history/history_screen.dart';
@@ -14,19 +17,40 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   int _selectedNav = 0;
+  late bool _canViewAllAssessments;
+  late UserPreferences _userPreferences;
+  late List<Widget> _screens;
+
+  @override
+  void initState() {
+    _userPreferences = getItLocator<UserPreferences>();
+
+    if(_userPreferences.getPrivileges().contains(UserModel.keyPrivilegeViewAllAssessments)) {
+      _canViewAllAssessments = true;
+      _screens = [
+        const HomeScreen(),
+        const HistoryScreen(),
+        const AnalyticsScreen(),
+        const ProfileScreen()
+      ];
+    }
+    else {
+      _canViewAllAssessments = false;
+      _screens = [
+        const HomeScreen(),
+        const HistoryScreen(),
+        const ProfileScreen()
+      ];
+    }
+
+    super.initState();
+  }
 
   void _changeSelectedNav(int index) {
     setState(() {
       _selectedNav = index;
     });
   }
-
-  final _screens = [
-    const HomeScreen(),
-    const HistoryScreen(),
-    const AnalyticsScreen(),
-    const ProfileScreen()
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +67,7 @@ class _MainViewState extends State<MainView> {
               .millisecondsSinceEpoch;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text(
-              "Ulangi lagi untuk keluar dari aplikasi",
+              "Press back button again to exit",
             ),
           ));
           return false;
@@ -55,20 +79,21 @@ class _MainViewState extends State<MainView> {
           children: _screens,
         ),
         bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
+          items: <BottomNavigationBarItem>[
+            const BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
             ),
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               icon: Icon(Icons.history),
               label: 'History',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.analytics_rounded),
-              label: 'Analytics',
-            ),
-            BottomNavigationBarItem(
+            if(_canViewAllAssessments)
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.analytics_rounded),
+                label: 'Analytics',
+              ),
+            const BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: 'Profile',
             ),

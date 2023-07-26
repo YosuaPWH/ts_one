@@ -553,9 +553,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 16.0),
                                   child: IconButton(
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.table_chart_rounded,
-                                      color: tsOneColorScheme.primary,
+                                      // color: tsOneColorScheme.primary,
                                     ),
                                     tooltip: "Export to Sheet",
                                     onPressed: () async {
@@ -1583,9 +1583,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                       progress?.dismiss();
                                       pdfLoading = false;
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.picture_as_pdf_rounded,
-                                      color: tsOneColorScheme.primary,
+                                      // color: tsOneColorScheme.primary,
                                     ),
                                     tooltip: "Export to PDF",
                                   ),

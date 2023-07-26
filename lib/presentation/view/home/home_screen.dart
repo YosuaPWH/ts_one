@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
+import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/view_model/assessment_results_viewmodel.dart';
@@ -27,7 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late AssessmentResultsViewModel viewModel;
   late List<AssessmentResults> assessmentResults;
   late List<AssessmentResults> assessmentResultsNotConfirmedByCPTS;
-  late bool isCPTS;
+  late bool _isCPTS;
+  late bool _isInstructor;
 
   @override
   void initState() {
@@ -60,23 +62,33 @@ class _HomeScreenState extends State<HomeScreen> {
       timeToGreet = "Evening";
     }
 
-    isCPTS = false;
+    _isCPTS = false;
+    _isInstructor = false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getAssessmentResults();
+      checkInstructor();
     });
 
     super.initState();
   }
 
   void getAssessmentResults() async {
-    if (userPreferences.getIDNo() == 11720032) {
+    if (userPreferences.getPrivileges().contains(UserModel.keyPrivilegeViewAllAssessments)) {
       assessmentResultsNotConfirmedByCPTS = await viewModel.getAssessmentResultsNotConfirmByCPTS();
-      isCPTS = true;
+      _isCPTS = true;
     }
     log("dwadaw${assessmentResultsNotConfirmedByCPTS.length}");
 
     assessmentResults = await viewModel.getAssessmentResultsByCurrentUserNotConfirm();
+  }
+
+  void checkInstructor() {
+    log("HomeScreen: ${userPreferences.getPrivileges()}");
+    if(userPreferences.getPrivileges().contains(UserModel.keyPrivilegeCreateAssessment)) {
+      _isInstructor = true;
+    }
+    log("HomeScreen: $_isInstructor");
   }
 
   @override
@@ -148,7 +160,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           'Assessment',
                           style: tsOneTextTheme.headlineLarge,
                         ),
-                        OutlinedButton.icon(
+                        _isInstructor
+                        ? OutlinedButton.icon(
                           onPressed: () {
                             Navigator.pushNamed(context, NamedRoute.newAssessmentSimulatorFlight);
                           },
@@ -162,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             backgroundColor: TsOneColor.onPrimary,
                           ),
                         )
+                        : Container()
                       ],
                     ),
                   ),
@@ -177,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  model.isLoading
+                  viewModel.isLoading
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
@@ -187,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: cardAssessment(assessmentResults, false),
                             )
                           : const Center(child: Text('There is no data that needs confirmation')),
-                  if (isCPTS)
+                  if (_isCPTS)
                     Column(
                       children: [
                         Padding(
@@ -200,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                        model.isLoading
+                        viewModel.isLoading
                             ? const Center(
                                 child: CircularProgressIndicator(),
                               )

@@ -87,7 +87,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Assessment History", style: tsOneTextTheme.headlineLarge),
-                userPreferences.getPrivileges().contains(UserModel.keyPrivilegeManageFormAssessment)
+                userPreferences.getPrivileges().contains(UserModel.keyPrivilegeViewAllAssessments)
                     ? Row(
                         children: [
                           IconButton(
@@ -97,13 +97,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               icon: const Icon(
                                 Icons.feed,
                                 size: 32.0,
+                                // color: TsOneColor.primary,
                               )),
+                          /*
                           IconButton(
                               onPressed: () {},
                               icon: const Icon(
                                 Icons.download,
                                 size: 32.0,
                               ))
+                          */
                         ],
                       )
                     : Container()
