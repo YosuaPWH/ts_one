@@ -215,7 +215,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
                   ),
                 ),
                 Text(
-                  _assessmentResults.examinerStaffIDNo.toString(),
+                  _assessmentResults.examineeStaffIDNo.toString(),
                   style: const TextStyle(color: TsOneColor.onSecondary),
                   overflow: TextOverflow.ellipsis,
                 ),

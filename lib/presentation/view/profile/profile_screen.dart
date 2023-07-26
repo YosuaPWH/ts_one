@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
+import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
@@ -17,13 +20,26 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late UserViewModel viewModel;
   late UserPreferences userPreferences;
+  late bool _canViewAllAssessments;
 
   @override
   void initState() {
     viewModel = Provider.of<UserViewModel>(context, listen: false);
     userPreferences = getItLocator<UserPreferences>();
+    _canViewAllAssessments = false;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkCanViewAllAssessments();
+    });
 
     super.initState();
+  }
+
+  void checkCanViewAllAssessments() {
+    log(userPreferences.getPrivileges().toString());
+    if (userPreferences.getPrivileges().contains(UserModel.keyPrivilegeViewAllAssessments)) {
+      _canViewAllAssessments = true;
+    }
   }
 
   @override
@@ -197,7 +213,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 16,
                     )
                 ),
-                ElevatedButton(
+                _canViewAllAssessments == true
+                ? ElevatedButton(
                     onPressed: () {
                       Navigator.pushNamed(context, NamedRoute.allUsers);
                     },
@@ -208,7 +225,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       minimumSize: const Size.fromHeight(40),
                     ),
                     child: const Text("Manage User"),
-                ),
+                )
+                : const SizedBox(),
                 ElevatedButton(
                   onPressed: () {
                     viewModel.logout();

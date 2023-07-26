@@ -17,10 +17,11 @@ class AssessmentResults{
   static const String keyTypeOfAssessment = "type-of-assessment";
   static const String keyDate = "date";
 
-  static const String keyExaminerStaffIDNo = "examinee-staff-id-no";
+  static const String keyExamineeStaffIDNo = "examinee-staff-id-no";
   static const String keyLicenseExpiry = "license-expiry";
   static const String keySimIdent = "sim-ident";
-  static const String keyExaminerSignatureUrl = "examinee-signature-url";
+  static const String keyExamineeSignatureUrl = "examinee-signature-url";
+  static const String keyRank = "rank";
   static const String keyConfirmedByExaminer = "confirmed-by-examiner";
   static const String keyRankExaminee = "rank";
   static const String keyNameExaminee = "examinee-name";
@@ -55,10 +56,11 @@ class AssessmentResults{
   String typeOfAssessment = Util.defaultStringIfNull;
   DateTime date = Util.getCurrentDateWithoutTime();
 
-  int examinerStaffIDNo = Util.defaultIntIfNull;
+  int examineeStaffIDNo = Util.defaultIntIfNull;
   DateTime licenseExpiry = Util.defaultDateIfNull;
   String simIdent = Util.defaultStringIfNull;
-  String examinerSignatureUrl = Util.defaultStringIfNull;
+  String examineeSignatureUrl = Util.defaultStringIfNull;
+  String rank = Util.defaultStringIfNull;
   bool confirmedByExaminer = false;
   String examineeRank = Util.defaultStringIfNull;
   String examineeName = Util.defaultStringIfNull;
@@ -87,7 +89,6 @@ class AssessmentResults{
   String notes = Util.defaultStringIfNull;
   String declaration = Util.defaultStringIfNull;
 
-
   bool isCPTS = false;
   bool isFromHistory = true;
 
@@ -98,10 +99,11 @@ class AssessmentResults{
     id = data[keyId];
     date = DateTime.fromMillisecondsSinceEpoch(data[keyDate].seconds * 1000);
 
-    examinerStaffIDNo = data[keyExaminerStaffIDNo];
+    examineeStaffIDNo = data[keyExamineeStaffIDNo];
     licenseExpiry = DateTime.fromMillisecondsSinceEpoch(data[keyLicenseExpiry].seconds * 1000);
     simIdent = data[keySimIdent];
-    examinerSignatureUrl = data[keyExaminerSignatureUrl];
+    examineeSignatureUrl = data[keyExamineeSignatureUrl];
+    rank = data[keyRank];
     confirmedByExaminer = data[keyConfirmedByExaminer];
     examineeRank = data[keyRankExaminee];
     examineeName = data[keyNameExaminee];
@@ -137,10 +139,11 @@ class AssessmentResults{
       keyId: id,
       keyDate: date,
 
-      keyExaminerStaffIDNo: examinerStaffIDNo,
+      keyExamineeStaffIDNo: examineeStaffIDNo,
       keyLicenseExpiry: licenseExpiry,
       keySimIdent: simIdent,
-      keyExaminerSignatureUrl: examinerSignatureUrl,
+      keyExamineeSignatureUrl: examineeSignatureUrl,
+      keyRank: rank,
       keyConfirmedByExaminer: confirmedByExaminer,
       keyRankExaminee: examineeRank,
       keyNameExaminee: examineeName,
@@ -178,7 +181,7 @@ class AssessmentResults{
     assessmentResults1.examineeName = newAssessment.nameExaminee1;
     assessmentResults1.examineeRank = newAssessment.rankExaminee1;
     assessmentResults1.date = newAssessment.assessmentDate;
-    assessmentResults1.examinerStaffIDNo = newAssessment.idNo1;
+    assessmentResults1.examineeStaffIDNo = newAssessment.idNo1;
     assessmentResults1.licenseExpiry = newAssessment.licenseExpiry1;
     assessmentResults1.simIdent = Util.defaultStringIfNull; // TODO complete this one on new_assessment and the view
     assessmentResults1.otherStaffIDNo = newAssessment.idNo2;
@@ -193,6 +196,7 @@ class AssessmentResults{
     assessmentResults1.overallPerformance = newAssessment.overallPerformance1;
     assessmentResults1.notes = newAssessment.notes1;
     assessmentResults1.declaration = newAssessment.declaration1;
+    assessmentResults1.rank = newAssessment.rankExaminee1;
     assessmentResults1.variableResults.addAll(newAssessment.assessmentVariablesFlights1);
     assessmentResults1.variableResults.addAll(newAssessment.assessmentVariablesFlightsHumanFactor1);
 
@@ -201,7 +205,7 @@ class AssessmentResults{
     assessmentResults2.examineeName = newAssessment.nameExaminee2;
     assessmentResults2.examineeRank = newAssessment.rankExaminee2;
     assessmentResults2.date = newAssessment.assessmentDate;
-    assessmentResults2.examinerStaffIDNo = newAssessment.idNo2;
+    assessmentResults2.examineeStaffIDNo = newAssessment.idNo2;
     assessmentResults2.licenseExpiry = newAssessment.licenseExpiry2;
     assessmentResults2.simIdent = Util.defaultStringIfNull; // TODO complete this one on new_assessment and the view
     assessmentResults2.otherStaffIDNo = newAssessment.idNo2;
@@ -216,6 +220,7 @@ class AssessmentResults{
     assessmentResults2.overallPerformance = newAssessment.overallPerformance2;
     assessmentResults2.notes = newAssessment.notes2;
     assessmentResults2.declaration = newAssessment.declaration2;
+    assessmentResults2.rank = newAssessment.rankExaminee2;
     assessmentResults2.variableResults.addAll(newAssessment.assessmentVariablesFlights2);
     assessmentResults2.variableResults.addAll(newAssessment.assessmentVariablesFlightsHumanFactor2);
 

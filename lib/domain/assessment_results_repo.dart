@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
 
@@ -11,9 +12,8 @@ import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/util/util.dart';
 
-abstract class AssessmentResultsRepo {
-  Future<List<AssessmentResults>> addAssessmentResults(
-      List<AssessmentResults> assessmentResults, NewAssessment newAssessment);
+abstract class AssessmentResultsRepo{
+  Future<List<AssessmentResults>> addAssessmentResults(List<AssessmentResults> assessmentResults, NewAssessment newAssessment);
 
   Future<List<AssessmentResults>> getAllAssessmentResults();
 
@@ -36,29 +36,28 @@ abstract class AssessmentResultsRepo {
 }
 
 class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
-  AssessmentResultsRepoImpl({FirebaseFirestore? db, UserPreferences? userPreferences})
-      : _db = db ?? FirebaseFirestore.instance,
-        _userPreferences = userPreferences;
+  AssessmentResultsRepoImpl({
+    FirebaseFirestore? db, UserPreferences? userPreferences
+  }) : _db = db ?? FirebaseFirestore.instance, _userPreferences = userPreferences;
 
   final FirebaseFirestore? _db;
   final UserPreferences? _userPreferences;
 
   @override
-  Future<List<AssessmentResults>> addAssessmentResults(
-      List<AssessmentResults> assessmentResults, NewAssessment newAssessment) async {
+  Future<List<AssessmentResults>> addAssessmentResults
+      (List<AssessmentResults> assessmentResults, NewAssessment newAssessment) async {
     List<AssessmentResults> assessmentResultsList = AssessmentResults.extractDataFromNewAssessment(newAssessment);
     try {
-      for (var assessmentResult in assessmentResultsList) {
-        assessmentResult.id =
-            "assessment-result-${assessmentResult.examinerStaffIDNo}-${Util.convertDateTimeDisplay(assessmentResult.date.toString())}";
+      for(var assessmentResult in assessmentResultsList){
+        assessmentResult.id = "assessment-result-${assessmentResult.examineeStaffIDNo}-${Util.convertDateTimeDisplay(assessmentResult.date.toString())}";
         await _db!
             .collection(AssessmentResults.firebaseCollection)
             .doc(assessmentResult.id)
             .set(assessmentResult.toFirebase());
 
-        for (var assessmentVariableResult in assessmentResult.variableResults) {
-          assessmentVariableResult.id =
-              "assessment-variable-result-${assessmentVariableResult.assessmentVariableId}-${assessmentResult.examinerStaffIDNo}-${Util.convertDateTimeDisplay(assessmentResult.date.toString())}";
+        for(var assessmentVariableResult in assessmentResult.variableResults) {
+          assessmentVariableResult.id = "assessment-variable-result-${assessmentVariableResult.assessmentVariableId}-${assessmentResult.examineeStaffIDNo}-${Util.convertDateTimeDisplay(assessmentResult.date.toString())}";
+
           assessmentVariableResult.assessmentResultsId = assessmentResult.id;
           await _db!
               .collection(AssessmentVariableResults.firebaseCollection)
@@ -66,8 +65,9 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               .set(assessmentVariableResult.toFirebase());
         }
       }
-    } catch (e) {
-      print(e.toString());
+    }
+    catch(e){
+      log("Exception on assessment results repo: ${e.toString()}");
     }
     return assessmentResultsList;
   }
@@ -75,24 +75,27 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   @override
   Future<List<AssessmentResults>> getAllAssessmentResults() async {
     List<AssessmentResults> assessmentResultsList = [];
-    try {
-      QuerySnapshot querySnapshot = await _db!.collection(AssessmentResults.firebaseCollection).get();
+    try{
+      QuerySnapshot querySnapshot = await _db!
+          .collection(AssessmentResults.firebaseCollection)
+          .get();
 
-      for (var doc in querySnapshot.docs) {
+      for(var doc in querySnapshot.docs){
         AssessmentResults assessmentResults = AssessmentResults.fromFirebase(doc.data() as Map<String, dynamic>);
         QuerySnapshot querySnapshot2 = await _db!
             .collection(AssessmentVariableResults.firebaseCollection)
             .where(AssessmentVariableResults.keyAssessmentResultsId, isEqualTo: assessmentResults.id)
             .get();
-        for (var doc2 in querySnapshot2.docs) {
-          AssessmentVariableResults assessmentVariableResults =
-              AssessmentVariableResults.fromFirebase(doc2.data() as Map<String, dynamic>);
+
+        for(var doc2 in querySnapshot2.docs){
+          AssessmentVariableResults assessmentVariableResults = AssessmentVariableResults.fromFirebase(doc2.data() as Map<String, dynamic>);
           assessmentResults.variableResults.add(assessmentVariableResults);
         }
         assessmentResultsList.add(assessmentResults);
       }
-    } catch (e) {
-      print(e.toString());
+    }
+    catch(e){
+      log("Exception on assessment results repo: ${e.toString()}");
     }
     return assessmentResultsList;
   }
@@ -100,28 +103,29 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   @override
   Future<List<AssessmentResults>> getAssessmentResultsFilteredByDate(DateTime startDate, DateTime endDate) async {
     List<AssessmentResults> assessmentResultsList = [];
-    try {
+    try{
       QuerySnapshot querySnapshot = await _db!
           .collection(AssessmentResults.firebaseCollection)
           .where(AssessmentResults.keyDate, isGreaterThanOrEqualTo: startDate)
           .where(AssessmentResults.keyDate, isLessThanOrEqualTo: endDate)
           .get();
 
-      for (var doc in querySnapshot.docs) {
+      for(var doc in querySnapshot.docs){
         AssessmentResults assessmentResults = AssessmentResults.fromFirebase(doc.data() as Map<String, dynamic>);
         QuerySnapshot querySnapshot2 = await _db!
             .collection(AssessmentVariableResults.firebaseCollection)
             .where(AssessmentVariableResults.keyAssessmentResultsId, isEqualTo: assessmentResults.id)
             .get();
-        for (var doc2 in querySnapshot2.docs) {
-          AssessmentVariableResults assessmentVariableResults =
-              AssessmentVariableResults.fromFirebase(doc2.data() as Map<String, dynamic>);
+
+        for(var doc2 in querySnapshot2.docs){
+          AssessmentVariableResults assessmentVariableResults = AssessmentVariableResults.fromFirebase(doc2.data() as Map<String, dynamic>);
           assessmentResults.variableResults.add(assessmentVariableResults);
         }
         assessmentResultsList.add(assessmentResults);
       }
-    } catch (e) {
-      print(e.toString());
+    }
+    catch(e){
+      log("Exception on assessment results repo: ${e.toString()}");
     }
     return assessmentResultsList;
   }
@@ -130,14 +134,13 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm() async {
     final userPreferences = _userPreferences;
     final userId = userPreferences!.getIDNo();
-    int dummyUserId = 1029620;
+    int dummyUserId = 11720032;
     List<AssessmentResults> assessmentResults = [];
 
     try {
       await _db!
           .collection(AssessmentResults.firebaseCollection)
-          .where(AssessmentResults.keyExaminerStaffIDNo, isEqualTo: userId)
-          .where(AssessmentResults.keyConfirmedByInstructor, isEqualTo: true)
+          .where(AssessmentResults.keyExamineeStaffIDNo, isEqualTo: dummyUserId)
           .where(AssessmentResults.keyConfirmedByExaminer, isEqualTo: false)
           .get()
           .then((value) {
@@ -145,6 +148,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
           assessmentResults.add(AssessmentResults.fromFirebase(element.data()));
         }
       });
+
     } catch (e) {
       log("Exception in AssessmentResultRepo on getAssessmentResultsByCurrentUserNotConfirm: $e");
     }
@@ -168,13 +172,17 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         }
       });
     } catch (e) {
-      log("Exception in AssessmentResultRepo on getAssessmentResultsNotConfirmByCPTS: $e");
+      log(
+          "Exception in AssessmentResultRepo on getAssessmentResultsNotConfirmByCPTS: $e");
+      log(
+          "Exception in AssessmentResultRepo on getAssessmentResultsByCurrentUserNotConfirm: $e");
     }
 
     return assessmentResults;
   }
 
-  int assessmentVariableCollectionComparator(DocumentSnapshot a, DocumentSnapshot b) {
+  int assessmentVariableCollectionComparator(DocumentSnapshot a,
+      DocumentSnapshot b) {
     final idA = int.tryParse(a.id.split('-')[4]); // Extract the numerical part from the ID of document A
     final idB = int.tryParse(b.id.split('-')[4]); // Extract the numerical part from the ID of document B
 
@@ -200,8 +208,10 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       documents.sort(assessmentVariableCollectionComparator);
 
       for (var element in documents) {
-        assessmentVariableResults.add(AssessmentVariableResults.fromFirebase(element.data()));
+        assessmentVariableResults.add(AssessmentVariableResults.fromFirebase(
+            element.data()));
       }
+
     } catch (e) {
       log("Exception in AssessmentResultRepo on getAssessmentVariableResult: $e");
     }
@@ -220,6 +230,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       log("Exception in AssessmentResultRepo on updateAssessmentResultForExaminee: $e");
     }
   }
+
 
   @override
   Future<List<AssessmentResults>> searchAssessmentResultsBasedOnName(String searchName, int searchLimit) async {
@@ -348,7 +359,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
           case "License No.":
             document.pages[0].graphics.drawString(
-              assessmentResults.examinerStaffIDNo.toString(),
+              assessmentResults.examineeStaffIDNo.toString(),
               PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
               brush: PdfBrushes.black,
               bounds: Rect.fromLTWH(textbounds.topLeft.dx, textbounds.topLeft.dy + 8, 100, 50),
@@ -366,7 +377,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
           case "Staff No.":
             document.pages[0].graphics.drawString(
-              assessmentResults.examinerStaffIDNo.toString(),
+              assessmentResults.examineeStaffIDNo.toString(),
               PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
               brush: PdfBrushes.black,
               bounds: Rect.fromLTWH(textbounds.topLeft.dx, textbounds.topLeft.dy + 8, 100, 50),
@@ -504,4 +515,5 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     }
     return "Failed";
   }
+
 }

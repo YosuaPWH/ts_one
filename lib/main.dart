@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,8 +32,8 @@ void main() async {
     // wait for the preferences and other async dependencies to be ready before starting the app
     await getItLocator.allReady().then((value) => "All dependencies are ready");
   } catch (e) {
-    print("Something went wrong during initialization");
-    print("This is the exception: $e");
+    log("Something went wrong during initialization");
+    log("This is the exception: $e");
   }
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

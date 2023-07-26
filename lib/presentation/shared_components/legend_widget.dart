@@ -46,7 +46,7 @@ class LegendsListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Wrap(
       spacing: 16,
-      alignment: WrapAlignment.spaceAround,
+      alignment: WrapAlignment.center,
       children: legends
           .map(
             (e) => LegendWidget(

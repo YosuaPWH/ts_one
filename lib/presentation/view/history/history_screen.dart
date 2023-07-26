@@ -316,7 +316,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                         style: const TextStyle(fontWeight: FontWeight.bold),
                                                       ),
                                                       Text(
-                                                        allAssessment[index].examinerStaffIDNo.toString(),
+                                                        allAssessment[index].examineeStaffIDNo.toString(),
                                                         style: const TextStyle(fontWeight: FontWeight.normal),
                                                       ),
                                                       Text(
@@ -384,7 +384,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                             style: const TextStyle(fontWeight: FontWeight.bold),
                                                           ),
                                                           Text(
-                                                            searchedAssessment[index].examinerStaffIDNo.toString(),
+                                                            searchedAssessment[index].examineeStaffIDNo.toString(),
                                                             style: const TextStyle(fontWeight: FontWeight.normal),
                                                           ),
                                                           Text(
