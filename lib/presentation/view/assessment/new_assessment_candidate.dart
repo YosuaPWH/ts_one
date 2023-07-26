@@ -189,6 +189,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                             if (suggestion != null) {
                               _newAssessment.idNo1 = suggestion.idNo;
                               _newAssessment.licenseExpiry1 = suggestion.licenseExpiry;
+                              _newAssessment.nameExaminee1 = suggestion.name;
                               _newAssessment.rankExaminee1 = suggestion.rank;
 
                               name1TextController.text = "${suggestion.rank} ${suggestion.name}";
@@ -356,6 +357,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                                   _newAssessment.idNo2 = suggestion.idNo;
                                   _newAssessment.licenseExpiry2 = suggestion.licenseExpiry;
                                   _newAssessment.rankExaminee2 = suggestion.rank;
+                                  _newAssessment.nameExaminee2 = suggestion.name;
 
                                   name2TextController.text = "${suggestion.rank} ${suggestion.name}";
                                   staffNo2TextController.text = _newAssessment.idNo2.toString();
