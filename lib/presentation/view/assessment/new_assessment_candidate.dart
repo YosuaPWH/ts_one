@@ -191,6 +191,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                               _newAssessment.licenseExpiry1 = suggestion.licenseExpiry;
                               _newAssessment.nameExaminee1 = suggestion.name;
                               _newAssessment.rankExaminee1 = suggestion.rank;
+                              _newAssessment.nameExaminee1 = suggestion.name;
 
                               name1TextController.text = "${suggestion.rank} ${suggestion.name}";
                               staffNo1TextController.text = suggestion.idNo.toString();
