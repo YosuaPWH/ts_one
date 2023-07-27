@@ -62,6 +62,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
           assessmentVariableResult.id =
               "assessment-variable-result-${assessmentVariableResult.assessmentVariableId}-${assessmentResult.examineeStaffIDNo}-${Util.convertDateTimeDisplay(assessmentResult.date.toString())}";
 
+          log("SINI ${assessmentVariableResult.id}");
           assessmentVariableResult.assessmentResultsId = assessmentResult.id;
           await _db!
               .collection(AssessmentVariableResults.firebaseCollection)
@@ -306,7 +307,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       Directory? tempDir = await getExternalStorageDirectory();
 
       // Load the existing PDF document.
-      final PdfDocument document =
+      PdfDocument document =
           PdfDocument(inputBytes: File('${tempDir?.path}/QZ_TS1_SIM_04JUL2020_rev02.pdf').readAsBytesSync());
 
       // ============================= FOR CANDIDATE DETAIL ================================================
@@ -333,7 +334,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         switch (matched.text) {
           case "Other Crew Member Rank & Name.":
             document.pages[0].graphics.drawString(
-              "${assessmentResults.examineeRank}. ${assessmentResults.otherStaffIDNo}",
+              "${assessmentResults.rank}. ${assessmentResults.otherStaffIDNo}",
               PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
               brush: PdfBrushes.black,
               bounds: Rect.fromLTWH(textbounds.topLeft.dx, textbounds.topLeft.dy + 8, 100, 50),
@@ -343,7 +344,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
           case "Rank & Name.":
             if (!sameName) {
               document.pages[0].graphics.drawString(
-                "${assessmentResults.examineeRank}. ${assessmentResults.examineeName}",
+                "${assessmentResults.rank}. ${assessmentResults.examineeName}",
                 PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
                 brush: PdfBrushes.black,
                 bounds: Rect.fromLTWH(textbounds.topLeft.dx, textbounds.topLeft.dy + 8, 300, 50),
@@ -423,7 +424,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               bounds: Rect.fromLTWH(textbounds.topLeft.dx, textbounds.topLeft.dy + 8, 100, 50),
             );
             break;
-
         }
       }
 
@@ -477,35 +477,11 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         MatchedItem text = matchedVariable;
         Rect textBounds = text.bounds;
 
-        // outerLoop:
         var check = true;
 
         for (var assessment in assessmentVariableResults) {
           // Check if the assessment variable name is the same with the matched variable text
           if (assessment.assessmentVariableName.trim().toLowerCase() == matchedVariable.text.trim().toLowerCase()) {
-            // log("masuk assessment variable name: ${assessment.assessmentVariableName.trim().toLowerCase()} dan matched variable text: ${matchedVariable.text.trim().toLowerCase()}");
-            //
-            // if (matchedVariable.text == "UPRT - Nose High") {
-            //
-            //   if (check) {
-            //     log("masuk UUUU ${matchedVariable.bounds}");
-            //
-            //     document.pages[0].graphics.drawString(
-            //         "UUUU",
-            //         PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-            //         brush: PdfBrushes.black,
-            //         bounds: Rect.fromLTWH(textBounds.topLeft.dx + 146, textBounds.topLeft.dy - 2, 100, 50));
-            //     check = false;
-            //   } else {
-            //     log("masuk AAAA ${matchedVariable.bounds}");
-            //
-            //     document.pages[0].graphics.drawString(
-            //         "AAA",
-            //         PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-            //         brush: PdfBrushes.black,
-            //         bounds: Rect.fromLTWH(textBounds.topLeft.dx + 128, textBounds.topLeft.dy - 2, 100, 50));
-            //   }
-            // }
 
             // Assessment Type = Satisfactory
             if (assessment.assessmentType == "Satisfactory") {
@@ -525,41 +501,41 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                       "v", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
                       brush: PdfBrushes.black,
                       bounds: Rect.fromLTWH(textBounds.topLeft.dx + 128, textBounds.topLeft.dy - 2, 100, 50));
-                }
-              }
 
-              // Assessment Markers
-              switch (assessment.assessmentMarkers) {
-                case 1:
-                  document.pages[0].graphics.drawString(
-                      "1", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                      brush: PdfBrushes.black,
-                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 180, textBounds.topLeft.dy - 2, 100, 50));
-                  break;
-                case 2:
-                  document.pages[0].graphics.drawString(
-                      "2", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                      brush: PdfBrushes.black,
-                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 200, textBounds.topLeft.dy - 2, 100, 50));
-                  break;
-                case 3:
-                  document.pages[0].graphics.drawString(
-                      "3", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                      brush: PdfBrushes.black,
-                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 220, textBounds.topLeft.dy - 2, 100, 50));
-                  break;
-                case 4:
-                  document.pages[0].graphics.drawString(
-                      "4", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                      brush: PdfBrushes.black,
-                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 238, textBounds.topLeft.dy - 2, 100, 50));
-                  break;
-                case 5:
-                  document.pages[0].graphics.drawString(
-                      "5", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                      brush: PdfBrushes.black,
-                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 255, textBounds.topLeft.dy - 2, 100, 50));
-                  break;
+                  // Assessment Markers
+                  switch (assessment.assessmentMarkers) {
+                    case 1:
+                      document.pages[0].graphics.drawString(
+                          "1", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+                          brush: PdfBrushes.black,
+                          bounds: Rect.fromLTWH(textBounds.topLeft.dx + 180, textBounds.topLeft.dy - 2, 100, 50));
+                      break;
+                    case 2:
+                      document.pages[0].graphics.drawString(
+                          "2", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+                          brush: PdfBrushes.black,
+                          bounds: Rect.fromLTWH(textBounds.topLeft.dx + 200, textBounds.topLeft.dy - 2, 100, 50));
+                      break;
+                    case 3:
+                      document.pages[0].graphics.drawString(
+                          "3", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+                          brush: PdfBrushes.black,
+                          bounds: Rect.fromLTWH(textBounds.topLeft.dx + 220, textBounds.topLeft.dy - 2, 100, 50));
+                      break;
+                    case 4:
+                      document.pages[0].graphics.drawString(
+                          "4", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+                          brush: PdfBrushes.black,
+                          bounds: Rect.fromLTWH(textBounds.topLeft.dx + 238, textBounds.topLeft.dy - 2, 100, 50));
+                      break;
+                    case 5:
+                      document.pages[0].graphics.drawString(
+                          "5", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+                          brush: PdfBrushes.black,
+                          bounds: Rect.fromLTWH(textBounds.topLeft.dx + 255, textBounds.topLeft.dy - 2, 100, 50));
+                      break;
+                  }
+                }
               }
 
               // Assessment Type = PF/PM ========================================================
@@ -637,16 +613,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 }
               }
             }
-
-
-            // switch (assessment)
-
-            // if (assessment.)
-            // document.pages[0].graphics.drawString(
-            //     "v",
-            //     PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-            //     brush: PdfBrushes.black,
-            //     bounds: Rect.fromLTWH(textBounds.topLeft.dx + 14, textBounds.topLeft.dy - 2, 100, 50));
           }
         }
       }
@@ -655,13 +621,13 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
       // Overall Performance
 
-
       var overallPerformance = assessmentResults.overallPerformance.round();
       document.pages[1];
 
       List<MatchedItem> nonDuplicateMatchedItemVariableForOverall = [];
 
-      List<MatchedItem> overallValue = PdfTextExtractor(document).findText(["only if recommendations is made", "Notes", "1", "2", "3", "4", "5"], startPageIndex: 1);
+      List<MatchedItem> overallValue = PdfTextExtractor(document)
+          .findText(["only if recommendations is made", "Notes", "1", "2", "3", "4", "5"], startPageIndex: 1);
 
       for (var value in overallValue) {
         if (!nonDuplicateMatchedItemVariableForOverall.contains(value)) {
@@ -675,7 +641,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
         if (overallPerformance.toString() == matchedItem.text) {
           document.pages[1].graphics.drawString(
-              "O", PdfStandardFont(PdfFontFamily.helvetica, 20, style: PdfFontStyle.bold),
+              "O", PdfStandardFont(PdfFontFamily.helvetica, 25, style: PdfFontStyle.bold),
               brush: PdfBrushes.black,
               bounds: Rect.fromLTWH(textBounds.topLeft.dx - 5, textBounds.topLeft.dy - 8, 100, 50));
         }
@@ -685,13 +651,16 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             document.pages[1].graphics.drawString(
                 assessmentResults.notes, PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
                 brush: PdfBrushes.black,
-                bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + 15, 500, 100),
-                format: PdfStringFormat(lineSpacing: 6.5)
-            );
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + 15, 500, 300),
+                format: PdfStringFormat(lineSpacing: 6.5));
             break;
         }
 
-        List<String> signatureText = ["only if recommendations is made", "Candidate Name:", "Chief Pilot Training & Standards"];
+        List<String> signatureText = [
+          "only if recommendations is made",
+          "Candidate Name:",
+          "Chief Pilot Training & Standards"
+        ];
         List<MatchedItem> signatureMatchedItem = PdfTextExtractor(document).findText(signatureText, startPageIndex: 1);
 
         for (var item in signatureMatchedItem) {
@@ -706,10 +675,8 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
               PdfBitmap image = PdfBitmap(data);
 
-              document.pages[1].graphics.drawImage(
-                  image,
-                  Rect.fromLTWH(textBounds.topLeft.dx, textBounds.center.dy - 50, 70, 50)
-              );
+              document.pages[1].graphics
+                  .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx, textBounds.center.dy - 50, 70, 50));
               break;
 
             case "Candidate Name:":
@@ -727,10 +694,8 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
                 PdfBitmap image = PdfBitmap(data);
 
-                document.pages[1].graphics.drawImage(
-                    image,
-                    Rect.fromLTWH(textBounds.topLeft.dx, textBounds.center.dy - 70, 70, 50)
-                );
+                document.pages[1].graphics
+                    .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx, textBounds.center.dy - 70, 70, 50));
               }
 
               break;
@@ -743,39 +708,77 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
                 PdfBitmap image = PdfBitmap(data);
 
-                document.pages[1].graphics.drawImage(
-                    image,
-                    Rect.fromLTWH(textBounds.topLeft.dx + 15, textBounds.center.dy + 20, 70, 50)
-                );
+                document.pages[1].graphics
+                    .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx + 15, textBounds.center.dy + 20, 70, 50));
               }
               break;
-
-
           }
-
-
         }
+      }
 
+      // ======================================== FOR DECLARATION ====================================================
+      if (assessmentResults.sessionDetails == NewAssessment.keySessionDetailsTraining) {
+        List<String> declarationTextTraining = [
+          'Satisfactory',
+          'Further Training Req.',
+          'Cleared for Check',
+          'Stop Training, TS7 Rised'
+        ];
+        List<MatchedItem> declarationMatchedItem =
+        PdfTextExtractor(document).findText(declarationTextTraining, startPageIndex: 1);
 
+        for (var item in declarationMatchedItem) {
+          var textDeclaration = item.text;
+          var boundsDeclarations = item.bounds;
 
+          if (textDeclaration == assessmentResults.declaration) {
+            document.pages[1].graphics.drawString(
+                "v", PdfStandardFont(PdfFontFamily.helvetica, 15, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(boundsDeclarations.topLeft.dx - 28, boundsDeclarations.topLeft.dy - 5, 100, 50));
+          }
+        }
+      } else if (assessmentResults.sessionDetails == NewAssessment.keySessionDetailsCheck) {
+        List<String> declarationTextCheck = [
+          'PASS',
+          'FAIL'
+        ];
+        List<MatchedItem> declarationMatchedItem =
+          PdfTextExtractor(document).findText(declarationTextCheck, startPageIndex: 1);
+
+        for (var item in declarationMatchedItem) {
+          var textDeclaration = item.text;
+          var boundsDeclarations = item.bounds;
+
+          if (textDeclaration.toLowerCase().trim() == assessmentResults.declaration.toLowerCase().trim()) {
+            document.pages[1].graphics.drawString(
+                "v", PdfStandardFont(PdfFontFamily.helvetica, 20, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(boundsDeclarations.topLeft.dx - 75, boundsDeclarations.topLeft.dy - 10, 100, 50));
+          }
+        }
       }
 
 
 
-
-
-
-
+      // Save into download directory
 
       // Save and dispose the document.
       String pathSavePDF =
-          "${tempDir?.path}/${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf";
+          "/storage/emulated/0/Download/${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf";
 
-      File(pathSavePDF).writeAsBytesSync(await document.save());
+      String cacheSavePDF =
+          '${tempDir?.path}/${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf';
+
+      var bytes = await document.save();
+
+      File(pathSavePDF).writeAsBytesSync(bytes);
+
+      File(cacheSavePDF).writeAsBytesSync(bytes);
 
       document.dispose();
 
-      return pathSavePDF;
+      return cacheSavePDF;
     } catch (e) {
       log("Exception in AssessmentResultRepo on makePDFSimulator: $e");
     }

@@ -1556,6 +1556,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                         final filePath = '${directory.path}/$fileName.pdf';
                                         final file = File(filePath);
                                         await file.writeAsBytes(await pdf.save());
+                                        log("dawdaw $filePath");
 
                                         Directory? destinationDirectory;
                                         destinationDirectory = await getTemporaryDirectory();

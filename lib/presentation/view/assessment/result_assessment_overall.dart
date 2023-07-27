@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:permission_handler/permission_handler.dart' as permission;
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:googleapis/androidenterprise/v1.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
@@ -25,7 +27,6 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
   late AssessmentResults _assessmentResults;
   late AssessmentResultsViewModel viewModel;
   bool isCPTS = false;
-  String messageMakePDF = "";
 
   @override
   void initState() {
@@ -37,19 +38,12 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
   }
 
   Future<void> makePDF() async {
-    // setState(() async {
-    // });
-    messageMakePDF = await viewModel.makePDFSimulator(_assessmentResults);
-
-    log("messageMakePDF: $messageMakePDF");
-
-
-    showOpenPDF();
-
-    // setState(() {});
+    var pathPDF = await viewModel.makePDFSimulator(_assessmentResults);
+    log("messageMakePDF: $pathPDF");
+    showOpenPDF(pathPDF);
   }
 
-  void showOpenPDF() {
+  void showOpenPDF(String pathPDF) {
     showDialog(
       context: context,
       builder: (context) {
@@ -65,7 +59,8 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
             ),
             TextButton(
               onPressed: () {
-                OpenFile.open(messageMakePDF);
+                OpenFile.open(pathPDF);
+                Navigator.pop(context);
               },
               child: const Text("Yes"),
             ),
@@ -133,136 +128,135 @@ class _ResultAssessmentOverallState extends State<ResultAssessmentOverall> with 
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AssessmentResultsViewModel>(
-      builder: (_, viewModel, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Overall Performance"),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: viewModel.isLoading
-                ? const Center(
-                    child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text("This will take a while."),
-                    ],
-                  ))
-                : Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.only(bottom: 16.0, top: 8.0),
-                                  child: TextField(
-                                    enabled: false,
-                                    style: const TextStyle(
-                                      color: TsOneColor.onSecondary,
+    return Consumer<AssessmentResultsViewModel>(builder: (_, viewModel, child) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Overall Performance"),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: viewModel.isLoading
+              ? const Center(
+                  child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text("Downloading. This will take a while."),
+                  ],
+                ))
+              : Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.only(bottom: 16.0, top: 8.0),
+                                child: TextField(
+                                  enabled: false,
+                                  style: const TextStyle(
+                                    color: TsOneColor.onSecondary,
+                                  ),
+                                  controller: TextEditingController(
+                                      text: _assessmentResults.overallPerformance.round().toString()),
+                                  decoration: const InputDecoration(
+                                    disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.green)),
+                                    border: OutlineInputBorder(borderSide: BorderSide(color: Colors.green)),
+                                    hintMaxLines: 1,
+                                    label: Text(
+                                      "Overall Performance",
+                                      style: TextStyle(fontSize: 12, color: Colors.green),
                                     ),
-                                    controller: TextEditingController(
-                                        text: _assessmentResults.overallPerformance.round().toString()),
-                                    decoration: const InputDecoration(
-                                      disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.green)),
-                                      border: OutlineInputBorder(borderSide: BorderSide(color: Colors.green)),
-                                      hintMaxLines: 1,
-                                      label: Text(
-                                        "Overall Performance",
-                                        style: TextStyle(fontSize: 12, color: Colors.green),
-                                      ),
-                                    ),
-                                  )),
-                              TextField(
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                minLines: 10,
-                                enabled: false,
-                                style: const TextStyle(
-                                  color: TsOneColor.onSecondary,
-                                ),
-                                controller: TextEditingController(text: _assessmentResults.notes),
-                                decoration: const InputDecoration(
-                                  disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.green)),
-                                  border: OutlineInputBorder(),
-                                  label: Text(
-                                    "Overall Performance",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.green,
-                                    ),
+                                  ),
+                                )),
+                            TextField(
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              minLines: 10,
+                              enabled: false,
+                              style: const TextStyle(
+                                color: TsOneColor.onSecondary,
+                              ),
+                              controller: TextEditingController(text: _assessmentResults.notes),
+                              decoration: const InputDecoration(
+                                disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.green)),
+                                border: OutlineInputBorder(),
+                                label: Text(
+                                  "Overall Performance",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.green,
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // _assessmentResults.isFromHistory
-                      //     ? const SizedBox()
-                      //     :
-                      ElevatedButton(
-                        onPressed: () {
-                          _assessmentResults.isFromHistory
-                              ? showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text("Download"),
-                                      content: const Text("Are you sure you want to download this assessment?"),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text("Cancel"),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            Navigator.pop(context);
-                                            // Future.delayed(const Duration(seconds: 2));
-
-                                            makePDF();
-                                            // await _assessmentResults.downloadAssessment();
-                                          },
-                                          child: const Text("Download"),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                )
-                              :
-                              // _assessmentResults.isFromHistory ? NamedRoute.template :
-                              Navigator.pushNamed(context, NamedRoute.resultAssessmentDeclaration,
-                                  arguments: _assessmentResults);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                          backgroundColor: TsOneColor.primary,
-                        ),
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: 48,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              _assessmentResults.isFromHistory ? "Download" : "Next",
-                              style: const TextStyle(color: TsOneColor.secondary),
                             ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // _assessmentResults.isFromHistory
+                    //     ? const SizedBox()
+                    //     :
+                    ElevatedButton(
+                      onPressed: () {
+                        _assessmentResults.isFromHistory
+                            ? makePDF()
+                            // showDialog(
+                            //         context: context,
+                            //         builder: (context) {
+                            //           return AlertDialog(
+                            //             title: const Text("Download"),
+                            //             content: const Text("Are you sure you want to download this assessment?"),
+                            //             actions: [
+                            //               TextButton(
+                            //                 onPressed: () {
+                            //                   Navigator.pop(context);
+                            //                 },
+                            //                 child: const Text("Cancel"),
+                            //               ),
+                            //               TextButton(
+                            //                 onPressed: () async {
+                            //                   Navigator.pop(context);
+                            //                   // Future.delayed(const Duration(seconds: 2));
+                            //
+                            //                   makePDF();
+                            //                   // await _assessmentResults.downloadAssessment();
+                            //                 },
+                            //                 child: const Text("Download"),
+                            //               ),
+                            //             ],
+                            //           );
+                            //         },
+                            //       )
+                            :
+                            // _assessmentResults.isFromHistory ? NamedRoute.template :
+                            Navigator.pushNamed(context, NamedRoute.resultAssessmentDeclaration,
+                                arguments: _assessmentResults);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                        backgroundColor: TsOneColor.primary,
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 48,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            _assessmentResults.isFromHistory ? "Download" : "Next",
+                            style: const TextStyle(color: TsOneColor.secondary),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-          ),
-        );
-      }
-    );
+                    ),
+                  ],
+                ),
+        ),
+      );
+    });
   }
 }
