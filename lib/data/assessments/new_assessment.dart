@@ -30,7 +30,7 @@ class NewAssessment with ChangeNotifier {
       "the published syllabus and assessed the performance of the candidate as";
 
   static const String keyForTrainingSatisfactory = "Satisfactory";
-  static const String keyForTrainingFurtherTraining = "Further Training Required";
+  static const String keyForTrainingFurtherTraining = "Further Training Req.";
   static const String keyForClearedForCheck = "Cleared for Check";
   static const String keyStopTraining = "Stop Training, TS7 Rised";
 

@@ -23,7 +23,6 @@ class AssessmentResults{
   static const String keyExamineeSignatureUrl = "examinee-signature-url";
   static const String keyRank = "rank";
   static const String keyConfirmedByExaminer = "confirmed-by-examiner";
-  static const String keyRankExaminee = "rank";
   static const String keyNameExaminee = "examinee-name";
 
   static const String keyOtherStaffIDNo = "other-staff-id-no";
@@ -62,7 +61,6 @@ class AssessmentResults{
   String examineeSignatureUrl = Util.defaultStringIfNull;
   String rank = Util.defaultStringIfNull;
   bool confirmedByExaminer = false;
-  String examineeRank = Util.defaultStringIfNull;
   String examineeName = Util.defaultStringIfNull;
 
   int otherStaffIDNo = Util.defaultIntIfNull;
@@ -105,7 +103,6 @@ class AssessmentResults{
     examineeSignatureUrl = data[keyExamineeSignatureUrl];
     rank = data[keyRank];
     confirmedByExaminer = data[keyConfirmedByExaminer];
-    examineeRank = data[keyRankExaminee];
     examineeName = data[keyNameExaminee];
 
     otherStaffIDNo = data[keyOtherStaffIDNo];
@@ -132,6 +129,8 @@ class AssessmentResults{
 
     overallPerformance = data[keyOverallPerformance];
     notes = data[keyNotes];
+
+    declaration = data[keyDeclaration];
   }
 
   Map<String, dynamic> toFirebase() {
@@ -145,7 +144,6 @@ class AssessmentResults{
       keyExamineeSignatureUrl: examineeSignatureUrl,
       keyRank: rank,
       keyConfirmedByExaminer: confirmedByExaminer,
-      keyRankExaminee: examineeRank,
       keyNameExaminee: examineeName,
 
       keyOtherStaffIDNo: otherStaffIDNo,
@@ -170,6 +168,8 @@ class AssessmentResults{
 
       keyOverallPerformance: overallPerformance,
       keyNotes: notes,
+
+      keyDeclaration: declaration
     };
   }
 
@@ -179,7 +179,6 @@ class AssessmentResults{
     AssessmentResults assessmentResults1 = AssessmentResults();
     assessmentResults1.typeOfAssessment = newAssessment.typeOfAssessment;
     assessmentResults1.examineeName = newAssessment.nameExaminee1;
-    assessmentResults1.examineeRank = newAssessment.rankExaminee1;
     assessmentResults1.date = newAssessment.assessmentDate;
     assessmentResults1.examineeStaffIDNo = newAssessment.idNo1;
     assessmentResults1.licenseExpiry = newAssessment.licenseExpiry1;
@@ -203,7 +202,6 @@ class AssessmentResults{
     AssessmentResults assessmentResults2 = AssessmentResults();
     assessmentResults2.typeOfAssessment = newAssessment.typeOfAssessment;
     assessmentResults2.examineeName = newAssessment.nameExaminee2;
-    assessmentResults2.examineeRank = newAssessment.rankExaminee2;
     assessmentResults2.date = newAssessment.assessmentDate;
     assessmentResults2.examineeStaffIDNo = newAssessment.idNo2;
     assessmentResults2.licenseExpiry = newAssessment.licenseExpiry2;

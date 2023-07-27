@@ -519,7 +519,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                       child: TextFormField(
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Simulation Hours',
+                          labelText: 'Simulation Hours (hh:mm)',
                           // suffixIcon: IconButton(
                           //   onPressed: () {},
                           //   icon: const Icon(Icons.search),

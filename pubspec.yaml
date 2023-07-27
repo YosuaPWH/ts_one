@@ -72,7 +72,6 @@ dependencies:
   firebase_storage: ^11.2.4
   path_provider: ^2.0.15
   fl_chart: ^0.63.0
-  infinite_scroll_pagination: ^3.2.0
   syncfusion_flutter_pdf: ^22.1.39
   pdf: ^3.10.4
   open_file: ^3.3.2
@@ -80,6 +79,8 @@ dependencies:
   screenshot: ^2.1.0
   flutter_progress_hud: ^2.0.2
   excel: ^2.1.0
+  permission_handler: ^10.4.3
+  device_info_plus: ^9.0.2
 
 dev_dependencies:
   flutter_test:

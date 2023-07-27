@@ -1351,7 +1351,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
       );
     }
 
-    log(inputs1HumanFactor.toString());
+    // log(inputs1HumanFactor.toString());
 
     return expansionTiles;
   }

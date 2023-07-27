@@ -77,22 +77,22 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
           // assessmentFlightDetailsWhichCanBeSelectedAgain[element];
           if (assessmentFlightDetailsWhichCanBeSelectedAgainS1[element] == null) {
             assessmentFlightDetailsWhichCanBeSelectedAgainS1.addAll({
-              element: {data: false}
+              element: {data.trim(): false}
             });
             assessmentFlightDetailsWhichCanBeSelectedAgainS2.addAll({
-              element: {data: false}
+              element: {data.trim(): false}
             });
           } else {
-            if (!assessmentFlightDetailsWhichCanBeSelectedAgainS1[element]!.containsKey(data)) {
-              assessmentFlightDetailsWhichCanBeSelectedAgainS1[element]!.addAll({data: false});
-              assessmentFlightDetailsWhichCanBeSelectedAgainS2[element]!.addAll({data: false});
+            if (!assessmentFlightDetailsWhichCanBeSelectedAgainS1[element]!.containsKey(data.trim())) {
+              assessmentFlightDetailsWhichCanBeSelectedAgainS1[element]!.addAll({data.trim(): false});
+              assessmentFlightDetailsWhichCanBeSelectedAgainS2[element]!.addAll({data.trim(): false});
             }
           }
         }
       }
     }
 
-    log(assessmentFlightDetailsWhichCanBeSelectedAgainS1.toString());
+    // log(assessmentFlightDetailsWhichCanBeSelectedAgainS1.toString());
   }
 
   @override

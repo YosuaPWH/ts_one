@@ -2,16 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
-import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/di/locator.dart';
-import 'package:ts_one/domain/assessment_results_repo.dart';
 import 'package:ts_one/presentation/routes.dart';
-import 'package:ts_one/presentation/shared_components/card_user.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/assessment_results_viewmodel.dart';
 import 'package:ts_one/util/util.dart';
@@ -82,9 +78,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         allAssessment.sort((a, b) => a.examineeName.compareTo(b.examineeName));
         searchedAssessment.sort((a, b) => a.examineeName.compareTo(b.examineeName));
         break;
-      case AssessmentResults.keyRankExaminee:
-        allAssessment.sort((a, b) => a.examineeRank.compareTo(b.examineeRank));
-        searchedAssessment.sort((a, b) => a.examineeRank.compareTo(b.examineeRank));
+      case AssessmentResults.keyRank:
+        allAssessment.sort((a, b) => a.rank.compareTo(b.rank));
+        searchedAssessment.sort((a, b) => a.rank.compareTo(b.rank));
       case AssessmentResults.keyDate:
         allAssessment.sort((a, b) => b.date.compareTo(a.date));
         searchedAssessment.sort((a, b) => b.date.compareTo(a.date));
@@ -320,7 +316,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                         style: const TextStyle(fontWeight: FontWeight.normal),
                                                       ),
                                                       Text(
-                                                        allAssessment[index].examineeRank.toString(),
+                                                        allAssessment[index].rank.toString(),
                                                         style: const TextStyle(
                                                           fontWeight: FontWeight.normal,
                                                         ),
@@ -388,7 +384,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                             style: const TextStyle(fontWeight: FontWeight.normal),
                                                           ),
                                                           Text(
-                                                            searchedAssessment[index].examineeRank.toString(),
+                                                            searchedAssessment[index].rank.toString(),
                                                             style: const TextStyle(
                                                               fontWeight: FontWeight.normal,
                                                             ),
@@ -449,7 +445,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 title: const Text('Rank'),
                 onTap: () {
                   setState(() {
-                    _sortBy = AssessmentResults.keyRankExaminee;
+                    _sortBy = AssessmentResults.keyRank;
                   });
                   sortAssessmentBy();
                   Navigator.pop(context);
