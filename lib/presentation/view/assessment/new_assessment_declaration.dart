@@ -530,25 +530,43 @@ class _NewAssessmentDeclarationState extends State<NewAssessmentDeclaration> wit
                             log(_newAssessment.signatureBytes.toString());
 
                             if(_formKey.currentState!.validate()) {
-                              String signatureUrl = await _userViewModel.uploadSignature(
-                                  _newAssessment.idNoInstructor,
-                                  _newAssessment.assessmentDate,
-                                  _newAssessment.signatureBytes);
-                              _newAssessment.instructorSignatureUrl = signatureUrl;
+                              try {
+                                String signatureUrl = await _userViewModel.uploadSignature(
+                                    _newAssessment.idNoInstructor,
+                                    _newAssessment.assessmentDate,
+                                    _newAssessment.signatureBytes);
+                                _newAssessment.instructorSignatureUrl = signatureUrl;
 
-                              // store UserSignatures in remote to be used later in the app
-                              _userSignatures = UserSignatures(
-                                urlSignature: signatureUrl,
-                                staffId: _newAssessment.idNoInstructor,
-                              );
-                              _userSignatures = await _userViewModel.addSignature(_userSignatures);
+                                // store UserSignatures in remote to be used later in the app
+                                _userSignatures = UserSignatures(
+                                  urlSignature: signatureUrl,
+                                  staffId: _newAssessment.idNoInstructor,
+                                );
+                                _userSignatures = await _userViewModel.addSignature(_userSignatures);
 
 
-                              /// push the data to the database
-                              await assessmentResultsViewModel.addAssessmentResults(_assessmentResults, _newAssessment);
+                                /// push the data to the database
+                                await assessmentResultsViewModel.addAssessmentResults(_assessmentResults, _newAssessment);
 
-                              // push to success screen
-                              toSuccessScreen(context);
+                                if (!mounted) return;
+                                // push to success screen
+                                toSuccessScreen(context);
+                              } catch (e) {
+                                log(e.toString());
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: const Text("Failed to confirm your assessment"),
+                                        duration: const Duration(milliseconds: 2000),
+                                        action: SnackBarAction(
+                                          label: "Close",
+                                          onPressed: () {
+                                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                          },
+                                        ))
+                                );
+                              }
+
                             }
                           },
                           style: ElevatedButton.styleFrom(
