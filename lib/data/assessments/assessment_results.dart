@@ -26,6 +26,8 @@ class AssessmentResults{
   static const String keyNameExaminee = "examinee-name";
 
   static const String keyOtherStaffIDNo = "other-staff-id-no";
+  static const String keyOtherStaffName = "other-staff-name";
+  static const String keyOtherStaffRank = "other-staff-rank";
 
   static const String keyAircraftType = "aircraft-type";
   static const String keyAirportAndRoute = "airport-and-route";
@@ -64,6 +66,8 @@ class AssessmentResults{
   String examineeName = Util.defaultStringIfNull;
 
   int otherStaffIDNo = Util.defaultIntIfNull;
+  String otherStaffName = Util.defaultStringIfNull;
+  String otherStaffRank = Util.defaultStringIfNull;
 
   String aircraftType = Util.defaultStringIfNull;
   String airportAndRoute = Util.defaultStringIfNull;
@@ -106,6 +110,8 @@ class AssessmentResults{
     examineeName = data[keyNameExaminee];
 
     otherStaffIDNo = data[keyOtherStaffIDNo];
+    otherStaffName = data[keyOtherStaffName];
+    otherStaffRank = data[keyOtherStaffRank];
 
     aircraftType = data[keyAircraftType];
     airportAndRoute = data[keyAirportAndRoute];
@@ -147,6 +153,8 @@ class AssessmentResults{
       keyNameExaminee: examineeName,
 
       keyOtherStaffIDNo: otherStaffIDNo,
+      keyOtherStaffName: otherStaffName,
+      keyOtherStaffRank: otherStaffRank,
 
       keyAircraftType: aircraftType,
       keyAirportAndRoute: airportAndRoute,
@@ -184,6 +192,8 @@ class AssessmentResults{
     assessmentResults1.licenseExpiry = newAssessment.licenseExpiry1;
     assessmentResults1.simIdent = Util.defaultStringIfNull; // TODO complete this one on new_assessment and the view
     assessmentResults1.otherStaffIDNo = newAssessment.idNo2;
+    assessmentResults1.otherStaffName = newAssessment.nameExaminee2;
+    assessmentResults1.otherStaffRank = newAssessment.rankExaminee2;
     assessmentResults1.aircraftType = newAssessment.aircraftType;
     assessmentResults1.airportAndRoute = newAssessment.airportAndRoute;
     assessmentResults1.simulationHours = newAssessment.simulationHours;
@@ -206,7 +216,9 @@ class AssessmentResults{
     assessmentResults2.examineeStaffIDNo = newAssessment.idNo2;
     assessmentResults2.licenseExpiry = newAssessment.licenseExpiry2;
     assessmentResults2.simIdent = Util.defaultStringIfNull; // TODO complete this one on new_assessment and the view
-    assessmentResults2.otherStaffIDNo = newAssessment.idNo2;
+    assessmentResults2.otherStaffIDNo = newAssessment.idNo1;
+    assessmentResults2.otherStaffName = newAssessment.nameExaminee1;
+    assessmentResults2.otherStaffRank = newAssessment.rankExaminee1;
     assessmentResults2.aircraftType = newAssessment.aircraftType;
     assessmentResults2.airportAndRoute = newAssessment.airportAndRoute;
     assessmentResults2.simulationHours = newAssessment.simulationHours;
