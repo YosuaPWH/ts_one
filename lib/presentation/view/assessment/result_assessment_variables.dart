@@ -27,7 +27,6 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
   late AssessmentResults _assessmentResults;
   bool isCPTS = false;
   late List<AssessmentVariableResults> assessmentVariableResults;
-  late UserModel _instructor;
   late Map<String, dynamic> assessmentCategories;
 
   @override
@@ -37,19 +36,13 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     assessmentVariableResults = [];
     _assessmentResults = widget.assessmentResults;
     assessmentCategories = {};
-    _instructor = UserModel();
     isCPTS = _assessmentResults.isCPTS;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getInstructor();
       getAllResultAssessmentVariablesById(_assessmentResults.id);
     });
 
     super.initState();
-  }
-
-  void getInstructor() async {
-    _instructor = await userViewModel.getUserByIDNo(_assessmentResults.instructorStaffIDNo.toString());
   }
 
   void getAllResultAssessmentVariablesById(String idAssessment) async {
@@ -208,7 +201,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  _instructor.name,
+                  _assessmentResults.instructorName,
                   style: const TextStyle(
                     color: TsOneColor.onSecondary,
                     overflow: TextOverflow.ellipsis,
