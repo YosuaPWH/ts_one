@@ -92,6 +92,17 @@ class UserPreferences extends ChangeNotifier {
     return preferences.getStringList(UserModel.keyInstructor) ?? [];
   }
 
+  String getInstructorString() {
+    String instructor = "";
+    for(int i = 0; i < getInstructor().length; i++) {
+      instructor += getInstructor()[i];
+      if(i < getInstructor().length - 1) {
+        instructor += ", ";
+      }
+    }
+    return instructor;
+  }
+
   String getLicenseNo() {
     return preferences.getString(UserModel.keyLicenseNo) ?? "";
   }
