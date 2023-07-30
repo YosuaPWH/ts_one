@@ -38,6 +38,7 @@ class AssessmentResults{
   static const String keyInstructorStaffIDNo = "instructor-staff-id-no";
   static const String keyInstructorSignatureUrl = "instructor-signature-url";
   static const String keyConfirmedByInstructor = "confirmed-by-instructor";
+  static const String keyInstructorName = "instructor-name";
 
   static const String keyPilotAdministratorStaffIDNo = "pilot-administrator-staff-id-no";
   static const String keyPilotAdministratorSignatureUrl = "pilot-administrator-signature-url";
@@ -78,6 +79,7 @@ class AssessmentResults{
   int instructorStaffIDNo = Util.defaultIntIfNull;
   String instructorSignatureUrl = Util.defaultStringIfNull;
   bool confirmedByInstructor = false;
+  String instructorName = Util.defaultStringIfNull;
 
   int pilotAdministratorStaffIDNo = Util.defaultIntIfNull;
   String pilotAdministratorSignatureUrl = Util.defaultStringIfNull;
@@ -124,6 +126,7 @@ class AssessmentResults{
     instructorStaffIDNo = data[keyInstructorStaffIDNo];
     instructorSignatureUrl = data[keyInstructorSignatureUrl];
     confirmedByInstructor = data[keyConfirmedByInstructor];
+    instructorName = data[keyInstructorName];
 
     pilotAdministratorStaffIDNo = data[keyPilotAdministratorStaffIDNo];
     pilotAdministratorSignatureUrl = data[keyPilotAdministratorSignatureUrl];
@@ -165,6 +168,7 @@ class AssessmentResults{
       keyInstructorStaffIDNo: instructorStaffIDNo,
       keyInstructorSignatureUrl: instructorSignatureUrl,
       keyConfirmedByInstructor: confirmedByInstructor,
+      keyInstructorName: instructorName,
 
       keyPilotAdministratorStaffIDNo: pilotAdministratorStaffIDNo,
       keyPilotAdministratorSignatureUrl: pilotAdministratorSignatureUrl,
@@ -202,6 +206,7 @@ class AssessmentResults{
     assessmentResults1.instructorStaffIDNo = newAssessment.idNoInstructor;
     assessmentResults1.instructorSignatureUrl = newAssessment.instructorSignatureUrl;
     assessmentResults1.confirmedByInstructor = true;
+    assessmentResults1.instructorName = newAssessment.instructorName;
     assessmentResults1.overallPerformance = newAssessment.overallPerformance1;
     assessmentResults1.notes = newAssessment.notes1;
     assessmentResults1.declaration = newAssessment.declaration1;
@@ -225,6 +230,7 @@ class AssessmentResults{
     assessmentResults2.sessionDetails = newAssessment.sessionDetails2;
     assessmentResults2.trainingCheckingDetails = newAssessment.assessmentFlightDetails2.flightDetails;
     assessmentResults2.instructorStaffIDNo = newAssessment.idNoInstructor;
+    assessmentResults2.instructorName = newAssessment.instructorName;
     assessmentResults2.instructorSignatureUrl = newAssessment.instructorSignatureUrl;
     assessmentResults2.confirmedByInstructor = true;
     assessmentResults2.overallPerformance = newAssessment.overallPerformance2;

@@ -720,13 +720,30 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       List<String> signatureText = [
         "only if recommendations is made",
         "Candidate Name:",
+        "Name:",
         "Chief Pilot Training & Standards"
       ];
       List<MatchedItem> signatureMatchedItem = PdfTextExtractor(document).findText(signatureText, startPageIndex: 1);
+      List<String> uniqueSignature = [];
+      List<MatchedItem> nonDuplicateSignatureMatchedItem = [];
+
+      log("LEN: ${signatureMatchedItem.length}");
 
       for (var item in signatureMatchedItem) {
+        if (!uniqueSignature.contains(item.text)) {
+          uniqueSignature.add(item.text);
+          nonDuplicateSignatureMatchedItem.add(item);
+        }
+      }
+
+      log("LEN: ${nonDuplicateSignatureMatchedItem.length}");
+
+
+      for (var item in nonDuplicateSignatureMatchedItem) {
         MatchedItem matchedItem = item;
         Rect textBounds = matchedItem.bounds;
+
+        log("match: ${matchedItem.text}");
 
         switch (matchedItem.text) {
           case "only if recommendations is made":
@@ -745,7 +762,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               assessmentResults.examineeName,
               PdfStandardFont(PdfFontFamily.helvetica, 10),
               brush: PdfBrushes.black,
-              bounds: Rect.fromLTWH(textBounds.topLeft.dx + 20, textBounds.topLeft.dy + 8, 300, 50),
+              bounds: Rect.fromLTWH(textBounds.topLeft.dx + 10, textBounds.topLeft.dy + 8, 200, 50),
             );
 
             if (assessmentResults.examineeSignatureUrl != "") {
@@ -755,7 +772,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
               PdfBitmap image = PdfBitmap(data);
               document.pages[1].graphics
-                  .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx, textBounds.center.dy - 70, 70, 50));
+                  .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx + 30, textBounds.center.dy - 60, 70, 50));
             }
             break;
 
@@ -769,6 +786,16 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               document.pages[1].graphics
                   .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx + 15, textBounds.center.dy + 20, 70, 50));
             }
+            break;
+
+            // For Instructor
+          case "Name:":
+            document.pages[1].graphics.drawString(
+              assessmentResults.instructorStaffIDNo.toString(),
+              PdfStandardFont(PdfFontFamily.helvetica, 10),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(textBounds.topLeft.dx + 10, textBounds.topLeft.dy + 8, 200, 50),
+            );
             break;
         }
       }

@@ -56,6 +56,7 @@ class NewAssessment with ChangeNotifier {
   int idNoInstructor = Util.defaultIntIfNull;
   Uint8List? signatureBytes;
   String instructorSignatureUrl = Util.defaultStringIfNull;
+  String instructorName = Util.defaultStringIfNull;
 
   // Flight Crew 1
   int idNo1 = Util.defaultIntIfNull;

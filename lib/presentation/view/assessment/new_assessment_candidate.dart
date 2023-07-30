@@ -46,6 +46,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
     _usersSearched = [];
     _userPreferences = getItLocator<UserPreferences>();
     _newAssessment.idNoInstructor = _userPreferences.getIDNo();
+    _newAssessment.instructorName = _userPreferences.getName();
 
     name1TextController = TextEditingController();
     staffNo1TextController = TextEditingController(text: _newAssessment.getIDNo1());
