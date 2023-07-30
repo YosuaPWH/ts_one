@@ -144,63 +144,157 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Column(
                          children: [
+                           // email
                            Row(
-                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             mainAxisAlignment:
+                             MainAxisAlignment.spaceBetween,
                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 16.0, left: 16.0),
-                                  child: Text(
-                                      "License No.",
-                                      style: TextStyle(
-                                        color: TsOneColor.onPrimary,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'Poppins',
-                                      )
-                                  )
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 16.0, right: 16.0),
-                                  child: Text(
-                                    userPreferences.getLicenseNo(),
-                                    style: const TextStyle(
-                                      color: TsOneColor.onPrimary,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Poppins',
-                                    )
-                                  ),
-                                ),
-                              ],
+                               const Padding(
+                                   padding: EdgeInsets.only(
+                                       top: 16.0, left: 16.0),
+                                   child: Text("Email",
+                                       style: TextStyle(
+                                         color: TsOneColor.onPrimary,
+                                         fontSize: 16,
+                                         fontWeight: FontWeight.w500,
+                                         fontFamily: 'Poppins',
+                                       ))),
+                               Padding(
+                                 padding: const EdgeInsets.only(
+                                     top: 16.0, right: 16.0),
+                                 child: Text(userPreferences.getEmail(),
+                                     style: const TextStyle(
+                                       color: TsOneColor.onPrimary,
+                                       fontSize: 13,
+                                       fontWeight: FontWeight.w700,
+                                       fontFamily: 'Poppins',
+                                     )),
+                               ),
+                             ],
                            ),
+
+                           // rank
                            Row(
-                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(top: 16.0, bottom: 16.0, left: 16.0),
-                                    child: Text(
-                                        "License Expiry",
-                                        style: TextStyle(
-                                          color: TsOneColor.onPrimary,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: 'Poppins',
-                                        )
-                                    )
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 16.0),
-                                    child: Text(
-                                      Util.convertDateTimeDisplay(userPreferences.getLicenseExpiry().toString(), "dd MMMM yyyy"),
-                                      style: const TextStyle(
-                                        color: TsOneColor.onPrimary,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: 'Poppins',
-                                      )
-                                    ),
-                                  ),
-                                ],
+                             mainAxisAlignment:
+                             MainAxisAlignment.spaceBetween,
+                             children: [
+                               const Padding(
+                                   padding: EdgeInsets.only(
+                                       top: 16.0, left: 16.0),
+                                   child: Text("Rank",
+                                       style: TextStyle(
+                                         color: TsOneColor.onPrimary,
+                                         fontSize: 16,
+                                         fontWeight: FontWeight.w500,
+                                         fontFamily: 'Poppins',
+                                       ))),
+                               Padding(
+                                 padding: const EdgeInsets.only(
+                                     top: 16.0, right: 16.0),
+                                 child: Text(userPreferences.getRank(),
+                                     style: const TextStyle(
+                                       color: TsOneColor.onPrimary,
+                                       fontSize: 13,
+                                       fontWeight: FontWeight.w700,
+                                       fontFamily: 'Poppins',
+                                     )),
+                               ),
+                             ],
+                           ),
+
+                           // instructor
+                           userPreferences.getInstructor().isEmpty
+                               ? const SizedBox()
+                               : Row(
+                             mainAxisAlignment:
+                             MainAxisAlignment.spaceBetween,
+                             children: [
+                               const Padding(
+                                   padding: EdgeInsets.only(
+                                       top: 16.0, left: 16.0),
+                                   child: Text("Instructor",
+                                       style: TextStyle(
+                                         color: TsOneColor.onPrimary,
+                                         fontSize: 16,
+                                         fontWeight: FontWeight.w500,
+                                         fontFamily: 'Poppins',
+                                       ))),
+                               Padding(
+                                 padding: const EdgeInsets.only(
+                                     top: 16.0, right: 16.0),
+                                 child: Text(userPreferences.getInstructorString(),
+                                     style: const TextStyle(
+                                       color: TsOneColor.onPrimary,
+                                       fontSize: 13,
+                                       fontWeight: FontWeight.w700,
+                                       fontFamily: 'Poppins',
+                                     )),
+                               ),
+                             ],
+                           ),
+
+                           // license no
+                           Row(
+                             mainAxisAlignment:
+                             MainAxisAlignment.spaceBetween,
+                             children: [
+                               const Padding(
+                                   padding: EdgeInsets.only(
+                                       top: 16.0, left: 16.0),
+                                   child: Text("License No",
+                                       style: TextStyle(
+                                         color: TsOneColor.onPrimary,
+                                         fontSize: 16,
+                                         fontWeight: FontWeight.w500,
+                                         fontFamily: 'Poppins',
+                                       ))),
+                               Padding(
+                                 padding: const EdgeInsets.only(
+                                     top: 16.0, right: 16.0),
+                                 child: Text(
+                                     userPreferences.getLicenseNo(),
+                                     style: const TextStyle(
+                                       color: TsOneColor.onPrimary,
+                                       fontSize: 13,
+                                       fontWeight: FontWeight.w700,
+                                       fontFamily: 'Poppins',
+                                     )),
+                               ),
+                             ],
+                           ),
+
+                           // license expiry
+                           Row(
+                             mainAxisAlignment:
+                             MainAxisAlignment.spaceBetween,
+                             children: [
+                               const Padding(
+                                   padding: EdgeInsets.only(
+                                       top: 16.0,
+                                       bottom: 16.0,
+                                       left: 16.0),
+                                   child: Text("License Expiry",
+                                       style: TextStyle(
+                                         color: TsOneColor.onPrimary,
+                                         fontSize: 16,
+                                         fontWeight: FontWeight.w500,
+                                         fontFamily: 'Poppins',
+                                       ))),
+                               Padding(
+                                 padding: const EdgeInsets.only(
+                                     top: 16.0, bottom: 16.0, right: 16.0),
+                                 child: Text(
+                                     Util.convertDateTimeDisplay(
+                                         userPreferences.getLicenseExpiry(),
+                                         "dd MMMM yyyy"),
+                                     style: const TextStyle(
+                                       color: TsOneColor.onPrimary,
+                                       fontSize: 13,
+                                       fontWeight: FontWeight.w700,
+                                       fontFamily: 'Poppins',
+                                     )),
+                               ),
+                             ],
                            ),
                          ],
                       ),

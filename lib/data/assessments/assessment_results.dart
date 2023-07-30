@@ -194,7 +194,7 @@ class AssessmentResults{
     assessmentResults1.date = newAssessment.assessmentDate;
     assessmentResults1.examineeStaffIDNo = newAssessment.idNo1;
     assessmentResults1.licenseExpiry = newAssessment.licenseExpiry1;
-    assessmentResults1.simIdent = Util.defaultStringIfNull; // TODO complete this one on new_assessment and the view
+    assessmentResults1.simIdent = newAssessment.simulationIdentity;
     assessmentResults1.otherStaffIDNo = newAssessment.idNo2;
     assessmentResults1.otherStaffName = newAssessment.nameExaminee2;
     assessmentResults1.otherStaffRank = newAssessment.rankExaminee2;
@@ -220,7 +220,7 @@ class AssessmentResults{
     assessmentResults2.date = newAssessment.assessmentDate;
     assessmentResults2.examineeStaffIDNo = newAssessment.idNo2;
     assessmentResults2.licenseExpiry = newAssessment.licenseExpiry2;
-    assessmentResults2.simIdent = Util.defaultStringIfNull; // TODO complete this one on new_assessment and the view
+    assessmentResults2.simIdent = newAssessment.simulationIdentity;
     assessmentResults2.otherStaffIDNo = newAssessment.idNo1;
     assessmentResults2.otherStaffName = newAssessment.nameExaminee1;
     assessmentResults2.otherStaffRank = newAssessment.rankExaminee1;

@@ -78,8 +78,8 @@ class AssessmentVariables with ChangeNotifier {
   ];
 
   static const aircraftSystemCategory = [
-    keyAbnormalEmergencyProcedure,
     keyAircraftSystemProcedures,
+    keyAbnormalEmergencyProcedure,
   ];
 
   static const satisfactoryList = [
