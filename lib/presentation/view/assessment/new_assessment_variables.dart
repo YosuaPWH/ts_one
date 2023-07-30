@@ -197,10 +197,58 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
                       scrollDirection: Axis.vertical,
                       child: Column(
                         children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    'Main Assessments',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.all(16),
                             child: Column(
                               children: _expansionTilesForNewAssessmentVariables(),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    'Human Factor Assessments',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           Padding(
@@ -1471,7 +1519,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
             border: OutlineInputBorder(),
             hintMaxLines: 1,
             label: Text(
-              "Markers",
+              "PF",
               style: TextStyle(
                 fontSize: 12,
               ),
@@ -1506,7 +1554,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
             border: OutlineInputBorder(),
             hintMaxLines: 1,
             label: Text(
-              "Markers",
+              "PM",
               style: TextStyle(
                 fontSize: 12,
               ),
@@ -1648,7 +1696,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
             border: OutlineInputBorder(),
             hintMaxLines: 1,
             label: Text(
-              "Markers",
+              "PF",
               style: TextStyle(
                 fontSize: 12,
               ),
@@ -1683,7 +1731,7 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
             border: OutlineInputBorder(),
             hintMaxLines: 1,
             label: Text(
-              "Markers",
+              "PM",
               style: TextStyle(
                 fontSize: 12,
               ),

@@ -491,6 +491,8 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         },
                       ),
                     ),
+
+                    // airport & route
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: TextFormField(
@@ -515,6 +517,8 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         },
                       ),
                     ),
+
+                    // simulation hours
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: TextFormField(
@@ -536,6 +540,32 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         onChanged: (value) {
                           _newAssessment.simulationHours = value;
+                        },
+                      ),
+                    ),
+
+                    // simulation identity
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Simulation Identity',
+                          // suffixIcon: IconButton(
+                          //   onPressed: () {},
+                          //   icon: const Icon(Icons.search),
+                          // ),
+                        ),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter simulation identity';
+                          }
+                          return null;
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        onChanged: (value) {
+                          _newAssessment.simulationIdentity = value;
                         },
                       ),
                     ),

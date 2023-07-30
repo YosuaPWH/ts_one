@@ -110,10 +110,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         "Hi, $titleToGreet!",
                         style: tsOneTextTheme.headlineLarge,
                       ),
-                      const Icon(
-                        Icons.notifications,
-                        color: Colors.black,
-                      )
+                      // const Icon(
+                      //   Icons.notifications,
+                      //   color: Colors.black,
+                      // )
                     ],
                   ),
                   Align(
