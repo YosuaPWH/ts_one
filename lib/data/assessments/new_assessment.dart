@@ -62,6 +62,7 @@ class NewAssessment with ChangeNotifier {
   // Flight Crew 1
   int idNo1 = Util.defaultIntIfNull;
   DateTime licenseExpiry1 = Util.defaultDateIfNull;
+  String licenseNo1 = Util.defaultStringIfNull;
   String sessionDetails1 = "Training";
   AssessmentFlightDetails assessmentFlightDetails1 = AssessmentFlightDetails();
   List<AssessmentVariableResults> assessmentVariablesFlights1 = [];
@@ -75,6 +76,7 @@ class NewAssessment with ChangeNotifier {
   // Flight Crew 2
   int idNo2 = Util.defaultIntIfNull;
   DateTime licenseExpiry2 = Util.defaultDateIfNull;
+  String licenseNo2 = Util.defaultStringIfNull;
   String sessionDetails2 = "Training";
   AssessmentFlightDetails assessmentFlightDetails2 = AssessmentFlightDetails();
   List<AssessmentVariableResults> assessmentVariablesFlights2 = [];
@@ -162,6 +164,7 @@ class NewAssessment with ChangeNotifier {
   String toString() {
     return "NewAssessment: typeOfAssessment: $typeOfAssessment, idNo1: $idNo1, idNo2: $idNo2, aircraftType: $aircraftType, airportAndRoute: $airportAndRoute, simulationHours: $simulationHours"
         ", assessmentDate: $assessmentDate, licenseExpiry1: $licenseExpiry1, licenseExpiry2: $licenseExpiry2, "
+        "licenseNo1: $licenseNo1, licenseNo2: $licenseNo2, "
         "sessionDetails1: $sessionDetails1, sessionDetails2: $sessionDetails2, "
         "assessmentFlightDetails1: $assessmentFlightDetails1, assessmentFlightDetails2: $assessmentFlightDetails2, "
         "assessmentVariablesFlights1: $assessmentVariablesFlights1, assessmentVariablesFlights2: $assessmentVariablesFlights2, "

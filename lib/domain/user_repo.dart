@@ -40,6 +40,8 @@ abstract class UserRepo {
   Future<UserSignatures> addSignature(UserSignatures userSignatures);
 
   Future<UserSignatures> getSignature(int id);
+
+  Future<bool> getPDFTemplate();
 }
 
 class UserRepoImpl implements UserRepo {
@@ -401,5 +403,24 @@ class UserRepoImpl implements UserRepo {
       log(e.toString());
     }
     return userSignatures;
+  }
+
+  @override
+  Future<bool> getPDFTemplate() async {
+
+    try {
+      Directory? tempDir = await getExternalStorageDirectory();
+
+      File downloadedFile = File('${tempDir!.path}/QZ_TS1_SIM_04JUL2020_rev02.pdf');
+
+      await _storage!
+          .ref('template-assessments/QZ_TS1_SIM_04JUL2020_rev02.pdf')
+          .writeToFile(downloadedFile);
+
+    } catch (e) {
+      log("Exception on UserRepo: ${e.toString()}");
+    }
+
+    return true;
   }
 }

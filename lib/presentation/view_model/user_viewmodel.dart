@@ -205,6 +205,15 @@ class UserViewModel extends LoadingViewModel {
     return userSignature;
   }
 
+  Future<bool> getPDFTemplate() async {
+    try {
+      return await repo.getPDFTemplate();
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
   void reset() {
     users.clear();
     lastUser = null;

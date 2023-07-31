@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
@@ -35,6 +36,7 @@ abstract class AssessmentResultsRepo {
       int limit, AssessmentResults? lastAssessment, DateTime? filterStart, DateTime? filterEnd);
 
   Future<String> makePDFSimulator(AssessmentResults assessmentResults);
+
 }
 
 class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
@@ -337,7 +339,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               "${assessmentResults.otherStaffRank}. ${assessmentResults.otherStaffName}",
               PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
               brush: PdfBrushes.black,
-              bounds: Rect.fromLTWH(textbounds.topLeft.dx, textbounds.topLeft.dy + 8, 100, 50),
+              bounds: Rect.fromLTWH(textbounds.topLeft.dx, textbounds.topLeft.dy + 8, 300, 50),
             );
             break;
 
@@ -355,7 +357,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
           case "License No.":
             document.pages[0].graphics.drawString(
-              assessmentResults.examineeStaffIDNo.toString(),
+              assessmentResults.licenseNo,
               PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
               brush: PdfBrushes.black,
               bounds: Rect.fromLTWH(textbounds.topLeft.dx + 3, textbounds.topLeft.dy + 8, 100, 50),
@@ -449,6 +451,10 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       }
 
       // ====================================== FOR ASSESSMENT VARIABLES ==============================================
+      // get font from asset
+      var fontData = await rootBundle.load("assets/fonts/Poppins-Bold.ttf");
+      List<int>? fontDataList = fontData.buffer.asUint8List(fontData.offsetInBytes, fontData.lengthInBytes);
+
       List<AssessmentVariableResults> assessmentVariableResults = assessmentResults.variableResults;
 
       List<String> titleVariableResults =
@@ -485,132 +491,110 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             if (assessment.assessmentType == "Satisfactory") {
               if (assessment.isNotApplicable) {
                 document.pages[0].graphics.drawString(
-                    "v", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+                    "√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
-                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + 163, textBounds.topLeft.dy - 2, 100, 50));
+                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + 163, textBounds.topLeft.dy - 5, 100, 50));
               } else {
                 // For Satisfactory
                 if (assessment.assessmentSatisfactory == "Satisfactory") {
                   document.pages[0].graphics.drawString(
-                      "v", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+                      "√", PdfTrueTypeFont(fontDataList, 10),
                       brush: PdfBrushes.black,
-                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 146, textBounds.topLeft.dy - 2, 100, 50));
+                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 146, textBounds.topLeft.dy - 5, 100, 50));
                 } else {
                   // FOR Unsatisfactory
                   document.pages[0].graphics.drawString(
-                      "v", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+                      "√", PdfTrueTypeFont(fontDataList, 10),
                       brush: PdfBrushes.black,
-                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 128, textBounds.topLeft.dy - 2, 100, 50));
+                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 128, textBounds.topLeft.dy - 5, 100, 50));
+                }
+
+                double additionalFromLeft = 0;
+                switch (assessment.assessmentMarkers) {
+                  case 1:
+                    additionalFromLeft = 180;
+                    break;
+                  case 2:
+                    additionalFromLeft = 200;
+                    break;
+                  case 3:
+                    additionalFromLeft = 220;
+                    break;
+                  case 4:
+                    additionalFromLeft = 230;
+                    break;
+                  case 5:
+                    additionalFromLeft = 255;
+                    break;
                 }
 
                 // Assessment Markers
-                switch (assessment.assessmentMarkers) {
-                  case 1:
-                    document.pages[0].graphics.drawString(
-                        "1", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 180, textBounds.topLeft.dy - 2, 100, 50));
-                    break;
-                  case 2:
-                    document.pages[0].graphics.drawString(
-                        "2", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 200, textBounds.topLeft.dy - 2, 100, 50));
-                    break;
-                  case 3:
-                    document.pages[0].graphics.drawString(
-                        "3", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 220, textBounds.topLeft.dy - 2, 100, 50));
-                    break;
-                  case 4:
-                    document.pages[0].graphics.drawString(
-                        "4", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 238, textBounds.topLeft.dy - 2, 100, 50));
-                    break;
-                  case 5:
-                    document.pages[0].graphics.drawString(
-                        "5", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 255, textBounds.topLeft.dy - 2, 100, 50));
-                    break;
-                }
+                document.pages[0].graphics.drawString(
+                    "√", PdfTrueTypeFont(fontDataList, 10),
+                    brush: PdfBrushes.black,
+                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeft, textBounds.topLeft.dy - 5, 100, 50));
               }
 
               // Assessment Type = PF/PM ========================================================
             } else if (assessment.assessmentType == "PF/PM") {
+
               if (assessment.isNotApplicable) {
                 document.pages[0].graphics.drawString(
-                    "v", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+                    "√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
-                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + 124, textBounds.topLeft.dy - 2, 100, 50));
+                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + 124, textBounds.topLeft.dy - 5, 100, 50));
               } else {
+                double additionalFromLeftForPilotPF = 0;
+
                 switch (assessment.pilotFlyingMarkers) {
                   case 1:
-                    document.pages[0].graphics.drawString(
-                        "1", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 140, textBounds.topLeft.dy - 2, 100, 50));
+                    additionalFromLeftForPilotPF = 140;
                     break;
                   case 2:
-                    document.pages[0].graphics.drawString(
-                        "2", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 155, textBounds.topLeft.dy - 2, 100, 50));
+                    additionalFromLeftForPilotPF = 155;
                     break;
                   case 3:
-                    document.pages[0].graphics.drawString(
-                        "3", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 170, textBounds.topLeft.dy - 2, 100, 50));
+                    additionalFromLeftForPilotPF = 170;
                     break;
                   case 4:
-                    document.pages[0].graphics.drawString(
-                        "4", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 185, textBounds.topLeft.dy - 2, 100, 50));
                     break;
                   case 5:
-                    document.pages[0].graphics.drawString(
-                        "5", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 200, textBounds.topLeft.dy - 2, 100, 50));
+                    additionalFromLeftForPilotPF = 200;
                     break;
                 }
 
+                // Value Pilot Flying Markers
+                document.pages[0].graphics.drawString(
+                    "√", PdfTrueTypeFont(fontDataList, 10),
+                    brush: PdfBrushes.black,
+                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeftForPilotPF, textBounds.topLeft.dy - 5, 100, 50));
+
+
+                double additionalFromLeftForPilotPM = 0;
+
                 switch (assessment.pilotMonitoringMarkers) {
                   case 1:
-                    document.pages[0].graphics.drawString(
-                        "1", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 213, textBounds.topLeft.dy - 2, 100, 50));
+                    additionalFromLeftForPilotPM = 213;
                     break;
                   case 2:
-                    document.pages[0].graphics.drawString(
-                        "2", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 233, textBounds.topLeft.dy - 2, 100, 50));
+                    additionalFromLeftForPilotPM = 233;
                     break;
                   case 3:
-                    document.pages[0].graphics.drawString(
-                        "3", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 248, textBounds.topLeft.dy - 2, 100, 50));
+                    additionalFromLeftForPilotPM = 248;
                     break;
                   case 4:
-                    document.pages[0].graphics.drawString(
-                        "4", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 263, textBounds.topLeft.dy - 2, 100, 50));
+                    additionalFromLeftForPilotPM = 263;
                     break;
                   case 5:
-                    document.pages[0].graphics.drawString(
-                        "5", PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-                        brush: PdfBrushes.black,
-                        bounds: Rect.fromLTWH(textBounds.topLeft.dx + 278, textBounds.topLeft.dy - 2, 100, 50));
+                    additionalFromLeftForPilotPM = 278;
                     break;
                 }
+
+                // Value Pilot Monitoring PM
+                document.pages[0].graphics.drawString(
+                    "√", PdfTrueTypeFont(fontDataList, 10),
+                    brush: PdfBrushes.black,
+                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeftForPilotPM, textBounds.topLeft.dy - 5, 100, 50));
               }
             }
           }
@@ -791,7 +775,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             // For Instructor
           case "Name:":
             document.pages[1].graphics.drawString(
-              assessmentResults.instructorStaffIDNo.toString(),
+              assessmentResults.instructorName.toString(),
               PdfStandardFont(PdfFontFamily.helvetica, 10),
               brush: PdfBrushes.black,
               bounds: Rect.fromLTWH(textBounds.topLeft.dx + 10, textBounds.topLeft.dy + 8, 200, 50),
@@ -820,7 +804,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
             if (textDeclaration == assessmentResults.declaration) {
               document.pages[1].graphics.drawString(
-                  "v", PdfStandardFont(PdfFontFamily.helvetica, 15, style: PdfFontStyle.bold),
+                  "√", PdfTrueTypeFont(fontDataList, 15),
                   brush: PdfBrushes.black,
                   bounds: Rect.fromLTWH(boundsDeclarations.topLeft.dx - 28, boundsDeclarations.topLeft.dy - 5, 100, 50));
             }
@@ -835,13 +819,15 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
           List<MatchedItem> declarationMatchedItem =
           PdfTextExtractor(document).findText(declarationTextCheck, startPageIndex: 1);
 
+
           for (var item in declarationMatchedItem) {
             var textDeclaration = item.text;
             var boundsDeclarations = item.bounds;
 
+
             if (textDeclaration.toLowerCase().trim() == assessmentResults.declaration.toLowerCase().trim()) {
               document.pages[1].graphics.drawString(
-                  "v", PdfStandardFont(PdfFontFamily.helvetica, 20, style: PdfFontStyle.bold),
+                  "√", PdfTrueTypeFont(fontDataList, 15),
                   brush: PdfBrushes.black,
                   bounds: Rect.fromLTWH(boundsDeclarations.topLeft.dx - 75, boundsDeclarations.topLeft.dy - 10, 100, 50));
             }
@@ -851,15 +837,16 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
       log("AAAAAAAAAAAAAAAAAAAAAa");
 
+      // Make Assessment TS1 Folder
+      Directory('/storage/emulated/0/Download/Assessment TS1/').createSync();
 
       // Save into download directory
-
       // Save and dispose the document.
       String pathSavePDF =
-          "/storage/emulated/0/Download/${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf";
+          "/storage/emulated/0/Download/Assessment TS1/TS1-${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf";
 
       String cacheSavePDF =
-          '${tempDir?.path}/${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf';
+          '${tempDir?.path}/TS1-${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf';
 
       var bytes = await document.save();
 
@@ -875,4 +862,5 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     }
     return "Failed";
   }
+
 }
