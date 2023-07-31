@@ -19,6 +19,7 @@ class AssessmentResults{
 
   static const String keyExamineeStaffIDNo = "examinee-staff-id-no";
   static const String keyLicenseExpiry = "license-expiry";
+  static const String keyLicenseNo = "license-no";
   static const String keySimIdent = "sim-ident";
   static const String keyExamineeSignatureUrl = "examinee-signature-url";
   static const String keyRank = "rank";
@@ -60,6 +61,7 @@ class AssessmentResults{
 
   int examineeStaffIDNo = Util.defaultIntIfNull;
   DateTime licenseExpiry = Util.defaultDateIfNull;
+  String licenseNo = Util.defaultStringIfNull;
   String simIdent = Util.defaultStringIfNull;
   String examineeSignatureUrl = Util.defaultStringIfNull;
   String rank = Util.defaultStringIfNull;
@@ -105,6 +107,7 @@ class AssessmentResults{
 
     examineeStaffIDNo = data[keyExamineeStaffIDNo];
     licenseExpiry = DateTime.fromMillisecondsSinceEpoch(data[keyLicenseExpiry].seconds * 1000);
+    licenseNo = data[keyLicenseNo];
     simIdent = data[keySimIdent];
     examineeSignatureUrl = data[keyExamineeSignatureUrl];
     rank = data[keyRank];
@@ -149,6 +152,7 @@ class AssessmentResults{
 
       keyExamineeStaffIDNo: examineeStaffIDNo,
       keyLicenseExpiry: licenseExpiry,
+      keyLicenseNo: licenseNo,
       keySimIdent: simIdent,
       keyExamineeSignatureUrl: examineeSignatureUrl,
       keyRank: rank,
@@ -194,6 +198,7 @@ class AssessmentResults{
     assessmentResults1.date = newAssessment.assessmentDate;
     assessmentResults1.examineeStaffIDNo = newAssessment.idNo1;
     assessmentResults1.licenseExpiry = newAssessment.licenseExpiry1;
+    assessmentResults1.licenseNo = newAssessment.licenseNo1;
     assessmentResults1.simIdent = newAssessment.simulationIdentity;
     assessmentResults1.otherStaffIDNo = newAssessment.idNo2;
     assessmentResults1.otherStaffName = newAssessment.nameExaminee2;
@@ -220,6 +225,7 @@ class AssessmentResults{
     assessmentResults2.date = newAssessment.assessmentDate;
     assessmentResults2.examineeStaffIDNo = newAssessment.idNo2;
     assessmentResults2.licenseExpiry = newAssessment.licenseExpiry2;
+    assessmentResults2.licenseNo = newAssessment.licenseNo2;
     assessmentResults2.simIdent = newAssessment.simulationIdentity;
     assessmentResults2.otherStaffIDNo = newAssessment.idNo1;
     assessmentResults2.otherStaffName = newAssessment.nameExaminee1;

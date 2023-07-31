@@ -115,6 +115,10 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           );
 
+                          await viewModel.getPDFTemplate();
+
+                          if (!mounted) return;
+
                           Navigator.pushNamedAndRemoveUntil(
                               context, NamedRoute.home, (route) => false);
                         }
@@ -182,6 +186,10 @@ class _LoginViewState extends State<LoginView> {
                                 ),
                               ),
                             );
+
+                            await viewModel.getPDFTemplate();
+
+                            if (!mounted) return;
 
                             Navigator.pushNamedAndRemoveUntil(
                                 context, NamedRoute.home, (route) => false);
