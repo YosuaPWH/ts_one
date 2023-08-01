@@ -127,6 +127,7 @@ class AssessmentResultsViewModel extends LoadingViewModel{
   Future<List<AssessmentResults>> getAllAssessmentResultsPaginated(int limit, DateTime? filterStart, DateTime? filterEnd) async {
     isLoading = true;
 
+    log("JALAN $isLoading");
     try {
       if (filterStart != null && filterEnd != null) {
         allAssessmentResults = [];
@@ -140,10 +141,14 @@ class AssessmentResultsViewModel extends LoadingViewModel{
       }
 
       final List<AssessmentResults> newAssessmentResults = await repo.getAllAssessmentResultsPaginated(limit, lastAssessment, filterStart, filterEnd);
+      log("BERAPA ${newAssessmentResults.length}");
       allAssessmentResults.addAll(newAssessmentResults);
 
       if (newAssessmentResults.isNotEmpty) {
         lastAssessment = newAssessmentResults[newAssessmentResults.length - 1];
+        if (newAssessmentResults.length < limit) {
+          isAllAssessmentLoaded = true;
+        }
       } else {
         lastAssessment = null;
         isAllAssessmentLoaded = true;
@@ -154,8 +159,34 @@ class AssessmentResultsViewModel extends LoadingViewModel{
       print("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
-
+    log("JALAN $isLoading");
     return allAssessmentResults;
+  }
+
+  Future<List<AssessmentResults>> getSelfAssessmentResultsPaginated() async {
+    isLoading = true;
+    List<AssessmentResults> assessmentResultsList = [];
+    try {
+      assessmentResultsList = await repo.getSelfAssessmentResults();
+      isLoading = false;
+    } catch (e) {
+      print("Exception on AssessmentResultsViewModel: $e");
+      isLoading = false;
+    }
+    return assessmentResultsList;
+  }
+
+  Future<List<AssessmentResults>> getMyAssessmentResultsPaginated() async {
+    isLoading = true;
+    List<AssessmentResults> assessmentResultsList = [];
+    try {
+      assessmentResultsList = await repo.getMyAssessmentResults();
+      isLoading = false;
+    } catch (e) {
+      log("Exception on AssessmentResultsViewModel: $e");
+      isLoading = false;
+    }
+    return assessmentResultsList;
   }
 
   Future<String> makePDFSimulator(AssessmentResults assessmentResults) async {

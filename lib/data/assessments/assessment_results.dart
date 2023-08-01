@@ -52,6 +52,7 @@ class AssessmentResults{
   static const String keyOverallPerformance = "overall-performance";
   static const String keyNotes = "notes";
   static const String keyDeclaration = "declaration";
+  static const String keyLoaNo = "loa-no";
 
   Uint8List? signatureBytes;
 
@@ -63,6 +64,7 @@ class AssessmentResults{
   DateTime licenseExpiry = Util.defaultDateIfNull;
   String licenseNo = Util.defaultStringIfNull;
   String simIdent = Util.defaultStringIfNull;
+  String loaNo = Util.defaultStringIfNull;
   String examineeSignatureUrl = Util.defaultStringIfNull;
   String rank = Util.defaultStringIfNull;
   bool confirmedByExaminer = false;
@@ -143,6 +145,8 @@ class AssessmentResults{
     notes = data[keyNotes];
 
     declaration = data[keyDeclaration];
+    loaNo = data[keyLoaNo];
+
   }
 
   Map<String, dynamic> toFirebase() {
@@ -185,7 +189,8 @@ class AssessmentResults{
       keyOverallPerformance: overallPerformance,
       keyNotes: notes,
 
-      keyDeclaration: declaration
+      keyDeclaration: declaration,
+      keyLoaNo: loaNo
     };
   }
 
@@ -200,6 +205,7 @@ class AssessmentResults{
     assessmentResults1.licenseExpiry = newAssessment.licenseExpiry1;
     assessmentResults1.licenseNo = newAssessment.licenseNo1;
     assessmentResults1.simIdent = newAssessment.simulationIdentity;
+    assessmentResults1.loaNo = newAssessment.loaNo;
     assessmentResults1.otherStaffIDNo = newAssessment.idNo2;
     assessmentResults1.otherStaffName = newAssessment.nameExaminee2;
     assessmentResults1.otherStaffRank = newAssessment.rankExaminee2;
@@ -227,6 +233,7 @@ class AssessmentResults{
     assessmentResults2.licenseExpiry = newAssessment.licenseExpiry2;
     assessmentResults2.licenseNo = newAssessment.licenseNo2;
     assessmentResults2.simIdent = newAssessment.simulationIdentity;
+    assessmentResults2.loaNo = newAssessment.loaNo;
     assessmentResults2.otherStaffIDNo = newAssessment.idNo1;
     assessmentResults2.otherStaffName = newAssessment.nameExaminee1;
     assessmentResults2.otherStaffRank = newAssessment.rankExaminee1;
