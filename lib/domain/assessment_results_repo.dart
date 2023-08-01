@@ -35,8 +35,11 @@ abstract class AssessmentResultsRepo {
   Future<List<AssessmentResults>> getAllAssessmentResultsPaginated(
       int limit, AssessmentResults? lastAssessment, DateTime? filterStart, DateTime? filterEnd);
 
-  Future<String> makePDFSimulator(AssessmentResults assessmentResults);
+  Future<List<AssessmentResults>> getSelfAssessmentResults();
 
+  Future<List<AssessmentResults>> getMyAssessmentResults();
+
+  Future<String> makePDFSimulator(AssessmentResults assessmentResults);
 }
 
 class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
@@ -176,7 +179,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       });
     } catch (e) {
       log("Exception in AssessmentResultRepo on getAssessmentResultsNotConfirmByCPTS: $e");
-      log("Exception in AssessmentResultRepo on getAssessmentResultsByCurrentUserNotConfirm: $e");
     }
 
     return assessmentResults;
@@ -265,8 +267,8 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       if (filterStart != null && filterEnd != null) {
         query = _db!
             .collection(AssessmentResults.firebaseCollection)
-            .where('date', isGreaterThanOrEqualTo: filterStart)
-            .where('date', isLessThanOrEqualTo: filterEnd)
+            .where(AssessmentResults.keyDate, isGreaterThanOrEqualTo: Timestamp.fromDate(filterStart))
+            .where(AssessmentResults.keyDate, isLessThanOrEqualTo: Timestamp.fromDate(filterEnd))
             .orderBy(AssessmentResults.keyDate, descending: true)
             .limit(limit);
       } else {
@@ -300,8 +302,53 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   }
 
   @override
+  Future<List<AssessmentResults>> getSelfAssessmentResults() async {
+    int idUser = _userPreferences!.getIDNo();
+    List<AssessmentResults> assessmentResultsList = [];
+
+    try {
+      await _db!
+        .collection(AssessmentResults.firebaseCollection)
+        .where(AssessmentResults.keyExamineeStaffIDNo, isEqualTo: idUser)
+        .orderBy(AssessmentResults.keyDate, descending: true)
+        .get()
+        .then((value) {
+          for (var element in value.docs) {
+            assessmentResultsList.add(AssessmentResults.fromFirebase(element.data()));
+          }
+        });
+
+    } catch (e) {
+      log("Exception in AssessmentResultRepo on getSelfAssessmentResultsPaginated: $e");
+    }
+    return assessmentResultsList;
+  }
+
+  @override
+  Future<List<AssessmentResults>> getMyAssessmentResults() async {
+    int idUser = _userPreferences!.getIDNo();
+    List<AssessmentResults> assessmentResultsList = [];
+
+    try {
+      await _db!
+          .collection(AssessmentResults.firebaseCollection)
+          .where(AssessmentResults.keyInstructorStaffIDNo, isEqualTo: idUser)
+          .orderBy(AssessmentResults.keyDate, descending: true)
+          .get()
+          .then((value) {
+        for (var element in value.docs) {
+          assessmentResultsList.add(AssessmentResults.fromFirebase(element.data()));
+        }
+      });
+
+    } catch (e) {
+      log("Exception in AssessmentResultRepo on getMyAssessmentResults: $e");
+    }
+    return assessmentResultsList;
+  }
+
+  @override
   Future<String> makePDFSimulator(AssessmentResults assessmentResults) async {
-    List<String> listOfTrainingCheckingDetails = assessmentResults.trainingCheckingDetails;
     String flightDetails = assessmentResults.sessionDetails;
 
     try {
@@ -430,6 +477,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       }
 
       // ====================================== FOR TRAINING / CHECKING DETAILS ======================================
+      List<String> listOfTrainingCheckingDetails = assessmentResults.trainingCheckingDetails;
 
       //Find the text and get matched items.
       List<MatchedItem> listOfTrainingCheckingDetailsMatchedItemCollection =
@@ -440,10 +488,37 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
       // Loop for listOfTrainingCheckingDetailsMatchedItemCollection
       for (var matched in listOfTrainingCheckingDetailsMatchedItemCollection) {
-        MatchedItem text = matched;
-        Rect textBounds = text.bounds;
+        String textMatched = matched.text;
+        Rect textBounds = matched.bounds;
 
         // Draw pages 1 on Training / Checking Details
+        if (textMatched == "ETOPS" || textMatched == "MNPS" || textMatched == "RVSM" || textMatched == "NATS") {
+          log("text: $textBounds");
+          document.pages[0].graphics.drawString(
+              flightDetails.substring(0, 1), PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+              brush: PdfBrushes.black, bounds: const Rect.fromLTWH(198.4, 156.4, 50, 50));
+
+          List<String> listOfEtopsMnpsRvsmNats = ["ETOPS", "MNPS", "RVSM", "NATS"];
+
+          listOfEtopsMnpsRvsmNats.removeWhere((element) => element == textMatched);
+
+          List<MatchedItem> listOfEtopsMnpsRvsmNatsMatchedItemCollection =
+              PdfTextExtractor(document).findText(listOfEtopsMnpsRvsmNats);
+
+
+          for (var item in listOfEtopsMnpsRvsmNatsMatchedItemCollection) {
+            Rect textBounds = item.bounds;
+
+            document.pages[0].graphics.drawString(
+                "-", PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy - 18, 32, 37),
+            );
+          }
+
+
+        }
+
         document.pages[0].graphics.drawString(
             flightDetails.substring(0, 1), PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
             brush: PdfBrushes.black,
@@ -486,25 +561,21 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         for (var assessment in assessmentVariableResults) {
           // Check if the assessment variable name is the same with the matched variable text
           if (assessment.assessmentVariableName.trim().toLowerCase() == matchedVariable.text.trim().toLowerCase()) {
-
             // Assessment Type = Satisfactory
             if (assessment.assessmentType == "Satisfactory") {
               if (assessment.isNotApplicable) {
-                document.pages[0].graphics.drawString(
-                    "√", PdfTrueTypeFont(fontDataList, 10),
+                document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
                     bounds: Rect.fromLTWH(textBounds.topLeft.dx + 163, textBounds.topLeft.dy - 5, 100, 50));
               } else {
                 // For Satisfactory
                 if (assessment.assessmentSatisfactory == "Satisfactory") {
-                  document.pages[0].graphics.drawString(
-                      "√", PdfTrueTypeFont(fontDataList, 10),
+                  document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                       brush: PdfBrushes.black,
                       bounds: Rect.fromLTWH(textBounds.topLeft.dx + 146, textBounds.topLeft.dy - 5, 100, 50));
                 } else {
                   // FOR Unsatisfactory
-                  document.pages[0].graphics.drawString(
-                      "√", PdfTrueTypeFont(fontDataList, 10),
+                  document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                       brush: PdfBrushes.black,
                       bounds: Rect.fromLTWH(textBounds.topLeft.dx + 128, textBounds.topLeft.dy - 5, 100, 50));
                 }
@@ -529,18 +600,16 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 }
 
                 // Assessment Markers
-                document.pages[0].graphics.drawString(
-                    "√", PdfTrueTypeFont(fontDataList, 10),
+                document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
-                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeft, textBounds.topLeft.dy - 5, 100, 50));
+                    bounds:
+                        Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeft, textBounds.topLeft.dy - 5, 100, 50));
               }
 
               // Assessment Type = PF/PM ========================================================
             } else if (assessment.assessmentType == "PF/PM") {
-
               if (assessment.isNotApplicable) {
-                document.pages[0].graphics.drawString(
-                    "√", PdfTrueTypeFont(fontDataList, 10),
+                document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
                     bounds: Rect.fromLTWH(textBounds.topLeft.dx + 124, textBounds.topLeft.dy - 5, 100, 50));
               } else {
@@ -564,11 +633,10 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 }
 
                 // Value Pilot Flying Markers
-                document.pages[0].graphics.drawString(
-                    "√", PdfTrueTypeFont(fontDataList, 10),
+                document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
-                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeftForPilotPF, textBounds.topLeft.dy - 5, 100, 50));
-
+                    bounds: Rect.fromLTWH(
+                        textBounds.topLeft.dx + additionalFromLeftForPilotPF, textBounds.topLeft.dy - 5, 100, 50));
 
                 double additionalFromLeftForPilotPM = 0;
 
@@ -591,10 +659,10 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 }
 
                 // Value Pilot Monitoring PM
-                document.pages[0].graphics.drawString(
-                    "√", PdfTrueTypeFont(fontDataList, 10),
+                document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
-                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeftForPilotPM, textBounds.topLeft.dy - 5, 100, 50));
+                    bounds: Rect.fromLTWH(
+                        textBounds.topLeft.dx + additionalFromLeftForPilotPM, textBounds.topLeft.dy - 5, 100, 50));
               }
             }
           }
@@ -615,8 +683,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
       List<String> textManual = ["Aircraft System/Procedures", "Abnormal/Emer.Proc"];
 
-      List<MatchedItem> matchedManual = PdfTextExtractor(document)
-          .findText(textManual, startPageIndex: 0);
+      List<MatchedItem> matchedManual = PdfTextExtractor(document).findText(textManual, startPageIndex: 0);
 
       for (var value in matchedManual) {
         MatchedItem matchedItem = value;
@@ -647,7 +714,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         }
       }
 
-      // ================================= PAGE 2 ========================================================
+      // ================================= PAGE 2 =====================================================================
 
       // Overall Performance
 
@@ -678,14 +745,11 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       }
 
       // Overall Performance
-      document.pages[1].graphics.drawString(
-          "O", PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
-          brush: PdfBrushes.black,
-          bounds: Rect.fromLTWH(coordinateFromLeft, 46, 100, 50));
+      document.pages[1].graphics.drawString("O", PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+          brush: PdfBrushes.black, bounds: Rect.fromLTWH(coordinateFromLeft, 46, 100, 50));
 
       // ======================================== FOR NOTES ====================================================
-      List<MatchedItem> notes = PdfTextExtractor(document)
-          .findText(["Notes"], startPageIndex: 1);
+      List<MatchedItem> notes = PdfTextExtractor(document).findText(["Notes"], startPageIndex: 1);
 
       for (var matchedVariable in notes) {
         MatchedItem matchedItem = matchedVariable;
@@ -721,7 +785,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       }
 
       log("LEN: ${nonDuplicateSignatureMatchedItem.length}");
-
 
       for (var item in nonDuplicateSignatureMatchedItem) {
         MatchedItem matchedItem = item;
@@ -772,7 +835,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             }
             break;
 
-            // For Instructor
+          // For Instructor
           case "Name:":
             document.pages[1].graphics.drawString(
               assessmentResults.instructorName.toString(),
@@ -782,6 +845,25 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             );
             break;
         }
+      }
+
+      // =========================================== LOA ==============================================================
+      List<String> loaText = ["LOA No.:"];
+      List<MatchedItem> loaMatchedItem = PdfTextExtractor(document).findText(loaText, startPageIndex: 1);
+
+      var loaNo = loaMatchedItem.first;
+      MatchedItem matchedItemLoa = loaNo;
+      Rect textBoundsLoa = matchedItemLoa.bounds;
+
+      switch (matchedItemLoa.text) {
+        case "LOA No.:":
+          document.pages[1].graphics.drawString(
+            assessmentResults.loaNo.toString(),
+            PdfStandardFont(PdfFontFamily.helvetica, 10),
+            brush: PdfBrushes.black,
+            bounds: Rect.fromLTWH(textBoundsLoa.topLeft.dx + 28, textBoundsLoa.topLeft.dy - 1, 200, 50),
+          );
+          break;
       }
 
       log("JALANJALAN");
@@ -796,40 +878,35 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             'Stop Training, TS7 Rised'
           ];
           List<MatchedItem> declarationMatchedItem =
-          PdfTextExtractor(document).findText(declarationTextTraining, startPageIndex: 1);
+              PdfTextExtractor(document).findText(declarationTextTraining, startPageIndex: 1);
 
           for (var item in declarationMatchedItem) {
             var textDeclaration = item.text;
             var boundsDeclarations = item.bounds;
 
             if (textDeclaration == assessmentResults.declaration) {
-              document.pages[1].graphics.drawString(
-                  "√", PdfTrueTypeFont(fontDataList, 15),
+              document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
                   brush: PdfBrushes.black,
-                  bounds: Rect.fromLTWH(boundsDeclarations.topLeft.dx - 28, boundsDeclarations.topLeft.dy - 5, 100, 50));
+                  bounds:
+                      Rect.fromLTWH(boundsDeclarations.topLeft.dx - 28, boundsDeclarations.topLeft.dy - 5, 100, 50));
             }
           }
           break;
 
         case NewAssessment.keySessionDetailsCheck:
-          List<String> declarationTextCheck = [
-            'PASS',
-            'FAIL'
-          ];
+          List<String> declarationTextCheck = ['PASS', 'FAIL'];
           List<MatchedItem> declarationMatchedItem =
-          PdfTextExtractor(document).findText(declarationTextCheck, startPageIndex: 1);
-
+              PdfTextExtractor(document).findText(declarationTextCheck, startPageIndex: 1);
 
           for (var item in declarationMatchedItem) {
             var textDeclaration = item.text;
             var boundsDeclarations = item.bounds;
 
-
             if (textDeclaration.toLowerCase().trim() == assessmentResults.declaration.toLowerCase().trim()) {
-              document.pages[1].graphics.drawString(
-                  "√", PdfTrueTypeFont(fontDataList, 15),
+              document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
                   brush: PdfBrushes.black,
-                  bounds: Rect.fromLTWH(boundsDeclarations.topLeft.dx - 75, boundsDeclarations.topLeft.dy - 10, 100, 50));
+                  bounds:
+                      Rect.fromLTWH(boundsDeclarations.topLeft.dx - 75, boundsDeclarations.topLeft.dy - 10, 100, 50));
             }
           }
           break;
@@ -862,5 +939,4 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     }
     return "Failed";
   }
-
 }

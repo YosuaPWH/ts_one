@@ -16,6 +16,7 @@ class NewAssessment with ChangeNotifier {
     this.airportAndRoute = "",
     this.simulationHours = "",
     this.simulationIdentity = "",
+    this.loaNo = "",
   });
 
   static const String keyTypeOfAssessmentSimulator = "Simulator";
@@ -91,6 +92,7 @@ class NewAssessment with ChangeNotifier {
   String airportAndRoute = "";
   String simulationHours = "";
   String simulationIdentity = "";
+  String loaNo = "";
 
   String getIDNo1() {
     if (idNo1 == Util.defaultIntIfNull) {

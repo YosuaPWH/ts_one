@@ -572,6 +572,32 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         },
                       ),
                     ),
+
+                    // LOA
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'LOA No.',
+                          // suffixIcon: IconButton(
+                          //   onPressed: () {},
+                          //   icon: const Icon(Icons.search),
+                          // ),
+                        ),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter LOA No.';
+                          }
+                          return null;
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        onChanged: (value) {
+                          _newAssessment.loaNo = value;
+                        },
+                      ),
+                    ),
                   ],
                 ),
                 ElevatedButton(
