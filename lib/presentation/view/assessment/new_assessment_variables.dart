@@ -176,145 +176,148 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AssessmentViewModel>(
-      builder: (_, model, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              "New Assessment",
+    return WillPopScope(
+      onWillPop: showExitPopup,
+      child: Consumer<AssessmentViewModel>(
+        builder: (_, model, child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                "New Assessment",
+              ),
             ),
-          ),
-          body: Form(
-            key: _formKey,
-            child: Column(
-                children: [
-                  Expanded(
-                    child: model.isLoading
-                    ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                    : SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Column(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey,
+            body: Form(
+              key: _formKey,
+              child: Column(
+                  children: [
+                    Expanded(
+                      child: model.isLoading
+                      ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                      : SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Column(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Divider(
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text(
-                                    'Main Assessments',
-                                    style: TextStyle(color: Colors.grey),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Text(
+                                      'Main Assessments',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey,
+                                  Expanded(
+                                    child: Divider(
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: _expansionTilesForNewAssessmentVariables(),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text(
-                                    'Human Factor Assessments',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: _expansionTilesForNewAssessmentHumanFactorVariables(),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        log(_newAssessment.toString());
-                        if(_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          calculateOverallPerformance();
-                          Navigator.pushNamed(
-                            context,
-                            NamedRoute.newAssessmentOverallPerformance,
-                            arguments: _newAssessment,
-                          );
-                        }
-                        else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text("Please fill all the fields"),
-                              duration: const Duration(milliseconds: 3000),
-                              action: SnackBarAction(
-                                label: 'Close',
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
-                                },
+                                ],
                               ),
                             ),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 40),
-                        backgroundColor: TsOneColor.primary,
-                        foregroundColor: TsOneColor.primaryContainer,
-                        surfaceTintColor: TsOneColor.primaryContainer,
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: _expansionTilesForNewAssessmentVariables(),
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Divider(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Text(
+                                      'Human Factor Assessments',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Divider(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: _expansionTilesForNewAssessmentHumanFactorVariables(),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 48,
-                        child: const Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Next",
-                            style: TextStyle(color: TsOneColor.secondary),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          log(_newAssessment.toString());
+                          if(_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            calculateOverallPerformance();
+                            Navigator.pushNamed(
+                              context,
+                              NamedRoute.newAssessmentOverallPerformance,
+                              arguments: _newAssessment,
+                            );
+                          }
+                          else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text("Please fill all the fields"),
+                                duration: const Duration(milliseconds: 3000),
+                                action: SnackBarAction(
+                                  label: 'Close',
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                  },
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 40),
+                          backgroundColor: TsOneColor.primary,
+                          foregroundColor: TsOneColor.primaryContainer,
+                          surfaceTintColor: TsOneColor.primaryContainer,
+                        ),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: 48,
+                          child: const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Next",
+                              style: TextStyle(color: TsOneColor.secondary),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -1758,4 +1761,24 @@ class _NewAssessmentVariablesState extends State<NewAssessmentVariables> {
     });
   }
 
+
+  Future<bool> showExitPopup() async {
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Are you sure?"),
+        content: const Text("Exiting will discard all changes and you have to refill all the fields again."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text("No"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text("Yes"),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
 }
