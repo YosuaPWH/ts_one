@@ -95,6 +95,25 @@ class AssessmentVariables with ChangeNotifier {
     keyMarkerFive,
   ];
 
+  static const instructorRecommendation = [
+    keyNone,
+    keySeniorFirstOfficer,
+    keyGroundTrainingInstructor,
+    keyCompanyCheckPilot,
+    keyCommandUpgrade,
+    keyTypeRatingInstructor,
+    keyOthers,
+  ];
+
+  // Instructor's Recommendation
+  static const String keyNone = "None";
+  static const String keySeniorFirstOfficer = "Senior First Officer";
+  static const String keyGroundTrainingInstructor = "Ground Training Instructor";
+  static const String keyCompanyCheckPilot = "Company Check Pilot";
+  static const String keyCommandUpgrade = "Command Upgrad";
+  static const String keyTypeRatingInstructor = "Type Rating Instructor";
+  static const String keyOthers = "Others";
+
   AssessmentVariables.fromFirebase(Map<String, dynamic> map) {
     id = map[keyId];
     assessmentPeriodId = map[keyAssessmentPeriodId];

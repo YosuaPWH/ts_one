@@ -259,15 +259,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                       size: 32.0,
                                       color: TsOneColor.secondary,
                                     )),
-                                IconButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, NamedRoute.template);
-                                    },
-                                    icon: const Icon(
-                                      Icons.download,
-                                      size: 32.0,
-                                      color: TsOneColor.secondary,
-                                    ))
                               ],
                             )
                                 : Container()
