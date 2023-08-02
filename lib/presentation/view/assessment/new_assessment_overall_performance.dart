@@ -25,6 +25,8 @@ class NewAssessmentOverallPerformance extends StatefulWidget {
 class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPerformance> {
   late AssessmentViewModel viewModel;
   late NewAssessment _newAssessment;
+  String selectedInstructorRecommendation1 = "None";
+  String selectedInstructorRecommendation2 = "None";
 
   @override
   void initState() {
@@ -101,6 +103,36 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                   },
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: DropdownButtonFormField(
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintMaxLines: 1,
+                      label: Text(
+                        "Instructor's Recommendation",
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      )),
+                  value: selectedInstructorRecommendation1,
+                  items: AssessmentVariables.instructorRecommendation
+                      .map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(
+                      e.toString(),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _newAssessment.instructorRecommendation1 = value as String;
+                      selectedInstructorRecommendation1 = value;
+                    });
+                  },
+                ),
+              ),
               TextField(
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
@@ -167,6 +199,36 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                   onChanged: (value) {
                     setState(() {
                       _newAssessment.overallPerformance2 = value as double;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: DropdownButtonFormField(
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintMaxLines: 1,
+                      label: Text(
+                        "Instructor's Recommendation",
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      )),
+                  value: selectedInstructorRecommendation2,
+                  items: AssessmentVariables.instructorRecommendation
+                      .map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(
+                      e.toString(),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _newAssessment.instructorRecommendation2 = value as String;
+                      selectedInstructorRecommendation2 = value;
                     });
                   },
                 ),

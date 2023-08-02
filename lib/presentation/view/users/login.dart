@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -194,6 +196,8 @@ class _LoginViewState extends State<LoginView> {
                             Navigator.pushNamedAndRemoveUntil(
                                 context, NamedRoute.home, (route) => false);
                           } else {
+                            log("Error: ${userAuth.errorMessage}");
+                            Fluttertoast.showToast(msg: "Error: ${userAuth.errorMessage}");
                             SnackBar(
                               content: Text(
                                   "Error: ${userAuth.errorMessage}"),

@@ -592,7 +592,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                     additionalFromLeft = 220;
                     break;
                   case 4:
-                    additionalFromLeft = 230;
+                    additionalFromLeft = 235;
                     break;
                   case 5:
                     additionalFromLeft = 255;
@@ -626,6 +626,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                     additionalFromLeftForPilotPF = 170;
                     break;
                   case 4:
+                    additionalFromLeftForPilotPF = 185;
                     break;
                   case 5:
                     additionalFromLeftForPilotPF = 200;
@@ -878,7 +879,17 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             'Stop Training, TS7 Rised'
           ];
           List<MatchedItem> declarationMatchedItem =
-              PdfTextExtractor(document).findText(declarationTextTraining, startPageIndex: 1);
+              PdfTextExtractor(document).findText(declarationTextTraining, startPageIndex: 1, searchOption: TextSearchOption.values.last);
+
+          // List<String> uniqueDeclaration = [];
+          // List<MatchedItem> nonDuplicateDeclarationMatchedItem = [];
+          //
+          // for (var item in declarationMatchedItem) {
+          //   if (!uniqueDeclaration.contains(item.text)) {
+          //     uniqueDeclaration.add(item.text);
+          //     nonDuplicateDeclarationMatchedItem.add(item);
+          //   }
+          // }
 
           for (var item in declarationMatchedItem) {
             var textDeclaration = item.text;

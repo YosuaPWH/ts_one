@@ -152,6 +152,10 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
                 'Examinee Name',
                 style: TextStyle(color: TsOneColor.onSecondary),
               ),
+              Text(
+                'LOA No.',
+                style: TextStyle(color: TsOneColor.onSecondary),
+              ),
             ],
           ),
           const SizedBox(
@@ -159,6 +163,10 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
           ),
           const Column(
             children: [
+              Text(
+                ':',
+                style: TextStyle(color: TsOneColor.onSecondary),
+              ),
               Text(
                 ':',
                 style: TextStyle(color: TsOneColor.onSecondary),
@@ -214,6 +222,11 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
                 ),
                 Text(
                   _assessmentResults.examineeName,
+                  style: const TextStyle(color: TsOneColor.onSecondary),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  _assessmentResults.loaNo,
                   style: const TextStyle(color: TsOneColor.onSecondary),
                   overflow: TextOverflow.ellipsis,
                 ),

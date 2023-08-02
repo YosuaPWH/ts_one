@@ -184,27 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   // DONT REMOVE - PILOT HOME
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 10),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Need Confirmations',
-                        style: tsOneTextTheme.headlineLarge,
-                      ),
-                    ),
-                  ),
-                  viewModel.isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : assessmentResults.isNotEmpty
-                          // Confirmation Assessment For Pilot
-                          ? Column(
-                              children: cardAssessment(assessmentResults, false),
-                            )
-                          : const Center(child: Text('There is no data that needs confirmation')),
-                  if (_isCPTS)
+                  if (userPreferences.getRank() != "Pilot Administrator")
                     Column(
                       children: [
                         Padding(
@@ -212,23 +192,48 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              'Need Confirmations - CPTS',
+                              'Need Confirmations',
                               style: tsOneTextTheme.headlineLarge,
                             ),
                           ),
                         ),
                         viewModel.isLoading
                             ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                            : assessmentResults.isNotEmpty
+                        // Confirmation Assessment For Pilot
+                            ? Column(
+                          children: cardAssessment(assessmentResults, false),
+                        )
+                            : const Center(child: Text('There is no data that needs confirmation')),
+                        if (_isCPTS)
+                          Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20, bottom: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Need Confirmations - CPTS',
+                                    style: tsOneTextTheme.headlineLarge,
+                                  ),
+                                ),
+                              ),
+                              viewModel.isLoading
+                                  ? const Center(
                                 child: CircularProgressIndicator(),
                               )
-                            : assessmentResultsNotConfirmedByCPTS.isNotEmpty
-                                // Confirmation Assessment For CPTS
-                                ? Column(
-                                    children: cardAssessment(assessmentResultsNotConfirmedByCPTS, true),
-                                  )
-                                : const Center(child: Text('There is no data that needs confirmation')),
+                                  : assessmentResultsNotConfirmedByCPTS.isNotEmpty
+                              // Confirmation Assessment For CPTS
+                                  ? Column(
+                                children: cardAssessment(assessmentResultsNotConfirmedByCPTS, true),
+                              )
+                                  : const Center(child: Text('There is no data that needs confirmation')),
+                            ],
+                          ),
                       ],
-                    ),
+                    )
                 ],
               ),
             ),

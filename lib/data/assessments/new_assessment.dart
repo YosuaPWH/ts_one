@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
+import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/util/util.dart';
 
 class NewAssessment with ChangeNotifier {
@@ -73,6 +74,7 @@ class NewAssessment with ChangeNotifier {
   String declaration1 = "";
   String nameExaminee1 = Util.defaultStringIfNull;
   String rankExaminee1 = Util.defaultStringIfNull;
+  String instructorRecommendation1 = AssessmentVariables.keyNone;
 
   // Flight Crew 2
   int idNo2 = Util.defaultIntIfNull;
@@ -87,6 +89,7 @@ class NewAssessment with ChangeNotifier {
   String declaration2 = "";
   String nameExaminee2 = Util.defaultStringIfNull;
   String rankExaminee2 = Util.defaultStringIfNull;
+  String instructorRecommendation2 = AssessmentVariables.keyNone;
 
   String aircraftType = "";
   String airportAndRoute = "";
