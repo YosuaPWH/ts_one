@@ -226,13 +226,14 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                                           });
                                                         } else {
                                                           assessmentFlightDetailsWhichCanBeSelectedAgainS1[item]![subItem] = false;
+                                                          dataCandidate.assessmentFlightDetails1.flightDetails.remove("$item:$subItem");
                                                         }
 
-                                                        if (!dataCandidate.assessmentFlightDetails1.flightDetails.contains(subItem)) {
-                                                          dataCandidate.assessmentFlightDetails1.flightDetails.add(subItem);
+                                                        if (!dataCandidate.assessmentFlightDetails1.flightDetails.contains("$item:$subItem")) {
+                                                          dataCandidate.assessmentFlightDetails1.flightDetails.add("$item:$subItem");
                                                           assessmentFlightDetails1Count++;
                                                         } else {
-                                                          dataCandidate.assessmentFlightDetails1.flightDetails.remove(subItem);
+                                                          dataCandidate.assessmentFlightDetails1.flightDetails.remove("$item:$subItem");
                                                           assessmentFlightDetails1Count--;
                                                         }
 
@@ -398,13 +399,14 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                                                     });
                                                                   } else {
                                                                     assessmentFlightDetailsWhichCanBeSelectedAgainS2[item]![subItem] = false;
+                                                                    dataCandidate.assessmentFlightDetails2.flightDetails.remove("$item:$subItem");
                                                                   }
 
-                                                                  if (!dataCandidate.assessmentFlightDetails2.flightDetails.contains(subItem)) {
-                                                                    dataCandidate.assessmentFlightDetails2.flightDetails.add(subItem);
+                                                                  if (!dataCandidate.assessmentFlightDetails2.flightDetails.contains("$item:$subItem")) {
+                                                                    dataCandidate.assessmentFlightDetails2.flightDetails.add("$item:$subItem");
                                                                     assessmentFlightDetails2Count++;
                                                                   } else {
-                                                                    dataCandidate.assessmentFlightDetails2.flightDetails.remove(subItem);
+                                                                    dataCandidate.assessmentFlightDetails2.flightDetails.remove("$item:$subItem");
                                                                     assessmentFlightDetails2Count--;
                                                                   }
 

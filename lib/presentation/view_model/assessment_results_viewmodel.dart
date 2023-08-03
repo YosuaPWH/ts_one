@@ -6,22 +6,27 @@ import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/domain/assessment_results_repo.dart';
 import 'package:ts_one/presentation/view_model/loading_viewmodel.dart';
 
-class AssessmentResultsViewModel extends LoadingViewModel{
+class AssessmentResultsViewModel extends LoadingViewModel {
   AssessmentResultsViewModel({required this.repo});
 
   final AssessmentResultsRepo repo;
+
   bool isAllAssessmentLoaded = false;
   List<AssessmentResults> allAssessmentResults = [];
-  AssessmentResults? lastAssessment;
+  AssessmentResults? allLastAssessment;
 
-  Future<List<AssessmentResults>> addAssessmentResults(List<AssessmentResults> assessmentResults, NewAssessment newAssessment) async {
+  bool isMyAssessmentLoaded = false;
+  List<AssessmentResults> myAssessmentResults = [];
+  AssessmentResults? myLastAssessment;
+
+  Future<List<AssessmentResults>> addAssessmentResults(
+      List<AssessmentResults> assessmentResults, NewAssessment newAssessment) async {
     isLoading = true;
     List<AssessmentResults> assessmentResultsList = [];
-    try{
+    try {
       assessmentResultsList = await repo.addAssessmentResults(assessmentResults, newAssessment);
       isLoading = false;
-    }
-    catch(e){
+    } catch (e) {
       log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
@@ -31,11 +36,10 @@ class AssessmentResultsViewModel extends LoadingViewModel{
   Future<List<AssessmentResults>> getAllAssessmentResults() async {
     isLoading = true;
     List<AssessmentResults> assessmentResultsList = [];
-    try{
+    try {
       assessmentResultsList = await repo.getAllAssessmentResults();
       isLoading = false;
-    }
-    catch(e){
+    } catch (e) {
       log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
@@ -45,11 +49,10 @@ class AssessmentResultsViewModel extends LoadingViewModel{
   Future<List<AssessmentResults>> getAssessmentResultsFilteredByDate(DateTime startDate, DateTime endDate) async {
     isLoading = true;
     List<AssessmentResults> assessmentResultsList = [];
-    try{
+    try {
       assessmentResultsList = await repo.getAssessmentResultsFilteredByDate(startDate, endDate);
       isLoading = false;
-    }
-    catch(e){
+    } catch (e) {
       log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
@@ -62,8 +65,7 @@ class AssessmentResultsViewModel extends LoadingViewModel{
     try {
       assessmentResults = await repo.getAssessmentResultsByCurrentUserNotConfirm();
       isLoading = false;
-    }
-    catch(e){
+    } catch (e) {
       log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
@@ -76,8 +78,7 @@ class AssessmentResultsViewModel extends LoadingViewModel{
     try {
       assessmentResults = await repo.getAssessmentResultsNotConfirmByCPTS();
       isLoading = false;
-    }
-    catch(e){
+    } catch (e) {
       print("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
@@ -90,8 +91,7 @@ class AssessmentResultsViewModel extends LoadingViewModel{
     try {
       assessmentVariableResults = await repo.getAssessmentVariableResult(idAssessment);
       isLoading = false;
-    }
-    catch(e){
+    } catch (e) {
       log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
@@ -103,19 +103,22 @@ class AssessmentResultsViewModel extends LoadingViewModel{
     try {
       await repo.updateAssessmentResultForExaminee(assessmentResults);
       isLoading = false;
-    }
-    catch(e){
+    } catch (e) {
       log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
   }
 
-  Future<List<AssessmentResults>> searchAssessmentResultsBasedOnName(String searchName, int searchLimit) async {
+  Future<List<AssessmentResults>> searchAssessmentResultsBasedOnName(String searchName, int searchLimit, bool isAll) async {
     isLoading = true;
     List<AssessmentResults> assessmentResultsList = [];
     try {
-      assessmentResultsList = await repo.searchAssessmentResultsBasedOnName(searchName, searchLimit);
-      isAllAssessmentLoaded = false;
+      assessmentResultsList = await repo.searchAssessmentResultsBasedOnName(searchName, searchLimit, isAll);
+      if (isAll) {
+        isAllAssessmentLoaded = false;
+      } else {
+        isMyAssessmentLoaded = false;
+      }
       isLoading = false;
     } catch (e) {
       print("Exception on AssessmentResultsViewModel: $e");
@@ -124,33 +127,30 @@ class AssessmentResultsViewModel extends LoadingViewModel{
     return assessmentResultsList;
   }
 
-  Future<List<AssessmentResults>> getAllAssessmentResultsPaginated(int limit, DateTime? filterStart, DateTime? filterEnd) async {
+  Future<List<AssessmentResults>> getAllAssessmentResultsPaginated(int limit, String? selectedRankFilter,
+      int? selectedMarkerFilter, DateTime? filterDateFrom, DateTime? filterDateTo) async {
     isLoading = true;
 
     log("JALAN $isLoading");
     try {
-      if (filterStart != null && filterEnd != null) {
-        allAssessmentResults = [];
-        lastAssessment == null;
-        isAllAssessmentLoaded = false;
-      }
-
       if (isAllAssessmentLoaded) {
         isLoading = false;
         return allAssessmentResults;
       }
 
-      final List<AssessmentResults> newAssessmentResults = await repo.getAllAssessmentResultsPaginated(limit, lastAssessment, filterStart, filterEnd);
+      final List<AssessmentResults> newAssessmentResults = await repo.getAssessmentResultsPaginated(
+          limit, true, allLastAssessment, selectedRankFilter, selectedMarkerFilter, filterDateFrom, filterDateTo);
+
       log("BERAPA ${newAssessmentResults.length}");
       allAssessmentResults.addAll(newAssessmentResults);
 
       if (newAssessmentResults.isNotEmpty) {
-        lastAssessment = newAssessmentResults[newAssessmentResults.length - 1];
+        allLastAssessment = newAssessmentResults[newAssessmentResults.length - 1];
         if (newAssessmentResults.length < limit) {
           isAllAssessmentLoaded = true;
         }
       } else {
-        lastAssessment = null;
+        allLastAssessment = null;
         isAllAssessmentLoaded = true;
       }
 
@@ -176,17 +176,40 @@ class AssessmentResultsViewModel extends LoadingViewModel{
     return assessmentResultsList;
   }
 
-  Future<List<AssessmentResults>> getMyAssessmentResultsPaginated() async {
+  Future<List<AssessmentResults>> getMyAssessmentResultsPaginated(int limit, String? selectedRankFilter,
+      int? selectedMarkerFilter, DateTime? filterDateFrom, DateTime? filterDateTo) async {
     isLoading = true;
-    List<AssessmentResults> assessmentResultsList = [];
+
+    log("JALAN $isLoading");
     try {
-      assessmentResultsList = await repo.getMyAssessmentResults();
+      if (isMyAssessmentLoaded) {
+        isLoading = false;
+        return myAssessmentResults;
+      }
+
+      final List<AssessmentResults> newAssessmentResults = await repo.getAssessmentResultsPaginated(
+          limit, false, myLastAssessment, selectedRankFilter, selectedMarkerFilter, filterDateFrom, filterDateTo);
+
+      log("BERAPA ${newAssessmentResults.length}");
+      myAssessmentResults.addAll(newAssessmentResults);
+
+      if (newAssessmentResults.isNotEmpty) {
+        myLastAssessment = newAssessmentResults[newAssessmentResults.length - 1];
+        if (newAssessmentResults.length < limit) {
+          isMyAssessmentLoaded = true;
+        }
+      } else {
+        myLastAssessment = null;
+        isMyAssessmentLoaded = true;
+      }
+
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentResultsViewModel: $e");
+      print("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }
-    return assessmentResultsList;
+    log("JALAN $isLoading");
+    return myAssessmentResults;
   }
 
   Future<String> makePDFSimulator(AssessmentResults assessmentResults) async {
@@ -194,10 +217,11 @@ class AssessmentResultsViewModel extends LoadingViewModel{
     String message = "";
     try {
       message = await repo.makePDFSimulator(assessmentResults);
+      isLoading = false;
     } catch (e) {
       print("Exception on AssessmentResultsViewModel: $e");
+      isLoading = false;
     }
-    isLoading = false;
     return message;
   }
 }
