@@ -54,6 +54,8 @@ class AssessmentResults{
   static const String keyDeclaration = "declaration";
   static const String keyLoaNo = "loa-no";
 
+  static const String keyInstructorRecommendation = "instructor-recommendation";
+
   Uint8List? signatureBytes;
 
   String id = Util.defaultStringIfNull;
@@ -96,6 +98,7 @@ class AssessmentResults{
   double overallPerformance = Util.defaultDoubleIfNull;
   String notes = Util.defaultStringIfNull;
   String declaration = Util.defaultStringIfNull;
+  String instructorRecommendation = Util.defaultStringIfNull;
 
   bool isCPTS = false;
   bool isFromHistory = true;
@@ -132,6 +135,7 @@ class AssessmentResults{
     instructorSignatureUrl = data[keyInstructorSignatureUrl];
     confirmedByInstructor = data[keyConfirmedByInstructor];
     instructorName = data[keyInstructorName];
+    instructorRecommendation = data[keyInstructorRecommendation];
 
     pilotAdministratorStaffIDNo = data[keyPilotAdministratorStaffIDNo];
     pilotAdministratorSignatureUrl = data[keyPilotAdministratorSignatureUrl];
@@ -177,6 +181,7 @@ class AssessmentResults{
       keyInstructorSignatureUrl: instructorSignatureUrl,
       keyConfirmedByInstructor: confirmedByInstructor,
       keyInstructorName: instructorName,
+      keyInstructorRecommendation: instructorRecommendation,
 
       keyPilotAdministratorStaffIDNo: pilotAdministratorStaffIDNo,
       keyPilotAdministratorSignatureUrl: pilotAdministratorSignatureUrl,
@@ -190,7 +195,7 @@ class AssessmentResults{
       keyNotes: notes,
 
       keyDeclaration: declaration,
-      keyLoaNo: loaNo
+      keyLoaNo: loaNo,
     };
   }
 
@@ -222,6 +227,7 @@ class AssessmentResults{
     assessmentResults1.notes = newAssessment.notes1;
     assessmentResults1.declaration = newAssessment.declaration1;
     assessmentResults1.rank = newAssessment.rankExaminee1;
+    assessmentResults1.instructorRecommendation = newAssessment.instructorRecommendation1;
     assessmentResults1.variableResults.addAll(newAssessment.assessmentVariablesFlights1);
     assessmentResults1.variableResults.addAll(newAssessment.assessmentVariablesFlightsHumanFactor1);
 
@@ -250,6 +256,7 @@ class AssessmentResults{
     assessmentResults2.notes = newAssessment.notes2;
     assessmentResults2.declaration = newAssessment.declaration2;
     assessmentResults2.rank = newAssessment.rankExaminee2;
+    assessmentResults2.instructorRecommendation = newAssessment.instructorRecommendation2;
     assessmentResults2.variableResults.addAll(newAssessment.assessmentVariablesFlights2);
     assessmentResults2.variableResults.addAll(newAssessment.assessmentVariablesFlightsHumanFactor2);
 

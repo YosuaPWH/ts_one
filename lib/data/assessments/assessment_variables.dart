@@ -110,7 +110,7 @@ class AssessmentVariables with ChangeNotifier {
   static const String keySeniorFirstOfficer = "Senior First Officer";
   static const String keyGroundTrainingInstructor = "Ground Training Instructor";
   static const String keyCompanyCheckPilot = "Company Check Pilot";
-  static const String keyCommandUpgrade = "Command Upgrad";
+  static const String keyCommandUpgrade = "Command upgrade";
   static const String keyTypeRatingInstructor = "Type Rating Instructor";
   static const String keyOthers = "Others";
 

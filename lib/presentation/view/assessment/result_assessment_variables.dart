@@ -28,6 +28,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
   bool isCPTS = false;
   late List<AssessmentVariableResults> assessmentVariableResults;
   late Map<String, dynamic> assessmentCategories;
+  List<String> trainingAndCheckingDetails = [];
 
   @override
   void initState() {
@@ -37,6 +38,28 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     _assessmentResults = widget.assessmentResults;
     assessmentCategories = {};
     isCPTS = _assessmentResults.isCPTS;
+
+    for (var element in _assessmentResults.trainingCheckingDetails) {
+      var splitData = element.split(":");
+
+      if (splitData.length == 2) {
+        var fullData = splitData[0].split("/");
+        if (fullData.length == 2) {
+          var parcialData1 = fullData[0].trim().split(" ");
+          var parcialData2 = fullData[1].trim().split(" ");
+          log("${parcialData1[0]} ${parcialData2[0]}");
+          if (parcialData1.length == 2 && parcialData2.length == 1) {
+            trainingAndCheckingDetails.add("${parcialData1[0]} ${parcialData2[0]}");
+          } else {
+            trainingAndCheckingDetails.add(splitData[1]);
+          }
+        } else if (fullData.length == 4) {
+          trainingAndCheckingDetails.add(splitData[1]);
+        }
+      } else {
+        trainingAndCheckingDetails.add(element);
+      }
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getAllResultAssessmentVariablesById(_assessmentResults.id);
@@ -258,7 +281,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
         ),
       ),
       subtitle: Column(
-        children: _assessmentResults.trainingCheckingDetails
+        children: trainingAndCheckingDetails
             .map(
               (element) => Align(
                 alignment: Alignment.centerLeft,
@@ -303,7 +326,8 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
       }
 
       if (assessmentCategories[dataCategory] == "Satisfactory") {
-        dataWidgetResult.add(_dataColumnAssessmentVariables(dataCategory, "Assessment", "Markers", dataAssessmentVariableResults));
+        dataWidgetResult
+            .add(_dataColumnAssessmentVariables(dataCategory, "Assessment", "Markers", dataAssessmentVariableResults));
       } else {
         dataWidgetResult.add(_dataColumnAssessmentVariables(dataCategory, "PF", "PM", dataAssessmentVariableResults));
       }
@@ -312,8 +336,8 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     return dataWidgetResult;
   }
 
-  Column _dataColumnAssessmentVariables(
-      String dataCategory, String secondColumnName, String thirdColumnName, List<AssessmentVariableResults> dataAssessmentVariableResults) {
+  Column _dataColumnAssessmentVariables(String dataCategory, String secondColumnName, String thirdColumnName,
+      List<AssessmentVariableResults> dataAssessmentVariableResults) {
     return Column(
       children: [
         Align(
@@ -359,10 +383,14 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     List<DataRow> dataRows = [];
     for (var element in data) {
       if (element.assessmentType == "Satisfactory") {
-        dataRows.add(dataRowAssessment(element.assessmentVariableName, element.assessmentSatisfactory == null ? "N/A" : element.assessmentSatisfactory!,
+        dataRows.add(dataRowAssessment(
+            element.assessmentVariableName,
+            element.assessmentSatisfactory == null ? "N/A" : element.assessmentSatisfactory!,
             element.assessmentMarkers == null ? "N/A" : element.assessmentMarkers!.toString()));
       } else {
-        dataRows.add(dataRowAssessment(element.assessmentVariableName, element.pilotFlyingMarkers == null ? "N/A" : element.pilotFlyingMarkers!.toString(),
+        dataRows.add(dataRowAssessment(
+            element.assessmentVariableName,
+            element.pilotFlyingMarkers == null ? "N/A" : element.pilotFlyingMarkers!.toString(),
             element.pilotMonitoringMarkers == null ? "N/A" : element.pilotMonitoringMarkers!.toString()));
       }
     }

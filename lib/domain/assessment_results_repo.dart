@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
+import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/util/util.dart';
@@ -30,14 +31,18 @@ abstract class AssessmentResultsRepo {
 
   Future<void> updateAssessmentResultForExaminee(AssessmentResults assessmentResults);
 
-  Future<List<AssessmentResults>> searchAssessmentResultsBasedOnName(String searchName, int searchLimit);
+  Future<List<AssessmentResults>> searchAssessmentResultsBasedOnName(String searchName, int searchLimit, bool isAll);
 
-  Future<List<AssessmentResults>> getAllAssessmentResultsPaginated(
-      int limit, AssessmentResults? lastAssessment, DateTime? filterStart, DateTime? filterEnd);
+  Future<List<AssessmentResults>> getAssessmentResultsPaginated(
+      int limit,
+      bool isAll,
+      AssessmentResults? lastAssessment,
+      String? selectedRankFilter,
+      int? selectedMarkerFilter,
+      DateTime? filterDateFrom,
+      DateTime? filterDateTo);
 
   Future<List<AssessmentResults>> getSelfAssessmentResults();
-
-  Future<List<AssessmentResults>> getMyAssessmentResults();
 
   Future<String> makePDFSimulator(AssessmentResults assessmentResults);
 }
@@ -141,13 +146,13 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm() async {
     final userPreferences = _userPreferences;
     final userId = userPreferences!.getIDNo();
-    int dummyUserId = 11720032;
+    // int dummyUserId = 11720032;
     List<AssessmentResults> assessmentResults = [];
 
     try {
       await _db!
           .collection(AssessmentResults.firebaseCollection)
-          .where(AssessmentResults.keyExamineeStaffIDNo, isEqualTo: dummyUserId)
+          .where(AssessmentResults.keyExamineeStaffIDNo, isEqualTo: userId)
           .where(AssessmentResults.keyConfirmedByExaminer, isEqualTo: false)
           .get()
           .then((value) {
@@ -168,7 +173,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     try {
       await _db!
           .collection(AssessmentResults.firebaseCollection)
-          // .where(AssessmentResults.keyConfirmedByExaminer, isEqualTo: true)
+          .where(AssessmentResults.keyConfirmedByExaminer, isEqualTo: true)
           .where(AssessmentResults.keyConfirmedByInstructor, isEqualTo: true)
           .where(AssessmentResults.keyConfirmedByCPTS, isEqualTo: false)
           .get()
@@ -232,13 +237,20 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   }
 
   @override
-  Future<List<AssessmentResults>> searchAssessmentResultsBasedOnName(String searchName, int searchLimit) async {
+  Future<List<AssessmentResults>> searchAssessmentResultsBasedOnName(
+      String searchName, int searchLimit, bool isAll) async {
     List<AssessmentResults> assessmentResultsList = [];
+    int idUser = _userPreferences!.getIDNo();
 
     try {
       log("KAMU SEARCH NAME: $searchName");
-      Query query = _db!
-          .collection(AssessmentResults.firebaseCollection)
+      Query query = _db!.collection(AssessmentResults.firebaseCollection);
+
+      if (!isAll) {
+        query = query.where(AssessmentResults.keyInstructorStaffIDNo, isEqualTo: idUser);
+      }
+
+      query = query
           .orderBy(AssessmentResults.keyNameExaminee)
           .limit(searchLimit)
           .startAt([searchName]).endAt(['$searchName\uf8ff']);
@@ -257,26 +269,42 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
   }
 
   @override
-  Future<List<AssessmentResults>> getAllAssessmentResultsPaginated(
-      int limit, AssessmentResults? lastAssessment, DateTime? filterStart, DateTime? filterEnd) async {
+  Future<List<AssessmentResults>> getAssessmentResultsPaginated(
+      int limit,
+      bool isAll,
+      AssessmentResults? lastAssessment,
+      String? selectedRankFilter,
+      int? selectedMarkerFilter,
+      DateTime? filterDateFrom,
+      DateTime? filterDateTo) async {
+    int idUser = _userPreferences!.getIDNo();
     List<AssessmentResults> assessmentResultsList = [];
 
     try {
       Query query;
-      log("BRAPa jln ${filterStart.toString()} ${filterEnd.toString()}");
-      if (filterStart != null && filterEnd != null) {
-        query = _db!
-            .collection(AssessmentResults.firebaseCollection)
-            .where(AssessmentResults.keyDate, isGreaterThanOrEqualTo: Timestamp.fromDate(filterStart))
-            .where(AssessmentResults.keyDate, isLessThanOrEqualTo: Timestamp.fromDate(filterEnd))
-            .orderBy(AssessmentResults.keyDate, descending: true)
-            .limit(limit);
-      } else {
-        query = _db!
-            .collection(AssessmentResults.firebaseCollection)
-            .orderBy(AssessmentResults.keyDate, descending: true)
-            .limit(limit);
+      log("FILTER DATE ${filterDateFrom.toString()} ${filterDateTo.toString()}");
+      log("FILTER RANK ${selectedRankFilter.toString()}");
+      log("FILTER MARKER ${selectedMarkerFilter.toString()}");
+
+      query = _db!.collection(AssessmentResults.firebaseCollection);
+
+      if (!isAll) {
+        query = query.where(AssessmentResults.keyInstructorStaffIDNo, isEqualTo: idUser);
       }
+
+      if (selectedRankFilter != null) {
+        query = query.where(AssessmentResults.keyRank, isEqualTo: selectedRankFilter);
+      }
+
+      if (filterDateFrom != null) {
+        query = query.where(AssessmentResults.keyDate, isGreaterThanOrEqualTo: Timestamp.fromDate(filterDateFrom));
+      }
+
+      if (filterDateTo != null) {
+        query = query.where(AssessmentResults.keyDate, isLessThanOrEqualTo: Timestamp.fromDate(filterDateTo));
+      }
+
+      query = query.orderBy(AssessmentResults.keyDate, descending: true);
 
       if (lastAssessment != null) {
         final lastDocumentAssessment =
@@ -285,14 +313,36 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         query = query.startAfterDocument(lastDocumentAssessment);
       }
 
-      final assessmentData = await query.get();
-      log("BRAPa ${assessmentData.docs.length}");
-      // assessmentResultsList = assessmentData.docs
-      //   .map((e) => AssessmentResults.fromFirebase(e.data() as Map<String, dynamic>))
-      //   .toList();
+      query = query.limit(limit);
 
-      for (var element in assessmentData.docs) {
-        assessmentResultsList.add(AssessmentResults.fromFirebase(element.data() as Map<String, dynamic>));
+      final assessmentData = await query.get();
+
+      if (selectedMarkerFilter != null) {
+        for (var doc in assessmentData.docs) {
+          AssessmentResults assessmentResults = AssessmentResults.fromFirebase(doc.data() as Map<String, dynamic>);
+
+          QuerySnapshot querySnapshot = await _db!
+              .collection(AssessmentVariableResults.firebaseCollection)
+              .where(AssessmentVariableResults.keyAssessmentResultsId, isEqualTo: assessmentResults.id)
+              .get();
+
+          for (var docVariable in querySnapshot.docs) {
+            AssessmentVariableResults assessmentVariableResults =
+                AssessmentVariableResults.fromFirebase(docVariable.data() as Map<String, dynamic>);
+
+            if (assessmentVariableResults.assessmentMarkers == selectedMarkerFilter ||
+                assessmentVariableResults.pilotFlyingMarkers == selectedMarkerFilter ||
+                assessmentVariableResults.pilotMonitoringMarkers == selectedMarkerFilter) {
+              log("MASUK SINI JAJAJAJAJ ${assessmentVariableResults.assessmentMarkers} ${assessmentVariableResults.pilotFlyingMarkers} ${assessmentVariableResults.pilotMonitoringMarkers}");
+              assessmentResultsList.add(assessmentResults);
+              break;
+            }
+          }
+        }
+      } else {
+        for (var element in assessmentData.docs) {
+          assessmentResultsList.add(AssessmentResults.fromFirebase(element.data() as Map<String, dynamic>));
+        }
       }
     } catch (e) {
       log("Exception in AssessmentResultRepo on getAllAssessmentResultsPaginated: $e");
@@ -308,31 +358,8 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
     try {
       await _db!
-        .collection(AssessmentResults.firebaseCollection)
-        .where(AssessmentResults.keyExamineeStaffIDNo, isEqualTo: idUser)
-        .orderBy(AssessmentResults.keyDate, descending: true)
-        .get()
-        .then((value) {
-          for (var element in value.docs) {
-            assessmentResultsList.add(AssessmentResults.fromFirebase(element.data()));
-          }
-        });
-
-    } catch (e) {
-      log("Exception in AssessmentResultRepo on getSelfAssessmentResultsPaginated: $e");
-    }
-    return assessmentResultsList;
-  }
-
-  @override
-  Future<List<AssessmentResults>> getMyAssessmentResults() async {
-    int idUser = _userPreferences!.getIDNo();
-    List<AssessmentResults> assessmentResultsList = [];
-
-    try {
-      await _db!
           .collection(AssessmentResults.firebaseCollection)
-          .where(AssessmentResults.keyInstructorStaffIDNo, isEqualTo: idUser)
+          .where(AssessmentResults.keyExamineeStaffIDNo, isEqualTo: idUser)
           .orderBy(AssessmentResults.keyDate, descending: true)
           .get()
           .then((value) {
@@ -340,9 +367,8 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
           assessmentResultsList.add(AssessmentResults.fromFirebase(element.data()));
         }
       });
-
     } catch (e) {
-      log("Exception in AssessmentResultRepo on getMyAssessmentResults: $e");
+      log("Exception in AssessmentResultRepo on getSelfAssessmentResults: $e");
     }
     return assessmentResultsList;
   }
@@ -477,11 +503,21 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       }
 
       // ====================================== FOR TRAINING / CHECKING DETAILS ======================================
-      List<String> listOfTrainingCheckingDetails = assessmentResults.trainingCheckingDetails;
+
+      Map<String, String> listOfTrainingCheckingDetails = {};
+
+      for (var element in assessmentResults.trainingCheckingDetails) {
+        var splitData = element.split(":");
+        if (splitData.length > 1) {
+          listOfTrainingCheckingDetails.addAll({splitData[0].trim(): splitData[1].trim()});
+        } else {
+          listOfTrainingCheckingDetails.addAll({element.trim(): ""});
+        }
+      }
 
       //Find the text and get matched items.
       List<MatchedItem> listOfTrainingCheckingDetailsMatchedItemCollection =
-          PdfTextExtractor(document).findText(listOfTrainingCheckingDetails);
+          PdfTextExtractor(document).findText(listOfTrainingCheckingDetails.keys.toList());
 
       // Get the matched item in the collection using index.
       // MatchedItem matchedText = listOfTrainingCheckingDetailsMatchedItemCollection[0];
@@ -491,38 +527,265 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         String textMatched = matched.text;
         Rect textBounds = matched.bounds;
 
-        // Draw pages 1 on Training / Checking Details
-        if (textMatched == "ETOPS" || textMatched == "MNPS" || textMatched == "RVSM" || textMatched == "NATS") {
-          log("text: $textBounds");
-          document.pages[0].graphics.drawString(
-              flightDetails.substring(0, 1), PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-              brush: PdfBrushes.black, bounds: const Rect.fromLTWH(198.4, 156.4, 50, 50));
+        switch (textMatched) {
+          case "Line Oriented Simulation (LOS) / SPOT":
+            var choice = listOfTrainingCheckingDetails[textMatched];
+            String textExtract;
 
-          List<String> listOfEtopsMnpsRvsmNats = ["ETOPS", "MNPS", "RVSM", "NATS"];
+            if (choice == "Line Oriented Simulation (LOS)") {
+              textExtract = "SPOT";
+            } else {
+              textExtract = "Line Oriented Simulation (LOS)";
+            }
 
-          listOfEtopsMnpsRvsmNats.removeWhere((element) => element == textMatched);
+            List<MatchedItem> lineOriented = PdfTextExtractor(document).findText([textExtract]);
 
-          List<MatchedItem> listOfEtopsMnpsRvsmNatsMatchedItemCollection =
-              PdfTextExtractor(document).findText(listOfEtopsMnpsRvsmNats);
+            var bonds = lineOriented[0].bounds;
 
+            if (choice == "Line Oriented Simulation (LOS)") {
+              document.pages[0].graphics.drawString(
+                "-",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(bonds.topLeft.dx, bonds.topLeft.dy - 18, 100, 37),
+              );
+            } else {
+              document.pages[0].graphics.drawString(
+                "--------",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(bonds.topLeft.dx, bonds.topLeft.dy - 18, 100, 37),
+              );
+            }
 
-          for (var item in listOfEtopsMnpsRvsmNatsMatchedItemCollection) {
-            Rect textBounds = item.bounds;
+            break;
 
-            document.pages[0].graphics.drawString(
-                "-", PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+          case "ETOPS / MNPS / RVSM / NATS":
+            List<String> listOfEtopsMnpsRvsmNats = ["ETOPS", "MNPS", "NATS", "RVSM"];
+
+            listOfEtopsMnpsRvsmNats
+                .removeWhere((element) => element == listOfTrainingCheckingDetails["ETOPS / MNPS / RVSM / NATS"]);
+
+            List<MatchedItem> listOfEtopsMnpsRvsmNatsMatchedItemCollection =
+                PdfTextExtractor(document).findText(listOfEtopsMnpsRvsmNats);
+
+            var duplicateRVSM = false;
+
+            for (var item in listOfEtopsMnpsRvsmNatsMatchedItemCollection) {
+              Rect textBounds = item.bounds;
+
+              if (duplicateRVSM) {
+                continue;
+              }
+
+              if (item.text == "RVSM") {
+                duplicateRVSM = true;
+              }
+
+              document.pages[0].graphics.drawString(
+                "-",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
                 brush: PdfBrushes.black,
                 bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy - 18, 32, 37),
+              );
+            }
+
+            break;
+
+          case "CRP Initial/Recurrent":
+            if (listOfTrainingCheckingDetails["CRP Initial/Recurrent"] == "Recurrent") {
+              document.pages[0].graphics.drawString(
+                "--",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx + 12, textBounds.topLeft.dy - 18, 32, 37),
+              );
+            } else {
+              document.pages[0].graphics.drawString(
+                "---",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx + 28, textBounds.topLeft.dy - 18, 32, 37),
+              );
+            }
+
+            break;
+
+          case "ZFTT / Flight Base Trng":
+            String choice = listOfTrainingCheckingDetails["ZFTT / Flight Base Trng"]!;
+            String extractor;
+            String hider;
+
+            if (choice == "ZFTT") {
+              extractor = "Flight Base Trng";
+              hider = "----";
+            } else {
+              extractor = "ZFTT";
+              hider = "-";
+            }
+
+            List<MatchedItem> listOfZFTTAndFlightBaseTrng =
+                PdfTextExtractor(document).findText([extractor]);
+
+            var bound = listOfZFTTAndFlightBaseTrng.first.bounds;
+
+            document.pages[0].graphics.drawString(
+              hider,
+              PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(bound.topLeft.dx, bound.topLeft.dy - 18, 40, 37),
             );
-          }
 
+            break;
 
+          case "Fixed Based Simulator/MFTD":
+            String choice = listOfTrainingCheckingDetails["Fixed Based Simulator/MFTD"]!;
+            String extractor;
+            String hider;
+
+            if (choice == "MFTD") {
+              extractor = "Fixed Based Simulator";
+              hider = "------";
+            } else {
+              extractor = "MFTD";
+              hider = "-";
+            }
+
+            List<MatchedItem> listOfFixedBasedSimulatorMFTD =
+              PdfTextExtractor(document).findText([extractor]);
+
+            var bound = listOfFixedBasedSimulatorMFTD.first.bounds;
+
+            document.pages[0].graphics.drawString(
+              hider,
+              PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(bound.topLeft.dx, bound.topLeft.dy - 18, 60, 37),
+            );
+            break;
+
+          case "RHS Initial / Recurrent":
+            if (listOfTrainingCheckingDetails["RHS Initial / Recurrent"] == "Recurrent") {
+              document.pages[0].graphics.drawString(
+                "--",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx + 12, textBounds.topLeft.dy - 18, 32, 37),
+              );
+            } else {
+              document.pages[0].graphics.drawString(
+                "---",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx + 28, textBounds.topLeft.dy - 18, 32, 37),
+              );
+            }
+            break;
+
+          case "Instructor's Initial / Renewal":
+            if (listOfTrainingCheckingDetails["Instructor's Initial / Renewal"] == "Renewal") {
+              document.pages[0].graphics.drawString(
+                "--",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx + 27, textBounds.topLeft.dy - 18, 32, 37),
+              );
+            } else {
+              document.pages[0].graphics.drawString(
+                "--",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx + 49, textBounds.topLeft.dy - 18, 32, 37),
+              );
+            }
+            break;
+
+          case "Std Transition / IOE for Rated Flt Crew":
+            String choice = listOfTrainingCheckingDetails["Std Transition / IOE for Rated Flt Crew"]!;
+            String extractor;
+            String hider;
+
+            if (choice == "Std Transition") {
+              extractor = "IOE for Rated Flt Crew";
+              hider = "------";
+            } else {
+              extractor = "Std Transition";
+              hider = "---";
+            }
+
+            List<MatchedItem> listOfStdTransitionAndIoeForRatedFltCrew =
+            PdfTextExtractor(document).findText([extractor]);
+
+            var bound = listOfStdTransitionAndIoeForRatedFltCrew.first.bounds;
+
+            document.pages[0].graphics.drawString(
+              hider,
+              PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(bound.topLeft.dx, bound.topLeft.dy - 18, 60, 37),
+            );
+            break;
+
+          case "Remedial Trng / Evaluation":
+            log("DAdwada");
+            if (listOfTrainingCheckingDetails["Remedial Trng / Evaluation"] == "Evaluation") {
+              document.pages[0].graphics.drawString(
+                "-",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx + 27, textBounds.topLeft.dy - 18, 32, 37),
+              );
+            } else {
+              document.pages[0].graphics.drawString(
+                "--",
+                PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx + 45, textBounds.topLeft.dy - 18, 32, 37),
+              );
+            }
+            break;
         }
 
+        // Draw pages 1 on Training / Checking Details
+        // if () {
+        // log("text: $textBounds");
+        // document.pages[0].graphics.drawString(
+        //     flightDetails.substring(0, 1), PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
+        //     brush: PdfBrushes.black, bounds: const Rect.fromLTWH(198.4, 156.4, 50, 50));
+        //
+        // List<String> listOfEtopsMnpsRvsmNats = ["ETOPS", "MNPS", "NATS", "RVSM"];
+        //
+        // listOfEtopsMnpsRvsmNats.removeWhere((element) => element == textMatched);
+        //
+        // List<MatchedItem> listOfEtopsMnpsRvsmNatsMatchedItemCollection =
+        //     PdfTextExtractor(document).findText(listOfEtopsMnpsRvsmNats);
+        //
+        // var duplicateRVSM = false;
+        //
+        // for (var item in listOfEtopsMnpsRvsmNatsMatchedItemCollection) {
+        //   Rect textBounds = item.bounds;
+        //
+        //   if (duplicateRVSM) {
+        //     continue;
+        //   }
+        //
+        //   if (item.text == "RVSM") {
+        //     duplicateRVSM = true;
+        //   }
+        //
+        //   document.pages[0].graphics.drawString(
+        //     "-",
+        //     PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+        //     brush: PdfBrushes.black,
+        //     bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy - 18, 32, 37),
+        //   );
+        // }
+        // } else {
         document.pages[0].graphics.drawString(
             flightDetails.substring(0, 1), PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
             brush: PdfBrushes.black,
             bounds: Rect.fromLTWH(textBounds.topLeft.dx - 14, textBounds.topLeft.dy - 2, 100, 50));
+        // }
       }
 
       // ====================================== FOR ASSESSMENT VARIABLES ==============================================
@@ -566,18 +829,18 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               if (assessment.isNotApplicable) {
                 document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
-                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + 163, textBounds.topLeft.dy - 5, 100, 50));
+                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + 163, textBounds.topLeft.dy - 4, 100, 50));
               } else {
                 // For Satisfactory
                 if (assessment.assessmentSatisfactory == "Satisfactory") {
                   document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                       brush: PdfBrushes.black,
-                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 146, textBounds.topLeft.dy - 5, 100, 50));
+                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 146, textBounds.topLeft.dy - 4, 100, 50));
                 } else {
                   // FOR Unsatisfactory
                   document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                       brush: PdfBrushes.black,
-                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 128, textBounds.topLeft.dy - 5, 100, 50));
+                      bounds: Rect.fromLTWH(textBounds.topLeft.dx + 128, textBounds.topLeft.dy - 4, 100, 50));
                 }
 
                 double additionalFromLeft = 0;
@@ -603,7 +866,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
                     bounds:
-                        Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeft, textBounds.topLeft.dy - 5, 100, 50));
+                        Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeft, textBounds.topLeft.dy - 4, 100, 50));
               }
 
               // Assessment Type = PF/PM ========================================================
@@ -611,7 +874,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               if (assessment.isNotApplicable) {
                 document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
-                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + 124, textBounds.topLeft.dy - 5, 100, 50));
+                    bounds: Rect.fromLTWH(textBounds.topLeft.dx + 124, textBounds.topLeft.dy - 4, 100, 50));
               } else {
                 double additionalFromLeftForPilotPF = 0;
 
@@ -637,7 +900,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
                     bounds: Rect.fromLTWH(
-                        textBounds.topLeft.dx + additionalFromLeftForPilotPF, textBounds.topLeft.dy - 5, 100, 50));
+                        textBounds.topLeft.dx + additionalFromLeftForPilotPF, textBounds.topLeft.dy - 4, 100, 50));
 
                 double additionalFromLeftForPilotPM = 0;
 
@@ -663,7 +926,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 document.pages[0].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 10),
                     brush: PdfBrushes.black,
                     bounds: Rect.fromLTWH(
-                        textBounds.topLeft.dx + additionalFromLeftForPilotPM, textBounds.topLeft.dy - 5, 100, 50));
+                        textBounds.topLeft.dx + additionalFromLeftForPilotPM, textBounds.topLeft.dy - 4, 100, 50));
               }
             }
           }
@@ -699,16 +962,134 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + minusBounds, 500, 300),
                 format: PdfStringFormat(lineSpacing: 2));
 
+            double additionalFromLeftForPilotPF = 0;
+
+            switch (manual.pilotFlyingMarkers) {
+              case 1:
+                additionalFromLeftForPilotPF = 133;
+                break;
+              case 2:
+                additionalFromLeftForPilotPF = 148;
+                break;
+              case 3:
+                additionalFromLeftForPilotPF = 163;
+                break;
+              case 4:
+                additionalFromLeftForPilotPF = 178;
+                break;
+              case 5:
+                additionalFromLeftForPilotPF = 193;
+                break;
+            }
+
+            // Value Pilot Flying Markers
+            document.pages[0].graphics.drawString(
+              "√",
+              PdfTrueTypeFont(fontDataList, 10),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeftForPilotPF,
+                  textBounds.topLeft.dy + minusBounds - 4, 100, 50),
+            );
+
+            double additionalFromLeftForPilotPM = 0;
+
+            switch (manual.pilotMonitoringMarkers) {
+              case 1:
+                additionalFromLeftForPilotPM = 205;
+                break;
+              case 2:
+                additionalFromLeftForPilotPM = 225;
+                break;
+              case 3:
+                additionalFromLeftForPilotPM = 240;
+                break;
+              case 4:
+                additionalFromLeftForPilotPM = 255;
+                break;
+              case 5:
+                additionalFromLeftForPilotPM = 270;
+                break;
+            }
+
+            // Value Pilot Monitoring PM
+            document.pages[0].graphics.drawString(
+              "√",
+              PdfTrueTypeFont(fontDataList, 10),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeftForPilotPM,
+                  textBounds.topLeft.dy + minusBounds - 4, 100, 50),
+            );
+
             minusBounds += 10;
           }
         } else if (matchedItem.text == "Abnormal/Emer.Proc") {
           var minusBounds = 12;
           for (var manual in manualVariableAbnormal) {
             document.pages[0].graphics.drawString(
-                manual.assessmentVariableName.toTitleCase(), PdfStandardFont(PdfFontFamily.helvetica, 7),
-                brush: PdfBrushes.black,
-                bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + minusBounds, 500, 300),
-                format: PdfStringFormat(lineSpacing: 2));
+              manual.assessmentVariableName.toTitleCase(),
+              PdfStandardFont(PdfFontFamily.helvetica, 7),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + minusBounds, 500, 300),
+              format: PdfStringFormat(lineSpacing: 2),
+            );
+
+            double additionalFromLeftForPilotPF = 0;
+
+            switch (manual.pilotFlyingMarkers) {
+              case 1:
+                additionalFromLeftForPilotPF = 133;
+                break;
+              case 2:
+                additionalFromLeftForPilotPF = 148;
+                break;
+              case 3:
+                additionalFromLeftForPilotPF = 163;
+                break;
+              case 4:
+                additionalFromLeftForPilotPF = 178;
+                break;
+              case 5:
+                additionalFromLeftForPilotPF = 193;
+                break;
+            }
+
+            // Value Pilot Flying Markers
+            document.pages[0].graphics.drawString(
+              "√",
+              PdfTrueTypeFont(fontDataList, 10),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeftForPilotPF,
+                  textBounds.topLeft.dy + minusBounds - 4, 100, 50),
+            );
+
+            double additionalFromLeftForPilotPM = 0;
+
+            switch (manual.pilotMonitoringMarkers) {
+              case 1:
+                additionalFromLeftForPilotPM = 205;
+                break;
+              case 2:
+                additionalFromLeftForPilotPM = 225;
+                break;
+              case 3:
+                additionalFromLeftForPilotPM = 240;
+                break;
+              case 4:
+                additionalFromLeftForPilotPM = 255;
+                break;
+              case 5:
+                additionalFromLeftForPilotPM = 270;
+                break;
+            }
+
+            // Value Pilot Monitoring PM
+            document.pages[0].graphics.drawString(
+              "√",
+              PdfTrueTypeFont(fontDataList, 10),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(textBounds.topLeft.dx + additionalFromLeftForPilotPM,
+                  textBounds.topLeft.dy + minusBounds - 4, 100, 50),
+            );
 
             minusBounds += 10;
           }
@@ -795,14 +1176,97 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
         switch (matchedItem.text) {
           case "only if recommendations is made":
-            var instructorSignatureUrl = assessmentResults.instructorSignatureUrl;
-            var response = await get(Uri.parse(instructorSignatureUrl));
-            var data = response.bodyBytes;
+            // Recommendation
+            if (assessmentResults.instructorRecommendation != "None") {
+              var instructorSignatureUrl = assessmentResults.instructorSignatureUrl;
+              var response = await get(Uri.parse(instructorSignatureUrl));
+              var data = response.bodyBytes;
 
-            PdfBitmap image = PdfBitmap(data);
+              PdfBitmap image = PdfBitmap(data);
 
-            document.pages[1].graphics
-                .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx, textBounds.center.dy - 50, 70, 50));
+              document.pages[1].graphics
+                  .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx, textBounds.center.dy - 50, 70, 50));
+
+              // List<String> instructorRecommendationText = [
+              //   "Senior First Officer",
+              //   "Ground Training Instructor",
+              //   "Company Check Pilot",
+              //   "Command upgrade",
+              //   "Type Rating Instructor",
+              //   "Others"
+              // ];
+
+              var variableRecommendation = assessmentResults.instructorRecommendation;
+
+              switch (assessmentResults.instructorRecommendation) {
+                case AssessmentVariables.keyGroundTrainingInstructor:
+                  variableRecommendation = "Ground Training";
+                  break;
+                case AssessmentVariables.keyTypeRatingInstructor:
+                  variableRecommendation = "Type Rating";
+                  break;
+                case AssessmentVariables.keyCompanyCheckPilot:
+                  variableRecommendation = "Company";
+                  break;
+              }
+
+              List<MatchedItem> instructorRecommendationMatchedItem =
+                  PdfTextExtractor(document).findText([variableRecommendation], startPageIndex: 1);
+
+              log("JAJAJAJ ${instructorRecommendationMatchedItem.length} dan $variableRecommendation");
+              var instrucItem = instructorRecommendationMatchedItem.first;
+
+              if (variableRecommendation == "Company") {
+                instrucItem = instructorRecommendationMatchedItem.last;
+              }
+
+              log("instruct: $instrucItem");
+              Rect instrucRecomBounds = instrucItem.bounds;
+
+              switch (assessmentResults.instructorRecommendation) {
+                case AssessmentVariables.keySeniorFirstOfficer:
+                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
+                      brush: PdfBrushes.black,
+                      bounds:
+                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 45, instrucRecomBounds.topLeft.dy - 8, 50, 50));
+                  break;
+
+                case AssessmentVariables.keyCommandUpgrade:
+                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
+                      brush: PdfBrushes.black,
+                      bounds:
+                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 45, instrucRecomBounds.topLeft.dy - 8, 50, 50));
+                  break;
+
+                case AssessmentVariables.keyGroundTrainingInstructor:
+                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
+                      brush: PdfBrushes.black,
+                      bounds:
+                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 33, instrucRecomBounds.topLeft.dy - 4, 50, 50));
+                  break;
+
+                case AssessmentVariables.keyTypeRatingInstructor:
+                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
+                      brush: PdfBrushes.black,
+                      bounds:
+                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 33, instrucRecomBounds.topLeft.dy - 4, 50, 50));
+                  break;
+
+                case AssessmentVariables.keyCompanyCheckPilot:
+                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
+                      brush: PdfBrushes.black,
+                      bounds:
+                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 45, instrucRecomBounds.topLeft.dy - 4, 50, 50));
+                  break;
+
+                case AssessmentVariables.keyOthers:
+                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
+                      brush: PdfBrushes.black,
+                      bounds:
+                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 50, instrucRecomBounds.topLeft.dy - 7, 50, 50));
+                  break;
+              }
+            }
             break;
 
           case "Candidate Name:":
@@ -848,6 +1312,30 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         }
       }
 
+      // =========================================== INSTRUCTOR SIGNATURE ==============================================================
+
+      List<String> instructorSignature = ["Signature :"];
+      List<MatchedItem> instructorSignatureMatchedItem =
+          PdfTextExtractor(document).findText(instructorSignature, startPageIndex: 1);
+      var instructorSignatureItem = instructorSignatureMatchedItem.last;
+      Rect instructorSignatureBounds = instructorSignatureItem.bounds;
+
+      switch (instructorSignatureItem.text) {
+        case "Signature :":
+          var instructorSignatureUrl = assessmentResults.instructorSignatureUrl;
+          var response = await get(Uri.parse(instructorSignatureUrl));
+          var data = response.bodyBytes;
+
+          PdfBitmap image = PdfBitmap(data);
+
+          document.pages[1].graphics.drawImage(
+              image,
+              Rect.fromLTWH(
+                  instructorSignatureBounds.topLeft.dx + 40, instructorSignatureBounds.center.dy - 20, 70, 50));
+
+          break;
+      }
+
       // =========================================== LOA ==============================================================
       List<String> loaText = ["LOA No.:"];
       List<MatchedItem> loaMatchedItem = PdfTextExtractor(document).findText(loaText, startPageIndex: 1);
@@ -878,18 +1366,8 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             'Cleared for Check',
             'Stop Training, TS7 Rised'
           ];
-          List<MatchedItem> declarationMatchedItem =
-              PdfTextExtractor(document).findText(declarationTextTraining, startPageIndex: 1, searchOption: TextSearchOption.values.last);
-
-          // List<String> uniqueDeclaration = [];
-          // List<MatchedItem> nonDuplicateDeclarationMatchedItem = [];
-          //
-          // for (var item in declarationMatchedItem) {
-          //   if (!uniqueDeclaration.contains(item.text)) {
-          //     uniqueDeclaration.add(item.text);
-          //     nonDuplicateDeclarationMatchedItem.add(item);
-          //   }
-          // }
+          List<MatchedItem> declarationMatchedItem = PdfTextExtractor(document)
+              .findText(declarationTextTraining, startPageIndex: 1, searchOption: TextSearchOption.values.last);
 
           for (var item in declarationMatchedItem) {
             var textDeclaration = item.text;
@@ -931,14 +1409,17 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       // Save into download directory
       // Save and dispose the document.
       String pathSavePDF =
-          "/storage/emulated/0/Download/Assessment TS1/TS1-${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf";
+          '/storage/emulated/0/Download/Assessment TS1/TS1-${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf';
 
       String cacheSavePDF =
           '${tempDir?.path}/TS1-${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf';
 
+      log("BISA");
       var bytes = await document.save();
 
+      log("PATH: $pathSavePDF");
       File(pathSavePDF).writeAsBytesSync(bytes);
+      log("INI BISA");
 
       File(cacheSavePDF).writeAsBytesSync(bytes);
 
