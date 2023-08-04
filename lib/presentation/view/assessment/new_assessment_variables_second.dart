@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
-import 'package:flutter/foundation.dart';
 import 'package:ts_one/presentation/shared_components/dropdown_button_form_component.dart';
 import 'package:ts_one/presentation/theme.dart';
 import '../../../data/assessments/assessment_variables.dart';

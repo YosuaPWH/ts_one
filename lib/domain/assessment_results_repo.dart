@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,8 +21,6 @@ abstract class AssessmentResultsRepo {
   Future<List<AssessmentResults>> getAllAssessmentResults();
 
   Future<List<AssessmentResults>> getAssessmentResultsLimited(int limit);
-
-  Future<List<AssessmentResults>> getAssessmentResultsFilteredByDate(DateTime startDate, DateTime endDate);
 
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm();
 
@@ -74,7 +71,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
           assessmentVariableResult.id =
               "assessment-variable-result-${assessmentVariableResult.assessmentVariableId}-${assessmentResult.examineeStaffIDNo}-${Util.convertDateTimeDisplay(assessmentResult.date.toString())}";
 
-          log("SINI ${assessmentVariableResult.id}");
           assessmentVariableResult.assessmentResultsId = assessmentResult.id;
           await _db!
               .collection(AssessmentVariableResults.firebaseCollection)
@@ -83,7 +79,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         }
       }
     } catch (e) {
-      log("Exception on assessment results repo: ${e.toString()}");
+      log("Exception in AssessmentResultsRepo on addAssessmentResults: ${e.toString()}");
     }
     return assessmentResultsList;
   }
@@ -109,7 +105,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         assessmentResultsList.add(assessmentResults);
       }
     } catch (e) {
-      log("Exception on assessment results repo: ${e.toString()}");
+      log("Exception in AssessmentResultsRepo on getAllAssessmentResults: $e");
     }
     return assessmentResultsList;
   }
@@ -136,41 +132,11 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     return assessmentResultsList;
   }
 
-  @override
-  Future<List<AssessmentResults>> getAssessmentResultsFilteredByDate(DateTime startDate, DateTime endDate) async {
-    List<AssessmentResults> assessmentResultsList = [];
-    try {
-      QuerySnapshot querySnapshot = await _db!
-          .collection(AssessmentResults.firebaseCollection)
-          .where(AssessmentResults.keyDate, isGreaterThanOrEqualTo: startDate)
-          .where(AssessmentResults.keyDate, isLessThanOrEqualTo: endDate)
-          .get();
-
-      for (var doc in querySnapshot.docs) {
-        AssessmentResults assessmentResults = AssessmentResults.fromFirebase(doc.data() as Map<String, dynamic>);
-        QuerySnapshot querySnapshot2 = await _db!
-            .collection(AssessmentVariableResults.firebaseCollection)
-            .where(AssessmentVariableResults.keyAssessmentResultsId, isEqualTo: assessmentResults.id)
-            .get();
-
-        for (var doc2 in querySnapshot2.docs) {
-          AssessmentVariableResults assessmentVariableResults =
-              AssessmentVariableResults.fromFirebase(doc2.data() as Map<String, dynamic>);
-          assessmentResults.variableResults.add(assessmentVariableResults);
-        }
-        assessmentResultsList.add(assessmentResults);
-      }
-    } catch (e) {
-      log("Exception on assessment results repo: ${e.toString()}");
-    }
-    return assessmentResultsList;
-  }
 
   @override
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm() async {
     final userPreferences = _userPreferences;
     final userId = userPreferences!.getIDNo();
-    // int dummyUserId = 11720032;
     List<AssessmentResults> assessmentResults = [];
 
     try {
@@ -267,7 +233,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     int idUser = _userPreferences!.getIDNo();
 
     try {
-      log("KAMU SEARCH NAME: $searchName");
       Query query = _db!.collection(AssessmentResults.firebaseCollection);
 
       if (!isAll) {
@@ -283,8 +248,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
       assessmentResultsList =
           assessmentData.docs.map((e) => AssessmentResults.fromFirebase(e.data() as Map<String, dynamic>)).toList();
-
-      log("JUMLAH SEARCH ${assessmentResultsList.length}");
     } catch (e) {
       log("Exception in AssessmentResultRepo on searchAssessmentResultsBasedOnName: $e");
     }
@@ -306,9 +269,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
     try {
       Query query;
-      log("FILTER DATE ${filterDateFrom.toString()} ${filterDateTo.toString()}");
-      log("FILTER RANK ${selectedRankFilter.toString()}");
-      log("FILTER MARKER ${selectedMarkerFilter.toString()}");
 
       query = _db!.collection(AssessmentResults.firebaseCollection);
 
@@ -357,7 +317,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             if (assessmentVariableResults.assessmentMarkers == selectedMarkerFilter ||
                 assessmentVariableResults.pilotFlyingMarkers == selectedMarkerFilter ||
                 assessmentVariableResults.pilotMonitoringMarkers == selectedMarkerFilter) {
-              log("MASUK SINI JAJAJAJAJ ${assessmentVariableResults.assessmentMarkers} ${assessmentVariableResults.pilotFlyingMarkers} ${assessmentVariableResults.pilotMonitoringMarkers}");
               assessmentResultsList.add(assessmentResults);
               break;
             }
@@ -648,8 +607,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               hider = "-";
             }
 
-            List<MatchedItem> listOfZFTTAndFlightBaseTrng =
-                PdfTextExtractor(document).findText([extractor]);
+            List<MatchedItem> listOfZFTTAndFlightBaseTrng = PdfTextExtractor(document).findText([extractor]);
 
             var bound = listOfZFTTAndFlightBaseTrng.first.bounds;
 
@@ -675,8 +633,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               hider = "-";
             }
 
-            List<MatchedItem> listOfFixedBasedSimulatorMFTD =
-              PdfTextExtractor(document).findText([extractor]);
+            List<MatchedItem> listOfFixedBasedSimulatorMFTD = PdfTextExtractor(document).findText([extractor]);
 
             var bound = listOfFixedBasedSimulatorMFTD.first.bounds;
 
@@ -738,7 +695,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             }
 
             List<MatchedItem> listOfStdTransitionAndIoeForRatedFltCrew =
-            PdfTextExtractor(document).findText([extractor]);
+                PdfTextExtractor(document).findText([extractor]);
 
             var bound = listOfStdTransitionAndIoeForRatedFltCrew.first.bounds;
 
@@ -751,7 +708,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             break;
 
           case "Remedial Trng / Evaluation":
-            log("DAdwada");
             if (listOfTrainingCheckingDetails["Remedial Trng / Evaluation"] == "Evaluation") {
               document.pages[0].graphics.drawString(
                 "-",
@@ -770,46 +726,10 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             break;
         }
 
-        // Draw pages 1 on Training / Checking Details
-        // if () {
-        // log("text: $textBounds");
-        // document.pages[0].graphics.drawString(
-        //     flightDetails.substring(0, 1), PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
-        //     brush: PdfBrushes.black, bounds: const Rect.fromLTWH(198.4, 156.4, 50, 50));
-        //
-        // List<String> listOfEtopsMnpsRvsmNats = ["ETOPS", "MNPS", "NATS", "RVSM"];
-        //
-        // listOfEtopsMnpsRvsmNats.removeWhere((element) => element == textMatched);
-        //
-        // List<MatchedItem> listOfEtopsMnpsRvsmNatsMatchedItemCollection =
-        //     PdfTextExtractor(document).findText(listOfEtopsMnpsRvsmNats);
-        //
-        // var duplicateRVSM = false;
-        //
-        // for (var item in listOfEtopsMnpsRvsmNatsMatchedItemCollection) {
-        //   Rect textBounds = item.bounds;
-        //
-        //   if (duplicateRVSM) {
-        //     continue;
-        //   }
-        //
-        //   if (item.text == "RVSM") {
-        //     duplicateRVSM = true;
-        //   }
-        //
-        //   document.pages[0].graphics.drawString(
-        //     "-",
-        //     PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
-        //     brush: PdfBrushes.black,
-        //     bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy - 18, 32, 37),
-        //   );
-        // }
-        // } else {
         document.pages[0].graphics.drawString(
             flightDetails.substring(0, 1), PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
             brush: PdfBrushes.black,
             bounds: Rect.fromLTWH(textBounds.topLeft.dx - 14, textBounds.topLeft.dy - 2, 100, 50));
-        // }
       }
 
       // ====================================== FOR ASSESSMENT VARIABLES ==============================================
@@ -984,25 +904,25 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 manual.assessmentVariableName.toTitleCase(), PdfStandardFont(PdfFontFamily.helvetica, 7),
                 brush: PdfBrushes.black,
                 bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + minusBounds, 500, 300),
-                format: PdfStringFormat(lineSpacing: 2));
+                format: PdfStringFormat(lineSpacing: 5));
 
             double additionalFromLeftForPilotPF = 0;
 
             switch (manual.pilotFlyingMarkers) {
               case 1:
-                additionalFromLeftForPilotPF = 133;
+                additionalFromLeftForPilotPF = 130;
                 break;
               case 2:
-                additionalFromLeftForPilotPF = 148;
+                additionalFromLeftForPilotPF = 145;
                 break;
               case 3:
-                additionalFromLeftForPilotPF = 163;
+                additionalFromLeftForPilotPF = 160;
                 break;
               case 4:
-                additionalFromLeftForPilotPF = 178;
+                additionalFromLeftForPilotPF = 175;
                 break;
               case 5:
-                additionalFromLeftForPilotPF = 193;
+                additionalFromLeftForPilotPF = 190;
                 break;
             }
 
@@ -1019,19 +939,19 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
             switch (manual.pilotMonitoringMarkers) {
               case 1:
-                additionalFromLeftForPilotPM = 205;
+                additionalFromLeftForPilotPM = 202;
                 break;
               case 2:
-                additionalFromLeftForPilotPM = 225;
+                additionalFromLeftForPilotPM = 222;
                 break;
               case 3:
-                additionalFromLeftForPilotPM = 240;
+                additionalFromLeftForPilotPM = 237;
                 break;
               case 4:
-                additionalFromLeftForPilotPM = 255;
+                additionalFromLeftForPilotPM = 252;
                 break;
               case 5:
-                additionalFromLeftForPilotPM = 270;
+                additionalFromLeftForPilotPM = 267;
                 break;
             }
 
@@ -1044,7 +964,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                   textBounds.topLeft.dy + minusBounds - 4, 100, 50),
             );
 
-            minusBounds += 10;
+            minusBounds += 12;
           }
         } else if (matchedItem.text == "Abnormal/Emer.Proc") {
           var minusBounds = 12;
@@ -1054,26 +974,26 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               PdfStandardFont(PdfFontFamily.helvetica, 7),
               brush: PdfBrushes.black,
               bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + minusBounds, 500, 300),
-              format: PdfStringFormat(lineSpacing: 2),
+              format: PdfStringFormat(lineSpacing: 5),
             );
 
             double additionalFromLeftForPilotPF = 0;
 
             switch (manual.pilotFlyingMarkers) {
               case 1:
-                additionalFromLeftForPilotPF = 133;
+                additionalFromLeftForPilotPF = 128;
                 break;
               case 2:
-                additionalFromLeftForPilotPF = 148;
+                additionalFromLeftForPilotPF = 143;
                 break;
               case 3:
-                additionalFromLeftForPilotPF = 163;
+                additionalFromLeftForPilotPF = 158;
                 break;
               case 4:
-                additionalFromLeftForPilotPF = 178;
+                additionalFromLeftForPilotPF = 173;
                 break;
               case 5:
-                additionalFromLeftForPilotPF = 193;
+                additionalFromLeftForPilotPF = 188;
                 break;
             }
 
@@ -1090,19 +1010,19 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
             switch (manual.pilotMonitoringMarkers) {
               case 1:
-                additionalFromLeftForPilotPM = 205;
+                additionalFromLeftForPilotPM = 200;
                 break;
               case 2:
-                additionalFromLeftForPilotPM = 225;
+                additionalFromLeftForPilotPM = 220;
                 break;
               case 3:
-                additionalFromLeftForPilotPM = 240;
+                additionalFromLeftForPilotPM = 235;
                 break;
               case 4:
-                additionalFromLeftForPilotPM = 255;
+                additionalFromLeftForPilotPM = 250;
                 break;
               case 5:
-                additionalFromLeftForPilotPM = 270;
+                additionalFromLeftForPilotPM = 265;
                 break;
             }
 
@@ -1115,7 +1035,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                   textBounds.topLeft.dy + minusBounds - 4, 100, 50),
             );
 
-            minusBounds += 10;
+            minusBounds += 12;
           }
         }
       }
@@ -1181,8 +1101,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       List<String> uniqueSignature = [];
       List<MatchedItem> nonDuplicateSignatureMatchedItem = [];
 
-      log("LEN: ${signatureMatchedItem.length}");
-
       for (var item in signatureMatchedItem) {
         if (!uniqueSignature.contains(item.text)) {
           uniqueSignature.add(item.text);
@@ -1190,13 +1108,9 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         }
       }
 
-      log("LEN: ${nonDuplicateSignatureMatchedItem.length}");
-
       for (var item in nonDuplicateSignatureMatchedItem) {
         MatchedItem matchedItem = item;
         Rect textBounds = matchedItem.bounds;
-
-        log("match: ${matchedItem.text}");
 
         switch (matchedItem.text) {
           case "only if recommendations is made":
@@ -1210,15 +1124,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
               document.pages[1].graphics
                   .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx, textBounds.center.dy - 50, 70, 50));
-
-              // List<String> instructorRecommendationText = [
-              //   "Senior First Officer",
-              //   "Ground Training Instructor",
-              //   "Company Check Pilot",
-              //   "Command upgrade",
-              //   "Type Rating Instructor",
-              //   "Others"
-              // ];
 
               var variableRecommendation = assessmentResults.instructorRecommendation;
 
@@ -1244,50 +1149,67 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 instrucItem = instructorRecommendationMatchedItem.last;
               }
 
-              log("instruct: $instrucItem");
               Rect instrucRecomBounds = instrucItem.bounds;
 
               switch (assessmentResults.instructorRecommendation) {
                 case AssessmentVariables.keySeniorFirstOfficer:
-                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
-                      brush: PdfBrushes.black,
-                      bounds:
-                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 45, instrucRecomBounds.topLeft.dy - 8, 50, 50));
+                  document.pages[1].graphics.drawString(
+                    "√",
+                    PdfTrueTypeFont(fontDataList, 15),
+                    brush: PdfBrushes.black,
+                    bounds:
+                        Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 45, instrucRecomBounds.topLeft.dy - 8, 50, 50),
+                  );
                   break;
 
                 case AssessmentVariables.keyCommandUpgrade:
-                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
-                      brush: PdfBrushes.black,
-                      bounds:
-                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 45, instrucRecomBounds.topLeft.dy - 8, 50, 50));
+                  document.pages[1].graphics.drawString(
+                    "√",
+                    PdfTrueTypeFont(fontDataList, 15),
+                    brush: PdfBrushes.black,
+                    bounds:
+                        Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 45, instrucRecomBounds.topLeft.dy - 8, 50, 50),
+                  );
                   break;
 
                 case AssessmentVariables.keyGroundTrainingInstructor:
-                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
-                      brush: PdfBrushes.black,
-                      bounds:
-                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 33, instrucRecomBounds.topLeft.dy - 4, 50, 50));
+                  document.pages[1].graphics.drawString(
+                    "√",
+                    PdfTrueTypeFont(fontDataList, 15),
+                    brush: PdfBrushes.black,
+                    bounds:
+                        Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 33, instrucRecomBounds.topLeft.dy - 4, 50, 50),
+                  );
                   break;
 
                 case AssessmentVariables.keyTypeRatingInstructor:
-                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
-                      brush: PdfBrushes.black,
-                      bounds:
-                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 33, instrucRecomBounds.topLeft.dy - 4, 50, 50));
+                  document.pages[1].graphics.drawString(
+                    "√",
+                    PdfTrueTypeFont(fontDataList, 15),
+                    brush: PdfBrushes.black,
+                    bounds:
+                        Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 33, instrucRecomBounds.topLeft.dy - 4, 50, 50),
+                  );
                   break;
 
                 case AssessmentVariables.keyCompanyCheckPilot:
-                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
-                      brush: PdfBrushes.black,
-                      bounds:
-                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 45, instrucRecomBounds.topLeft.dy - 4, 50, 50));
+                  document.pages[1].graphics.drawString(
+                    "√",
+                    PdfTrueTypeFont(fontDataList, 15),
+                    brush: PdfBrushes.black,
+                    bounds:
+                        Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 45, instrucRecomBounds.topLeft.dy - 4, 50, 50),
+                  );
                   break;
 
                 case AssessmentVariables.keyOthers:
-                  document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
-                      brush: PdfBrushes.black,
-                      bounds:
-                          Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 50, instrucRecomBounds.topLeft.dy - 7, 50, 50));
+                  document.pages[1].graphics.drawString(
+                    "√",
+                    PdfTrueTypeFont(fontDataList, 15),
+                    brush: PdfBrushes.black,
+                    bounds:
+                        Rect.fromLTWH(instrucRecomBounds.topLeft.dx - 50, instrucRecomBounds.topLeft.dy - 7, 50, 50),
+                  );
                   break;
               }
             }
@@ -1307,8 +1229,10 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               var data = response.bodyBytes;
 
               PdfBitmap image = PdfBitmap(data);
-              document.pages[1].graphics
-                  .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx + 30, textBounds.center.dy - 60, 70, 50));
+              document.pages[1].graphics.drawImage(
+                image,
+                Rect.fromLTWH(textBounds.topLeft.dx + 30, textBounds.center.dy - 60, 70, 50),
+              );
             }
             break;
 
@@ -1319,8 +1243,10 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
               var data = response.bodyBytes;
 
               PdfBitmap image = PdfBitmap(data);
-              document.pages[1].graphics
-                  .drawImage(image, Rect.fromLTWH(textBounds.topLeft.dx + 15, textBounds.center.dy + 20, 70, 50));
+              document.pages[1].graphics.drawImage(
+                image,
+                Rect.fromLTWH(textBounds.topLeft.dx + 15, textBounds.center.dy + 20, 70, 50),
+              );
             }
             break;
 
@@ -1379,8 +1305,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
           break;
       }
 
-      log("JALANJALAN");
-
       // ======================================== FOR DECLARATION ====================================================
       switch (assessmentResults.sessionDetails) {
         case NewAssessment.keySessionDetailsTraining:
@@ -1398,10 +1322,12 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             var boundsDeclarations = item.bounds;
 
             if (textDeclaration == assessmentResults.declaration) {
-              document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
-                  brush: PdfBrushes.black,
-                  bounds:
-                      Rect.fromLTWH(boundsDeclarations.topLeft.dx - 28, boundsDeclarations.topLeft.dy - 5, 100, 50));
+              document.pages[1].graphics.drawString(
+                "√",
+                PdfTrueTypeFont(fontDataList, 15),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(boundsDeclarations.topLeft.dx - 28, boundsDeclarations.topLeft.dy - 5, 100, 50),
+              );
             }
           }
           break;
@@ -1416,16 +1342,16 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             var boundsDeclarations = item.bounds;
 
             if (textDeclaration.toLowerCase().trim() == assessmentResults.declaration.toLowerCase().trim()) {
-              document.pages[1].graphics.drawString("√", PdfTrueTypeFont(fontDataList, 15),
-                  brush: PdfBrushes.black,
-                  bounds:
-                      Rect.fromLTWH(boundsDeclarations.topLeft.dx - 75, boundsDeclarations.topLeft.dy - 10, 100, 50));
+              document.pages[1].graphics.drawString(
+                "√",
+                PdfTrueTypeFont(fontDataList, 15),
+                brush: PdfBrushes.black,
+                bounds: Rect.fromLTWH(boundsDeclarations.topLeft.dx - 75, boundsDeclarations.topLeft.dy - 10, 100, 50),
+              );
             }
           }
           break;
       }
-
-      log("AAAAAAAAAAAAAAAAAAAAAa");
 
       // Make Assessment TS1 Folder
       Directory('/storage/emulated/0/Download/Assessment TS1/').createSync();
@@ -1438,12 +1364,9 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       String cacheSavePDF =
           '${tempDir?.path}/TS1-${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf';
 
-      log("BISA");
       var bytes = await document.save();
 
-      log("PATH: $pathSavePDF");
       File(pathSavePDF).writeAsBytesSync(bytes);
-      log("INI BISA");
 
       File(cacheSavePDF).writeAsBytesSync(bytes);
 

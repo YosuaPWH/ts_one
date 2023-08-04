@@ -75,14 +75,13 @@ dependencies:
   syncfusion_flutter_pdf: ^22.1.39
   pdf: ^3.10.4
   open_file: ^3.3.2
-  open_file_plus: ^3.4.1
   screenshot: ^2.1.0
   flutter_progress_hud: ^2.0.2
   excel: ^2.1.0
-  permission_handler: ^10.4.3
-  device_info_plus: ^9.0.2
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
+
   flutter_test:
     sdk: flutter
 
@@ -92,6 +91,13 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/airasia_logo_circle.png"
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

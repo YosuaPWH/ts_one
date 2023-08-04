@@ -635,7 +635,7 @@ class _UpdateUserViewState extends State<UpdateUserView> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         userModelUpdated = await viewModel.updateUser(userEmail, userModel);
-                        if(!context.mounted) return;
+                        if(!mounted) return;
 
                         if(userModelUpdated.name != Util.defaultStringIfNull){
                           ScaffoldMessenger.of(context).showSnackBar(

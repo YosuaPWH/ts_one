@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:focus_detector/focus_detector.dart';
@@ -129,7 +128,7 @@ class _DetailAssessmentPeriodViewState
                             onPressed: () async {
                               await viewModel.deleteAssessmentPeriodById(
                                   assessmentPeriodId);
-                              Navigator.pop(context);
+                              if (!mounted) return;
                               Navigator.pop(context);
                             },
                             child: const Text("Yes"),

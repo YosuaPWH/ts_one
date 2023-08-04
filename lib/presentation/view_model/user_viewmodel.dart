@@ -29,7 +29,7 @@ class UserViewModel extends LoadingViewModel {
       }
       isLoading = false;
     } catch (e) {
-      log("Exception on UserViewModel: $e");
+      log("Exception in UserViewModel on login: $e");
       isLoading = false;
     }
     return userAuth;
@@ -45,7 +45,7 @@ class UserViewModel extends LoadingViewModel {
       }
       isLoading = false;
     } catch (e) {
-      log("Exception on UserViewModel: $e");
+      log("Exception in UserViewModel loginWithGoogle: $e");
       isLoading = false;
     }
     return userAuth;
@@ -56,7 +56,7 @@ class UserViewModel extends LoadingViewModel {
       repo.logout();
       userPreferences.clearUser();
     } catch (e) {
-      log(e.toString());
+      log("Exception in UserViewModel on logout: $e");
     }
   }
 
@@ -81,7 +81,7 @@ class UserViewModel extends LoadingViewModel {
 
       isLoading = false;
     } catch (e) {
-      log("Exception on UserViewModel: $e");
+      log("Exception in UserViewModel on getAllUsers: $e");
       isLoading = false;
     }
 
@@ -95,7 +95,7 @@ class UserViewModel extends LoadingViewModel {
       userModel = await repo.getUserByIDNo(idNo);
       isLoading = false;
     } catch (e) {
-      log("Exception on UserViewModel: $e");
+      log("Exception in UserViewModel on getUserByIDNo: $e");
       isLoading = false;
     }
     return userModel;
@@ -108,7 +108,7 @@ class UserViewModel extends LoadingViewModel {
       users = await repo.getUsersBySearchName(searchName, searchLimit);
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      log("Exception in UserViewModel on getUsersBySearchName: $e");
       isLoading = false;
     }
     return users;
@@ -134,7 +134,7 @@ class UserViewModel extends LoadingViewModel {
       reset();
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      log("Exception in UserViewModel on addUser: $e");
       isLoading = false;
     }
     return newUserModel;
@@ -148,7 +148,7 @@ class UserViewModel extends LoadingViewModel {
       reset();
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      log("Exception in UserViewModel on updateUser: $e");
       isLoading = false;
     }
     return newUserModel;
@@ -161,7 +161,7 @@ class UserViewModel extends LoadingViewModel {
       reset();
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      log("Exception in UserViewModel on deleteUserByEmail: $e");
       isLoading = false;
     }
   }
@@ -173,7 +173,7 @@ class UserViewModel extends LoadingViewModel {
       downloadURL = await repo.uploadSignature(idUser, assessmentDate, signatureBytes);
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      log("Exception in UserViewModel on uploadSignature: $e");
       isLoading = false;
     }
     return downloadURL;
@@ -186,7 +186,7 @@ class UserViewModel extends LoadingViewModel {
       newUserSignatures = await repo.addSignature(userSignatures);
       isLoading = false;
     } catch (e) {
-      log(e.toString());
+      log("Exception in UserViewModel on addSignature: $e");
       isLoading = false;
     }
     return newUserSignatures;

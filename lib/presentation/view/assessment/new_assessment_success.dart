@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
@@ -17,11 +16,9 @@ class NewAssessmentSuccess extends StatefulWidget {
 }
 
 class _NewAssessmentSuccessState extends State<NewAssessmentSuccess> {
-  late NewAssessment _newAssessment;
 
   @override
   void initState() {
-    // _newAssessment = widget.newAssessment;
 
     super.initState();
     // return backToHome();

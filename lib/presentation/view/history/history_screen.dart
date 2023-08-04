@@ -22,8 +22,6 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  DateTime? _filterDateTimeStart;
-  DateTime? _filterDateTimeEnd;
   late UserPreferences userPreferences;
   late String rankUser;
   late AssessmentResultsViewModel viewModel;
@@ -32,7 +30,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   int searchLimit = 10;
 
-  String _allSortBy = "";
   late bool isSearchingAll;
   late List<AssessmentResults> allAssessment;
   late ScrollController _allScrollController;
@@ -40,7 +37,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   late List<AssessmentResults> selfAssessment;
 
-  String _mySortBy = "";
   late bool isSearchingMy;
   late List<AssessmentResults> myAssessment;
   late List<AssessmentResults> myAssessmentSearched;
@@ -109,9 +105,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     checkCPTS();
     checkInstructor();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //
-    // });
 
     super.initState();
   }
@@ -479,10 +472,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                         decoration: const InputDecoration(
                                           border: OutlineInputBorder(),
                                           labelText: 'To',
-                                          // suffixIcon: IconButton(
-                                          //   onPressed: () {},
-                                          //   icon: const Icon(Icons.search),
-                                          // ),
                                         ),
                                         controller: TextEditingController(
                                           text: filterDateToAll != null
@@ -921,10 +910,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                             decoration: const InputDecoration(
                                               border: OutlineInputBorder(),
                                               labelText: 'To',
-                                              // suffixIcon: IconButton(
-                                              //   onPressed: () {},
-                                              //   icon: const Icon(Icons.search),
-                                              // ),
                                             ),
                                             controller: TextEditingController(
                                               text: filterDateToMy != null
@@ -994,7 +979,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           controller: _myScrollController,
                           itemCount: myAssessment.length,
                           itemBuilder: (context, index) {
-                            if (index == myAssessment.length - 1 && !viewModel.isAllAssessmentLoaded) {
+                            if (index == myAssessment.length - 1 && !viewModel.isMyAssessmentLoaded) {
                               return const Padding(
                                 padding: EdgeInsets.all(16.0),
                                 child: Center(child: CircularProgressIndicator()),

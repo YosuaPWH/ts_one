@@ -138,15 +138,15 @@ class UserRepoImpl implements UserRepo {
       if (e.code == 'account-exists-with-different-credential') {
         userAuth.errorMessage =
             'The account already exists with a different credential.';
-        log(e.toString());
+        log("Exception in UserRepo on loginWithGoogle - account-exists-with-different-credential: $e");
       } else if (e.code == 'invalid-credential') {
         userAuth.errorMessage =
             'Error occurred while accessing credentials. Try again.';
-        log(e.toString());
+        log("Exception in UserRepo on loginWithGoogle - invalid-credential: $e");
       }
     } catch (e) {
       userAuth.errorMessage = 'Error occurred using Google Sign-In. Try again.';
-      log("repoyos" + e.toString());
+      log("Exception in UserRepo on loginWithGoogle: $e");
     }
 
     return userAuth;
@@ -157,7 +157,7 @@ class UserRepoImpl implements UserRepo {
     try {
       return await _auth!.signOut();
     } catch (e) {
-      log(e.toString());
+      log("Exception in UserRepo on logout: $e");
     }
   }
 
@@ -198,7 +198,7 @@ class UserRepoImpl implements UserRepo {
               UserModel.fromFirebaseUser(e.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      log("Exception in UserRepo getUsersPaginated: $e");
+      log("Exception in UserRepo on getUsersPaginated: $e");
     }
 
     return users;
@@ -216,7 +216,7 @@ class UserRepoImpl implements UserRepo {
       // create user model from firebase user and user data from firestore
       user = UserModel.fromFirebaseUser(userData.data()!);
     } catch (e) {
-      log("Exception in UserRepo getUserByEmail: $e");
+      log("Exception in UserRepo on getUserByIDNo: $e");
     }
 
     return user;
@@ -245,7 +245,7 @@ class UserRepoImpl implements UserRepo {
               UserModel.fromFirebaseUser(e.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      log(e.toString());
+      log("Exception in UserRepo on getUsersBySearchName: $e");
     }
 
     return users;
@@ -277,7 +277,7 @@ class UserRepoImpl implements UserRepo {
       // create user model from firebase user and user data from firestore
       newUserModel = UserModel.fromFirebaseUser(userData.data()!);
     } catch (e) {
-      log(e.toString());
+      log("Exception in UserRepo on addUser: $e");
     }
 
     return newUserModel;
@@ -344,9 +344,6 @@ class UserRepoImpl implements UserRepo {
       Directory tempDir = await getTemporaryDirectory();
       String tempPath = tempDir.path;
 
-      // String fileName = "Signature-${newAssessment.idNoInstructor}"
-      //     "-${Util.convertDateTimeDisplay(newAssessment.assessmentDate.toString())}"
-      //     "-${DateTime.now().millisecondsSinceEpoch.toString()}.png";
       String fileName = "Signature-$idUser"
           "-${Util.convertDateTimeDisplay(assessmentDate.toString())}"
           "-${DateTime.now().millisecondsSinceEpoch.toString()}.png";
@@ -362,7 +359,7 @@ class UserRepoImpl implements UserRepo {
       downloadURL = await snapshot.ref.getDownloadURL();
     }
     catch (e) {
-      log("Exception on UserRepo: ${e.toString()}");
+      log("Exception in UserRepo on uploadSignature: $e");
     }
     log("Message from UserRepo: $downloadURL");
     return downloadURL;
@@ -380,7 +377,7 @@ class UserRepoImpl implements UserRepo {
       newUserSignatures = userSignatures;
     }
     catch (e) {
-      log(e.toString());
+      log("Exception in UserRepo on addSignature: $e");
     }
 
     return newUserSignatures;
@@ -400,7 +397,7 @@ class UserRepoImpl implements UserRepo {
       userSignatures = UserSignatures.fromFirebase(snapshot.docs.first.data());
     }
     catch (e) {
-      log(e.toString());
+      log("Exception in UserRepo on getSignature: $e");
     }
     return userSignatures;
   }
@@ -418,7 +415,7 @@ class UserRepoImpl implements UserRepo {
           .writeToFile(downloadedFile);
 
     } catch (e) {
-      log("Exception on UserRepo: ${e.toString()}");
+      log("Exception in UserRepo on getPDFTemplate: $e");
     }
 
     return true;

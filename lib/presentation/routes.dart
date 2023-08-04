@@ -17,7 +17,6 @@ import 'package:ts_one/presentation/view/assessment/result_assessment_declaratio
 import 'package:ts_one/presentation/view/assessment/result_assessment_overall.dart';
 import 'package:ts_one/presentation/view/assessment/result_assessment_variables.dart';
 import 'package:ts_one/presentation/view/assessment/update_assessment_period.dart';
-import 'package:ts_one/presentation/view/history/template_tsone.dart';
 import 'package:ts_one/presentation/view/users/add_user.dart';
 import 'package:ts_one/presentation/view/users/all_users.dart';
 import 'package:ts_one/presentation/view/users/detail_user.dart';
@@ -172,14 +171,6 @@ class AppRoutes {
           settings: settings,
         );
 
-      case NamedRoute.template:
-        return MaterialPageRoute<void>(
-          builder: (_) => TemplateTSOne(
-            assessmentResults: settings.arguments as AssessmentResults,
-          ),
-          settings: settings,
-        );
-
       default:
         return MaterialPageRoute<void>(
           builder: (_) => _UndefinedView(name: settings.name),
@@ -205,8 +196,6 @@ class _UndefinedView extends StatelessWidget {
 
 class NamedRoute {
   NamedRoute._();
-
-  static const String template = '/template';
 
   static const String main = '/';
   static const String login = '/login';

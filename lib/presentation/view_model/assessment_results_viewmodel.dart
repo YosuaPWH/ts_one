@@ -28,7 +28,7 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       assessmentResultsList = await repo.addAssessmentResults(assessmentResults, newAssessment);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on addAssessmentResults: $e");
       isLoading = false;
     }
     return assessmentResultsList;
@@ -41,7 +41,7 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       assessmentResultsList = await repo.getAllAssessmentResults();
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on getAllAssessmentResults: $e");
       isLoading = false;
     }
     return assessmentResultsList;
@@ -61,19 +61,6 @@ class AssessmentResultsViewModel extends LoadingViewModel {
     return assessmentResultsList;
   }
 
-  Future<List<AssessmentResults>> getAssessmentResultsFilteredByDate(DateTime startDate, DateTime endDate) async {
-    isLoading = true;
-    List<AssessmentResults> assessmentResultsList = [];
-    try {
-      assessmentResultsList = await repo.getAssessmentResultsFilteredByDate(startDate, endDate);
-      isLoading = false;
-    } catch (e) {
-      log("Exception on AssessmentResultsViewModel: $e");
-      isLoading = false;
-    }
-    return assessmentResultsList;
-  }
-
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm() async {
     isLoading = true;
     List<AssessmentResults> assessmentResults = [];
@@ -81,7 +68,7 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       assessmentResults = await repo.getAssessmentResultsByCurrentUserNotConfirm();
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on getAssessmentResultsByCurrentUserNotConfirm: $e");
       isLoading = false;
     }
     return assessmentResults;
@@ -94,7 +81,7 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       assessmentResults = await repo.getAssessmentResultsNotConfirmByCPTS();
       isLoading = false;
     } catch (e) {
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on getAssessmentResultsNotConfirmByCPTS: $e");
       isLoading = false;
     }
     return assessmentResults;
@@ -107,7 +94,7 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       assessmentVariableResults = await repo.getAssessmentVariableResult(idAssessment);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on getAssessmentVariableResult: $e");
       isLoading = false;
     }
     return assessmentVariableResults;
@@ -119,7 +106,7 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       await repo.updateAssessmentResultForExaminee(assessmentResults);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on updateAssessmentResultForExaminee: $e");
       isLoading = false;
     }
   }
@@ -136,7 +123,7 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       }
       isLoading = false;
     } catch (e) {
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on searchAssessmentResultsBasedOnName: $e");
       isLoading = false;
     }
     return assessmentResultsList;
@@ -146,7 +133,6 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       int? selectedMarkerFilter, DateTime? filterDateFrom, DateTime? filterDateTo) async {
     isLoading = true;
 
-    log("JALAN $isLoading");
     try {
       if (isAllAssessmentLoaded) {
         isLoading = false;
@@ -156,7 +142,6 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       final List<AssessmentResults> newAssessmentResults = await repo.getAssessmentResultsPaginated(
           limit, true, allLastAssessment, selectedRankFilter, selectedMarkerFilter, filterDateFrom, filterDateTo);
 
-      log("BERAPA ${newAssessmentResults.length}");
       allAssessmentResults.addAll(newAssessmentResults);
 
       if (newAssessmentResults.isNotEmpty) {
@@ -171,10 +156,9 @@ class AssessmentResultsViewModel extends LoadingViewModel {
 
       isLoading = false;
     } catch (e) {
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on getAllAssessmentResultsPaginated: $e");
       isLoading = false;
     }
-    log("JALAN $isLoading");
     return allAssessmentResults;
   }
 
@@ -185,7 +169,7 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       assessmentResultsList = await repo.getSelfAssessmentResults();
       isLoading = false;
     } catch (e) {
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on getSelfAssessmentResultsPaginated: $e");
       isLoading = false;
     }
     return assessmentResultsList;
@@ -195,7 +179,6 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       int? selectedMarkerFilter, DateTime? filterDateFrom, DateTime? filterDateTo) async {
     isLoading = true;
 
-    log("JALAN $isLoading");
     try {
       if (isMyAssessmentLoaded) {
         isLoading = false;
@@ -205,7 +188,6 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       final List<AssessmentResults> newAssessmentResults = await repo.getAssessmentResultsPaginated(
           limit, false, myLastAssessment, selectedRankFilter, selectedMarkerFilter, filterDateFrom, filterDateTo);
 
-      log("BERAPA ${newAssessmentResults.length}");
       myAssessmentResults.addAll(newAssessmentResults);
 
       if (newAssessmentResults.isNotEmpty) {
@@ -220,10 +202,9 @@ class AssessmentResultsViewModel extends LoadingViewModel {
 
       isLoading = false;
     } catch (e) {
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on getMyAssessmentResultsPaginated: $e");
       isLoading = false;
     }
-    log("JALAN $isLoading");
     return myAssessmentResults;
   }
 
@@ -234,7 +215,7 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       message = await repo.makePDFSimulator(assessmentResults);
       isLoading = false;
     } catch (e) {
-      print("Exception on AssessmentResultsViewModel: $e");
+      log("Exception in AssessmentResultsViewModel on makePDFSimulator: $e");
       isLoading = false;
     }
     return message;
