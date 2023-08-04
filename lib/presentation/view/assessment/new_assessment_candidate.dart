@@ -525,8 +525,8 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: TextFormField(
-                        keyboardType: TextInputType.datetime,
-                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$'))],
+                        keyboardType: TextInputType.text,
+                        // inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$'))],
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Simulation Hours (hh:mm)',
