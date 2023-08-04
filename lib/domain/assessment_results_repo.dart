@@ -20,6 +20,8 @@ abstract class AssessmentResultsRepo {
 
   Future<List<AssessmentResults>> getAllAssessmentResults();
 
+  Future<List<AssessmentResults>> getAssessmentResultsLimited(int limit);
+
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm();
 
   Future<List<AssessmentResults>> getAssessmentResultsNotConfirmByCPTS();
@@ -103,10 +105,33 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         assessmentResultsList.add(assessmentResults);
       }
     } catch (e) {
-      log("Exception in AssessmentResultsRepo on getAllAssessmentResults: ${e.toString()}");
+      log("Exception in AssessmentResultsRepo on getAllAssessmentResults: $e");
     }
     return assessmentResultsList;
   }
+
+  @override
+  Future<List<AssessmentResults>> getAssessmentResultsLimited(int limit) async {
+    List<AssessmentResults> assessmentResultsList = [];
+
+    try {
+      _db!
+          .collection(AssessmentResults.firebaseCollection)
+          .limit(limit)
+          .orderBy(AssessmentResults.keyDate, descending: true)
+          .get()
+          .then((value) {
+            for (var element in value.docs) {
+              assessmentResultsList.add(AssessmentResults.fromFirebase(element.data()));
+            }
+      });
+    } catch (e) {
+      log("Exception on assessment results repo: ${e.toString()}");
+    }
+
+    return assessmentResultsList;
+  }
+
 
   @override
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm() async {
