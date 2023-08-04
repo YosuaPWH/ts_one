@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
-import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';

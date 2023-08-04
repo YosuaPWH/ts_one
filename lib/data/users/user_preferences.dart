@@ -26,7 +26,7 @@ class UserPreferences extends ChangeNotifier {
     preferences.setBool(UserPreferences.keyIsLogin, true);
     preferences.setString(UserPreferences.keyUserID, userAuth.userCredential!.user!.uid);
 
-    preferences.setString(UserPreferences.keyPhotoURL, userAuth.userCredential!.user!.photoURL.toString() ?? "");
+    preferences.setString(UserPreferences.keyPhotoURL, userAuth.userCredential!.user!.photoURL.toString());
     String? photoUrl = preferences.getString(keyPhotoURL);
     if(photoUrl != null) {
       photoUrl = photoUrl.replaceAll("s96-c", "s384-c");

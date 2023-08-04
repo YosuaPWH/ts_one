@@ -1,5 +1,4 @@
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/users/users.dart';
@@ -542,7 +541,7 @@ class _AddUserViewState extends State<AddUserView> {
                         // send data to view model
                         userModelAdded = await viewModel.addUser(userModel);
 
-                        if(!context.mounted) return;
+                        if(!mounted) return;
 
                         if(userModelAdded.name != Util.defaultStringIfNull) {
                           ScaffoldMessenger.of(context).showSnackBar(

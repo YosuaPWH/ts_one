@@ -7,15 +7,12 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
-import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
-import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
 import 'package:ts_one/data/users/user_signatures.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/assessment_results_viewmodel.dart';
-import 'package:ts_one/presentation/view_model/assessment_viewmodel.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 
 class NewAssessmentDeclaration extends StatefulWidget {

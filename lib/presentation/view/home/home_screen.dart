@@ -8,7 +8,6 @@ import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
 import 'package:ts_one/presentation/view_model/assessment_results_viewmodel.dart';
-import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 import 'package:ts_one/util/util.dart';
 
 import '../../shared_components/search_component.dart';

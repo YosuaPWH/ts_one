@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
+import 'package:ts_one/data/assessments/assessment_flight_details.dart';
 import 'package:ts_one/data/assessments/assessment_period.dart';
-import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/domain/assessment_repo.dart';
 import 'package:ts_one/presentation/view_model/loading_viewmodel.dart';
-
-import '../../data/assessments/assessment_flight_details.dart';
 
 class AssessmentViewModel extends LoadingViewModel {
   AssessmentViewModel({required this.repo});
@@ -22,7 +19,7 @@ class AssessmentViewModel extends LoadingViewModel {
       assessmentPeriods = await repo.getAllAssessmentPeriods();
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      log("Exception in AssessmentViewModel on getAllAssessmentPeriod: $e");
       isLoading = false;
     }
     return assessmentPeriods;
@@ -35,7 +32,7 @@ class AssessmentViewModel extends LoadingViewModel {
       assessmentPeriod = await repo.getAssessmentPeriodById(id);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      log("Exception in AssessmentViewModel on getAssessmentPeriodById: $e");
       isLoading = false;
     }
     return assessmentPeriod;
@@ -51,7 +48,7 @@ class AssessmentViewModel extends LoadingViewModel {
       }
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      log("Exception in AssessmentViewModel on getAllAssessmentFlightDetails: $e");
       isLoading = false;
     }
     return listFlightDetails;
@@ -67,7 +64,7 @@ class AssessmentViewModel extends LoadingViewModel {
       lastAssessmentPeriodData = await repo.getFlightAssessmentPeriodById(lastAssessmentPeriodId);
       isLoading = false;
     } catch (e) {
-      log("Exception on getAllAssessmentVariablesFromLastPeriod function on Assessment View Model: $e");
+      log("Exception in AssessmentViewModel on getAllFlightAssessmentVariablesFromLastPeriod: $e");
       isLoading = false;
     }
 
@@ -84,7 +81,7 @@ class AssessmentViewModel extends LoadingViewModel {
       lastAssessmentPeriodData = await repo.getFlightAssessmentPeriodById(lastAssessmentPeriodId);
       isLoading = false;
     } catch (e) {
-      log("Exception on getAllAssessmentVariablesFromLastPeriod function on Assessment View Model: $e");
+      log("Exception in AssessmentViewModel on getAllFlightAssessmentVariablesFromLatestPeriod : $e");
       isLoading = false;
     }
 
@@ -101,7 +98,7 @@ class AssessmentViewModel extends LoadingViewModel {
       lastAssessmentPeriodData = await repo.getHumanFactorAssessmentPeriodById(lastAssessmentPeriodId);
       isLoading = false;
     } catch (e) {
-      debugPrint("Exception on getAllHumanFactorAssessmentVariablesFromLastPeriod function on Assessment ViewModel: $e");
+      log("Exception in AssessmentViewModel on getAllHumanFactorAssessmentVariablesFromLastPeriod: $e");
       isLoading = false;
     }
 
@@ -118,7 +115,7 @@ class AssessmentViewModel extends LoadingViewModel {
       lastAssessmentPeriodData = await repo.getHumanFactorAssessmentPeriodById(lastAssessmentPeriodId);
       isLoading = false;
     } catch (e) {
-      debugPrint("Exception on getAllHumanFactorAssessmentVariablesFromLastPeriod function on Assessment ViewModel: $e");
+      log("Exception in AssessmentViewModel on getAllHumanFactorAssessmentVariablesFromLastPeriod: $e");
       isLoading = false;
     }
 
@@ -132,7 +129,7 @@ class AssessmentViewModel extends LoadingViewModel {
       assessmentPeriod = await repo.addAssessmentPeriod(assessmentPeriodModel);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      log("Exception in AssessmentViewModel on addAssessmentPeriod: $e");
       isLoading = false;
     }
     return assessmentPeriod;
@@ -145,7 +142,7 @@ class AssessmentViewModel extends LoadingViewModel {
       assessmentPeriod = await repo.updateAssessmentPeriod(assessmentPeriodModel);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      log("Exception in AssessmentViewModel on updateAssessmentPeriod: $e");
       isLoading = false;
     }
     return assessmentPeriod;
@@ -157,7 +154,7 @@ class AssessmentViewModel extends LoadingViewModel {
       await repo.deleteAssessmentPeriodById(id);
       isLoading = false;
     } catch (e) {
-      log("Exception on AssessmentViewModel: $e");
+      log("Exception in AssessmentViewModel on deleteAssessmentPeriodById: $e");
       isLoading = false;
     }
   }

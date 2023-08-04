@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:excel/excel.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
@@ -14,7 +13,6 @@ import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
-import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/assessment_variables.dart';
 import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/presentation/shared_components/legend_widget.dart';
@@ -994,7 +992,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                         var bytes = excel.save();
 
                                         final directory = await getApplicationDocumentsDirectory();
-                                        final fileName = "Analytics";
+                                        const fileName = "Analytics";
                                         var filePath = "${directory.path}/$fileName.xlsx";
                                         final file = File(filePath);
                                         await file.writeAsBytes(bytes!);
@@ -1011,6 +1009,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
                                         await OpenFile.open(destinationPath);
 
+                                        if (!mounted) return;
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           const SnackBar(
                                             content: Text("Analytics exported to Excel"),
@@ -1055,7 +1054,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                           context: context,
                                         );
 
-                                        if (!context.mounted) return;
+                                        if (!mounted) return;
 
                                         final bytesBarChartHumanFactorPFAssessment = await screenshotController.captureFromWidget(
                                           MediaQuery(
@@ -1071,7 +1070,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                           context: context,
                                         );
 
-                                        if (!context.mounted) return;
+                                        if (!mounted) return;
 
                                         final bytesBarChartHumanFactorPMAssessment = await screenshotController.captureFromWidget(
                                           MediaQuery(
@@ -1567,6 +1566,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                         file.delete();
 
                                         await OpenFile.open(destinationPath);
+                                        if (!mounted) return;
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           const SnackBar(
                                             content: Text('PDF file saved to downloads folder'),

@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -98,7 +97,7 @@ class _LoginViewState extends State<LoginView> {
                         UserAuth userAuth =
                             await viewModel.login(email, password);
 
-                        if (!context.mounted) return;
+                        if (!mounted) return;
 
                         if (userAuth.userCredential != null &&
                             userAuth.userModel != null) {
@@ -170,7 +169,7 @@ class _LoginViewState extends State<LoginView> {
                         onPressed: () async {
                           UserAuth userAuth = await viewModel.loginWithGoogle();
 
-                          if (!context.mounted) return;
+                          if (!mounted) return;
 
                           if (userAuth.userCredential != null &&
                               userAuth.userModel != null) {
@@ -238,7 +237,7 @@ class _LoginViewState extends State<LoginView> {
                       height: 2,
                       child: model.isLoading
                           ? const LinearProgressIndicator()
-                          : SizedBox(),
+                          : const SizedBox(),
                     ),
                   ),
                 ],
