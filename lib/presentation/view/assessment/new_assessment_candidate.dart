@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:googleapis/transcoder/v1.dart';
 import 'package:provider/provider.dart';
@@ -525,6 +526,8 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: TextFormField(
+                        keyboardType: TextInputType.datetime,
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$'))],
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Simulation Hours (hh:mm)',
@@ -537,6 +540,9 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter simulation hours';
+                          }
+                          if (!RegExp(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$').hasMatch(value)) {
+                            return "Enter in the format of hh:mm";
                           }
                           return null;
                         },

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:googleapis/forms/v1.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/assessments/assessment_variable_results.dart';
 import 'package:ts_one/data/assessments/new_assessment.dart';
@@ -40,6 +41,20 @@ class AssessmentResultsViewModel extends LoadingViewModel {
       assessmentResultsList = await repo.getAllAssessmentResults();
       isLoading = false;
     } catch (e) {
+      log("Exception on AssessmentResultsViewModel: $e");
+      isLoading = false;
+    }
+    return assessmentResultsList;
+  }
+
+  Future<List<AssessmentResults>> getAssessmentResultsLimited(int limit) async {
+    isLoading = true;
+    List<AssessmentResults> assessmentResultsList = [];
+    try{
+      assessmentResultsList = await repo.getAssessmentResultsLimited(limit);
+      isLoading = false;
+    }
+    catch(e){
       log("Exception on AssessmentResultsViewModel: $e");
       isLoading = false;
     }

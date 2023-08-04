@@ -21,6 +21,8 @@ abstract class AssessmentResultsRepo {
 
   Future<List<AssessmentResults>> getAllAssessmentResults();
 
+  Future<List<AssessmentResults>> getAssessmentResultsLimited(int limit);
+
   Future<List<AssessmentResults>> getAssessmentResultsFilteredByDate(DateTime startDate, DateTime endDate);
 
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm();
@@ -109,6 +111,28 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
     } catch (e) {
       log("Exception on assessment results repo: ${e.toString()}");
     }
+    return assessmentResultsList;
+  }
+
+  @override
+  Future<List<AssessmentResults>> getAssessmentResultsLimited(int limit) async {
+    List<AssessmentResults> assessmentResultsList = [];
+
+    try {
+      _db!
+          .collection(AssessmentResults.firebaseCollection)
+          .limit(limit)
+          .orderBy(AssessmentResults.keyDate, descending: true)
+          .get()
+          .then((value) {
+            for (var element in value.docs) {
+              assessmentResultsList.add(AssessmentResults.fromFirebase(element.data()));
+            }
+      });
+    } catch (e) {
+      log("Exception on assessment results repo: ${e.toString()}");
+    }
+
     return assessmentResultsList;
   }
 

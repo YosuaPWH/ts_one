@@ -30,10 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
   late List<AssessmentResults> assessmentResultsNotConfirmedByCPTS;
   late bool _isCPTS;
   late bool _isInstructor;
+  late bool _isPilotAdministrator;
 
   @override
   void initState() {
     userPreferences = getItLocator<UserPreferences>();
+    _isPilotAdministrator = false;
 
     switch (userPreferences.getRank()) {
       case 'CAPT':
@@ -44,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case 'Pilot Administrator':
         titleToGreet = 'Pilot Administrator';
+        _isPilotAdministrator = true;
         break;
       default:
         titleToGreet = 'Allstar';
@@ -81,9 +84,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     log("dwadaw${assessmentResultsNotConfirmedByCPTS.length}");
 
-    assessmentResults = await viewModel.getAssessmentResultsByCurrentUserNotConfirm();
-
-
+    if(_isPilotAdministrator) {
+      assessmentResults = await viewModel.getAssessmentResultsLimited(5);
+      // return;
+    }
+    else {
+      assessmentResults = await viewModel.getAssessmentResultsByCurrentUserNotConfirm();
+    }
   }
 
   void checkInstructor() {
@@ -234,6 +241,46 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                       ],
                     )
+                  else
+                    Column(
+                      children: [
+                        viewModel.isLoading
+                            ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                            : assessmentResults.isNotEmpty
+                        // Confirmation Assessment For Pilot
+                            ? Column(
+                          children: cardAssessment(assessmentResults, false),
+                        )
+                            : const Center(child: Text('There is no data')),
+                        if (_isCPTS)
+                          Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20, bottom: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Need Confirmations - CPTS',
+                                    style: tsOneTextTheme.headlineLarge,
+                                  ),
+                                ),
+                              ),
+                              viewModel.isLoading
+                                  ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                                  : assessmentResultsNotConfirmedByCPTS.isNotEmpty
+                              // Confirmation Assessment For CPTS
+                                  ? Column(
+                                children: cardAssessment(assessmentResultsNotConfirmedByCPTS, true),
+                              )
+                                  : const Center(child: Text('There is no data that needs confirmation')),
+                            ],
+                          ),
+                      ],
+                    )
                 ],
               ),
             ),
@@ -255,6 +302,9 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () {
               data.isCPTS = isCPTS;
               data.isFromHistory = false;
+              if(_isPilotAdministrator) {
+                data.isFromHistory = true;
+              }
               Navigator.pushNamed(context, NamedRoute.resultAssessmentVariables, arguments: data);
             },
             child: Padding(
