@@ -7,6 +7,7 @@ import 'package:ts_one/data/users/user_preferences.dart';
 import 'package:ts_one/data/users/users.dart';
 import 'package:ts_one/di/locator.dart';
 import 'package:ts_one/presentation/routes.dart';
+import 'package:ts_one/presentation/shared_components/airport_route_formatter.dart';
 import 'package:ts_one/presentation/theme.dart';
 import 'package:ts_one/presentation/view_model/user_viewmodel.dart';
 import 'package:ts_one/util/util.dart';
@@ -30,6 +31,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
   late TextEditingController staffNo1TextController;
   late TextEditingController licenseNo1TextController;
   late TextEditingController licenseExpiry1TextController;
+  late TextEditingController airportAndRouteTextController;
 
   late bool _flightCrew2Enabled;
   late TextEditingController name2TextController;
@@ -52,6 +54,18 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
     staffNo1TextController = TextEditingController(text: _newAssessment.getIDNo1());
     licenseNo1TextController = TextEditingController();
     licenseExpiry1TextController = TextEditingController();
+    airportAndRouteTextController = TextEditingController();
+
+    airportAndRouteTextController.addListener(() {
+      final text = airportAndRouteTextController.text;
+      final formattedText = _formatText(text);
+      if (formattedText != airportAndRouteTextController.text) {
+        airportAndRouteTextController.value = airportAndRouteTextController.value.copyWith(
+          text: formattedText,
+          selection: TextSelection.collapsed(offset: formattedText.length),
+        );
+      }
+    });
 
     if(_newAssessment.typeOfAssessment == NewAssessment.keyTypeOfAssessmentSimulator) {
       _flightCrew2Enabled = true;
@@ -65,6 +79,16 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
     licenseExpiry2TextController = TextEditingController();
 
     super.initState();
+  }
+
+  String _formatText(String text) {
+    const chunkSize = 3;
+    final chunks = <String>[];
+    for (var i = 0; i < text.length; i += chunkSize) {
+      final chunk = text.substring(i, i + chunkSize);
+      chunks.add(chunk);
+    }
+    return chunks.join('-');
   }
 
   @override
@@ -481,6 +505,7 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                           //   icon: const Icon(Icons.search),
                           // ),
                         ),
+                        initialValue: "A320",
                         textInputAction: TextInputAction.next,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -501,19 +526,28 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                       child: TextFormField(
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Airport & Route',
+                          labelText: 'Airport & Route (XXX-YYY-XXX)',
                           // suffixIcon: IconButton(
                           //   onPressed: () {},
                           //   icon: const Icon(Icons.search),
                           // ),
                         ),
+                        textCapitalization: TextCapitalization.characters,
                         textInputAction: TextInputAction.next,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter airport & route';
                           }
+                          if (!RegExp(r'^[A-Z]{3}-[A-Z]{3}-[A-Z]{3}$').hasMatch(value)) {
+                            return "Enter in the format of XXX-YYY-XXX";
+                          }
                           return null;
                         },
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp('[A-Z]')),
+                          LengthLimitingTextInputFormatter(9),
+                          AirportRouteFormatter(),
+                        ],
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         onChanged: (value) {
                           _newAssessment.airportAndRoute = value;
