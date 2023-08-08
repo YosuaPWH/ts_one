@@ -173,6 +173,11 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                     _newAssessment.notes1 = value;
                   });
                 },
+                onSubmitted: (value) {
+                  setState(() {
+                    _newAssessment.notes1 = "$value\n";
+                  });
+                },
               ),
 
               // flight crew 2
@@ -300,6 +305,11 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                 onChanged: (value) {
                   setState(() {
                     _newAssessment.notes2 = value;
+                  });
+                },
+                onSubmitted: (value) {
+                  setState(() {
+                    _newAssessment.notes2 = "$value\n";
                   });
                 },
               ),

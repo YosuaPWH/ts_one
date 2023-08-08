@@ -1228,7 +1228,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
     if (isAll) {
       final DateTime? picked = await showDatePicker(
           context: context,
-          initialDate: filterDateFromAll == null ? DateTime(now.year, now.month, now.day) : filterDateFromAll!,
+          initialDate: filterDateToAll != null
+              ? DateTime(filterDateToAll!.year, filterDateToAll!.month, filterDateToAll!.day)
+              : filterDateFromAll == null
+              ? DateTime(now.year, now.month, now.day) : filterDateFromAll!,
           firstDate: DateTime(2006),
           lastDate: filterDateToAll == null ? Util.getCurrentDateWithoutTime() : filterDateToAll!,
           helpText: "Select filter date");

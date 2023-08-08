@@ -42,7 +42,7 @@ class _NewAssessmentInstructorNotesState extends State<NewAssessmentInstructorNo
       builder: (_, viewModel, child) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text("Instructor Notes"),
+            title: const Text("Other Instructor Notes"),
           ),
           body: Padding(
             padding: const EdgeInsets.all(16),

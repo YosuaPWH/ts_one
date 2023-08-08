@@ -1109,7 +1109,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             document.pages[1].graphics.drawString(
                 assessmentResults.notes, PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
                 brush: PdfBrushes.black,
-                bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + 15, 500, 300),
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + 15, 500, 500),
                 format: PdfStringFormat(lineSpacing: 6));
             break;
         }
@@ -1382,17 +1382,25 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
       // Save into download directory
       // Save and dispose the document.
+
       String pathSavePDF =
           '/storage/emulated/0/Download/Assessment TS1/TS1-${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf';
+
 
       String cacheSavePDF =
           '${tempDir?.path}/TS1-${assessmentResults.examineeName}-${Util.convertDateTimeDisplay(assessmentResults.date.toString())}.pdf';
 
+
       var bytes = await document.save();
+
+      log("BISA");
 
       File(pathSavePDF).writeAsBytesSync(bytes);
 
+      log("BISGADWADAWA");
+
       File(cacheSavePDF).writeAsBytesSync(bytes);
+      log("dwadawdawdaw");
 
       document.dispose();
 
