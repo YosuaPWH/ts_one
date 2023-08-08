@@ -31,7 +31,6 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
   late TextEditingController staffNo1TextController;
   late TextEditingController licenseNo1TextController;
   late TextEditingController licenseExpiry1TextController;
-  late TextEditingController airportAndRouteTextController;
 
   late bool _flightCrew2Enabled;
   late TextEditingController name2TextController;
@@ -54,18 +53,6 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
     staffNo1TextController = TextEditingController(text: _newAssessment.getIDNo1());
     licenseNo1TextController = TextEditingController();
     licenseExpiry1TextController = TextEditingController();
-    airportAndRouteTextController = TextEditingController();
-
-    airportAndRouteTextController.addListener(() {
-      final text = airportAndRouteTextController.text;
-      final formattedText = _formatText(text);
-      if (formattedText != airportAndRouteTextController.text) {
-        airportAndRouteTextController.value = airportAndRouteTextController.value.copyWith(
-          text: formattedText,
-          selection: TextSelection.collapsed(offset: formattedText.length),
-        );
-      }
-    });
 
     if(_newAssessment.typeOfAssessment == NewAssessment.keyTypeOfAssessmentSimulator) {
       _flightCrew2Enabled = true;
@@ -527,10 +514,6 @@ class _NewAssessmentCandidateState extends State<NewAssessmentCandidate> {
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Airport & Route (XXX-YYY-XXX)',
-                          // suffixIcon: IconButton(
-                          //   onPressed: () {},
-                          //   icon: const Icon(Icons.search),
-                          // ),
                         ),
                         textCapitalization: TextCapitalization.characters,
                         textInputAction: TextInputAction.next,

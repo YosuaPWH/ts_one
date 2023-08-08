@@ -208,6 +208,19 @@ class AssessmentResultsViewModel extends LoadingViewModel {
     return myAssessmentResults;
   }
 
+  Future<Map<String, DateTime>> getInstructorNotes(int examineeId) async {
+    isLoading = true;
+    Map<String, DateTime> instructorNotes = {};
+    try {
+      instructorNotes = await repo.getInstructorNotes(examineeId);
+      isLoading = false;
+    } catch (e) {
+      log("Exception in AssessmentResultsViewModel on getInstructorNotes: $e");
+      isLoading = false;
+    }
+    return instructorNotes;
+  }
+
   Future<String> makePDFSimulator(AssessmentResults assessmentResults) async {
     isLoading = true;
     String message = "";

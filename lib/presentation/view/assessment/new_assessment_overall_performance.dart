@@ -130,6 +130,35 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                   },
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                        context,
+                        NamedRoute.newAssessmentInstructorNotes,
+                        arguments: _newAssessment.idNo1
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFf56464),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 48,
+                    child: const Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "See other instructor notes",
+                        style: TextStyle(color: TsOneColor.secondary),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               TextField(
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
@@ -230,6 +259,35 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                   },
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                        context,
+                        NamedRoute.newAssessmentInstructorNotes,
+                        arguments: _newAssessment.idNo2
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFf56464),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 48,
+                    child: const Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "See other instructor notes",
+                        style: TextStyle(color: TsOneColor.secondary),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               TextField(
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
@@ -256,10 +314,10 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 40),
                     backgroundColor: TsOneColor.primary,
-                    foregroundColor: TsOneColor.primaryContainer,
-                    surfaceTintColor: TsOneColor.primaryContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,

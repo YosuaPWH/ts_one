@@ -43,6 +43,8 @@ abstract class AssessmentResultsRepo {
 
   Future<List<AssessmentResults>> getSelfAssessmentResults();
 
+  Future<Map<String, DateTime>> getInstructorNotes(int examineeId);
+
   Future<String> makePDFSimulator(AssessmentResults assessmentResults);
 }
 
@@ -121,9 +123,9 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
           .orderBy(AssessmentResults.keyDate, descending: true)
           .get()
           .then((value) {
-            for (var element in value.docs) {
-              assessmentResultsList.add(AssessmentResults.fromFirebase(element.data()));
-            }
+        for (var element in value.docs) {
+          assessmentResultsList.add(AssessmentResults.fromFirebase(element.data()));
+        }
       });
     } catch (e) {
       log("Exception on assessment results repo: ${e.toString()}");
@@ -131,7 +133,6 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
     return assessmentResultsList;
   }
-
 
   @override
   Future<List<AssessmentResults>> getAssessmentResultsByCurrentUserNotConfirm() async {
@@ -354,6 +355,29 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       log("Exception in AssessmentResultRepo on getSelfAssessmentResults: $e");
     }
     return assessmentResultsList;
+  }
+
+  @override
+  Future<Map<String, DateTime>> getInstructorNotes(int examineeId) async {
+    Map<String, DateTime> instructorNotes = {};
+
+    try {
+      await _db!
+          .collection(AssessmentResults.firebaseCollection)
+          .where(AssessmentResults.keyExamineeStaffIDNo, isEqualTo: examineeId)
+          .orderBy(AssessmentResults.keyDate, descending: true)
+          .get()
+          .then((value) {
+        for (var element in value.docs) {
+          var assessmentResult = AssessmentResults.fromFirebase(element.data());
+          instructorNotes.addAll({assessmentResult.notes: assessmentResult.date});
+        }
+      });
+    } catch (e) {
+      log("Exception in AssessmentResultRepo on getInstructorNotes: $e");
+    }
+
+    return instructorNotes;
   }
 
   @override
