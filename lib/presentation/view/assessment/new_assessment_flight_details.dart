@@ -251,6 +251,57 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                                 )
                                                 .toList(),
                                           )
+                                        : item == "Recurrent ...." || item == "Other ...."
+                                        ? ExpansionTile(
+                                      controlAffinity: ListTileControlAffinity.leading,
+                                      tilePadding: const EdgeInsets.only(left: 9),
+                                      title: Padding(
+                                        padding: const EdgeInsets.only(left: 8),
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 50, bottom: 16.0, top: 5),
+                                          child: TextFormField(
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'Input',
+                                            ),
+                                            textInputAction: TextInputAction.next,
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please enter the data';
+                                              }
+                                              return null;
+                                            },
+                                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                                            onChanged: (value) {
+                                              // _newAssessment.airportAndRoute = value;
+                                              int existingIndex = dataCandidate.assessmentFlightDetails1.flightDetails.indexWhere((element) => element.startsWith(item));
+                                              if (value.isNotEmpty) {
+                                                setState(() {
+                                                  if (existingIndex != -1) {
+                                                    dataCandidate.assessmentFlightDetails1.flightDetails[existingIndex] = "$item:$value";
+                                                  } else {
+                                                    dataCandidate.assessmentFlightDetails1.flightDetails.add("$item:$value");
+                                                    assessmentFlightDetails1Count++;
+                                                  }
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  dataCandidate.assessmentFlightDetails1.flightDetails.removeAt(existingIndex);
+                                                  assessmentFlightDetails1Count--;
+                                                });
+                                              }
+                                              log("YOSUAHALOHO S1: ${dataCandidate.assessmentFlightDetails1.flightDetails}");
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                         : CheckboxListTile(
                                             dense: true,
                                             value: assessmentFlightDetails1[item],
@@ -258,9 +309,11 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                               setState(() {
                                                 assessmentFlightDetails1[item] = newValue!;
 
-                                                if (!dataCandidate.assessmentFlightDetails1.flightDetails.contains(item)) {
-                                                  dataCandidate.assessmentFlightDetails1.flightDetails.add(item);
-                                                  assessmentFlightDetails1Count++;
+                                                if (newValue) {
+                                                  if (!dataCandidate.assessmentFlightDetails1.flightDetails.contains(item)) {
+                                                    dataCandidate.assessmentFlightDetails1.flightDetails.add(item);
+                                                    assessmentFlightDetails1Count++;
+                                                  }
                                                 } else {
                                                   dataCandidate.assessmentFlightDetails1.flightDetails.remove(item);
                                                   assessmentFlightDetails1Count--;
@@ -424,16 +477,69 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                                           )
                                                           .toList(),
                                                     )
-                                                  : CheckboxListTile(
+                                                  : item == "Recurrent ...." || item == "Other ...."
+                                                  ? ExpansionTile(
+                                                controlAffinity: ListTileControlAffinity.leading,
+                                                tilePadding: const EdgeInsets.only(left: 9),
+                                                title: Padding(
+                                                  padding: const EdgeInsets.only(left: 8),
+                                                  child: Text(
+                                                    item,
+                                                    style: const TextStyle(fontSize: 14),
+                                                  ),
+                                                ),
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 50, bottom: 16.0, top: 5),
+                                                    child: TextFormField(
+                                                      decoration: const InputDecoration(
+                                                        border: OutlineInputBorder(),
+                                                        labelText: 'Input',
+                                                      ),
+                                                      textInputAction: TextInputAction.next,
+                                                      validator: (value) {
+                                                        if (value == null || value.isEmpty) {
+                                                          return 'Please enter the data';
+                                                        }
+                                                        return null;
+                                                      },
+                                                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                                                      onChanged: (value) {
+                                                        // _newAssessment.airportAndRoute = value;
+                                                        int existingIndex = dataCandidate.assessmentFlightDetails2.flightDetails.indexWhere((element) => element.startsWith(item));
+                                                        if (value.isNotEmpty) {
+                                                          setState(() {
+                                                            if (existingIndex != -1) {
+                                                              dataCandidate.assessmentFlightDetails2.flightDetails[existingIndex] = "$item:$value";
+                                                            } else {
+                                                              dataCandidate.assessmentFlightDetails2.flightDetails.add("$item:$value");
+                                                              assessmentFlightDetails2Count++;
+                                                            }
+                                                          });
+                                                        } else {
+                                                          setState(() {
+                                                            dataCandidate.assessmentFlightDetails2.flightDetails.removeAt(existingIndex);
+                                                            assessmentFlightDetails2Count--;
+                                                          });
+                                                        }
+                                                        log("YOSUAHALOHO S2: ${dataCandidate.assessmentFlightDetails2.flightDetails}");
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                              : CheckboxListTile(
                                                       dense: true,
                                                       value: assessmentFlightDetails2[item],
                                                       onChanged: (newValue) {
                                                         setState(() {
                                                           assessmentFlightDetails2[item] = newValue!;
 
-                                                          if (!dataCandidate.assessmentFlightDetails2.flightDetails.contains(item)) {
-                                                            dataCandidate.assessmentFlightDetails2.flightDetails.add(item);
-                                                            assessmentFlightDetails2Count++;
+                                                          if (newValue) {
+                                                            if (!dataCandidate.assessmentFlightDetails2.flightDetails.contains(item)) {
+                                                              dataCandidate.assessmentFlightDetails2.flightDetails.add(item);
+                                                              assessmentFlightDetails2Count++;
+                                                            }
                                                           } else {
                                                             dataCandidate.assessmentFlightDetails2.flightDetails.remove(item);
                                                             assessmentFlightDetails2Count--;

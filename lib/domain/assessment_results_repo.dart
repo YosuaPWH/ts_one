@@ -1109,7 +1109,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
             document.pages[1].graphics.drawString(
                 assessmentResults.notes, PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
                 brush: PdfBrushes.black,
-                bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + 15, 500, 500),
+                bounds: Rect.fromLTWH(textBounds.topLeft.dx, textBounds.topLeft.dy + 15, 500, 400),
                 format: PdfStringFormat(lineSpacing: 6));
             break;
         }

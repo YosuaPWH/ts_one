@@ -161,7 +161,7 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
               ),
               TextField(
                 keyboardType: TextInputType.multiline,
-                maxLines: null,
+                maxLines: 20,
                 minLines: 10,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -175,7 +175,7 @@ class _NewAssessmentOverallPerformanceState extends State<NewAssessmentOverallPe
                 },
                 onSubmitted: (value) {
                   setState(() {
-                    _newAssessment.notes1 = "$value\n";
+                    _newAssessment.notes1 = value;
                   });
                 },
               ),
