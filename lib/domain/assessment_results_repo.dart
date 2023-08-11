@@ -446,7 +446,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
           case "License Expiry":
             document.pages[0].graphics.drawString(
-              Util.convertDateTimeDisplay(assessmentResults.licenseExpiry.toString()),
+              Util.convertDateTimeDisplay(assessmentResults.licenseExpiry.toString(), "dd/MM/yyyy"),
               PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
               brush: PdfBrushes.black,
               bounds: Rect.fromLTWH(textbounds.topLeft.dx + 3, textbounds.topLeft.dy + 8, 100, 50),
@@ -500,7 +500,7 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
 
           case "Date (dd/mm/yyyy)":
             document.pages[0].graphics.drawString(
-              Util.convertDateTimeDisplay(assessmentResults.date.toString()),
+              Util.convertDateTimeDisplay(assessmentResults.date.toString(), "dd/MM/yyyy"),
               PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold),
               brush: PdfBrushes.black,
               bounds: Rect.fromLTWH(textbounds.topLeft.dx, textbounds.topLeft.dy + 8, 100, 50),
@@ -522,17 +522,20 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
         }
       }
 
+
+
       //Find the text and get matched items.
       List<MatchedItem> listOfTrainingCheckingDetailsMatchedItemCollection =
-          PdfTextExtractor(document).findText(listOfTrainingCheckingDetails.keys.toList());
+          PdfTextExtractor(document).findText(listOfTrainingCheckingDetails.keys.toList(), startPageIndex: 0,endPageIndex: 0);
 
       // Get the matched item in the collection using index.
       // MatchedItem matchedText = listOfTrainingCheckingDetailsMatchedItemCollection[0];
-
       // Loop for listOfTrainingCheckingDetailsMatchedItemCollection
       for (var matched in listOfTrainingCheckingDetailsMatchedItemCollection) {
         String textMatched = matched.text;
         Rect textBounds = matched.bounds;
+
+        log("SEMOGA: $textMatched");
 
         switch (textMatched) {
           case "Line Oriented Simulation (LOS) / SPOT":
@@ -747,6 +750,25 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
                 bounds: Rect.fromLTWH(textBounds.topLeft.dx + 45, textBounds.topLeft.dy - 18, 32, 37),
               );
             }
+            break;
+
+          case "Recurrent ….":
+            document.pages[0].graphics.drawString(
+              listOfTrainingCheckingDetails["Recurrent …."]!,
+              PdfStandardFont(PdfFontFamily.helvetica, 6),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(textBounds.topLeft.dx + 30, textBounds.topLeft.dy - 2, 80, 37),
+            );
+            break;
+
+
+          case "Other ....":
+            document.pages[0].graphics.drawString(
+              listOfTrainingCheckingDetails["Other ...."]!,
+              PdfStandardFont(PdfFontFamily.helvetica, 6),
+              brush: PdfBrushes.black,
+              bounds: Rect.fromLTWH(textBounds.topLeft.dx + 20, textBounds.topLeft.dy - 2, 70, 37),
+            );
             break;
         }
 
