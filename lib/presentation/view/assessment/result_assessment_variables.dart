@@ -58,7 +58,7 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
         } else if (fullData.length == 4) {
           trainingAndCheckingDetails.add(splitData[1]);
         }
-        if (splitData[0] == "Recurrent ...." || splitData[0] == "Other ....") {
+        if (splitData[0] == "Recurrent …." || splitData[0] == "Other ....") {
           trainingAndCheckingDetails.add("${splitData[0]}: ${splitData[1]}");
         }
       }

@@ -1354,19 +1354,38 @@ class AssessmentResultsRepoImpl implements AssessmentResultsRepo {
       // ======================================== FOR DECLARATION ====================================================
       switch (assessmentResults.sessionDetails) {
         case NewAssessment.keySessionDetailsTraining:
+
+          bool getLastSatisfactory = false;
           List<String> declarationTextTraining = [
             'Satisfactory',
             'Further Training Req.',
             'Cleared for Check',
             'Stop Training, TS7 Rised'
           ];
+
           List<MatchedItem> declarationMatchedItem = PdfTextExtractor(document)
-              .findText(declarationTextTraining, startPageIndex: 1, searchOption: TextSearchOption.values.last);
+              .findText(declarationTextTraining, startPageIndex: 1);
+
+          List<String> nonDuplicateDeclaration = [];
+          List<MatchedItem> nonDuplicateDeclarationMatchedItem = [];
 
           for (var item in declarationMatchedItem) {
+            if (item.text == "Satisfactory" && !getLastSatisfactory) {
+              getLastSatisfactory = true;
+              continue;
+            }
+            if (!nonDuplicateDeclaration.contains(item.text)) {
+              nonDuplicateDeclaration.add(item.text);
+              nonDuplicateDeclarationMatchedItem.add(item);
+            }
+          }
+
+
+          for (var item in nonDuplicateDeclarationMatchedItem) {
             var textDeclaration = item.text;
             var boundsDeclarations = item.bounds;
 
+            log("APA YA: ${assessmentResults.declaration} dan $textDeclaration");
             if (textDeclaration == assessmentResults.declaration) {
               document.pages[1].graphics.drawString(
                 "√",
