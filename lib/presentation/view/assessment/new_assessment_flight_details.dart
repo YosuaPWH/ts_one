@@ -251,7 +251,7 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                                 )
                                                 .toList(),
                                           )
-                                        : item == "Recurrent ...." || item == "Other ...."
+                                        : item == "Recurrent …." || item == "Other ...."
                                         ? ExpansionTile(
                                       controlAffinity: ListTileControlAffinity.leading,
                                       tilePadding: const EdgeInsets.only(left: 9),
@@ -296,7 +296,6 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                                   assessmentFlightDetails1Count--;
                                                 });
                                               }
-                                              log("YOSUAHALOHO S1: ${dataCandidate.assessmentFlightDetails1.flightDetails}");
                                             },
                                           ),
                                         ),
@@ -477,7 +476,7 @@ class _NewAssessmentFlightDetailsState extends State<NewAssessmentFlightDetails>
                                                           )
                                                           .toList(),
                                                     )
-                                                  : item == "Recurrent ...." || item == "Other ...."
+                                                  : item == "Recurrent …." || item == "Other ...."
                                                   ? ExpansionTile(
                                                 controlAffinity: ListTileControlAffinity.leading,
                                                 tilePadding: const EdgeInsets.only(left: 9),

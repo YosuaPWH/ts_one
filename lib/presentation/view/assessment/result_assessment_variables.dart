@@ -37,8 +37,12 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
     assessmentCategories = {};
     isCPTS = _assessmentResults.isCPTS;
 
+    log("YOSUA: ${_assessmentResults.trainingCheckingDetails}");
+
     for (var element in _assessmentResults.trainingCheckingDetails) {
       var splitData = element.split(":");
+
+      log("DAW: ${splitData[0]}");
 
       if (splitData.length == 2) {
         var fullData = splitData[0].split("/");
@@ -54,7 +58,11 @@ class _ResultAssessmentVariablesState extends State<ResultAssessmentVariables> {
         } else if (fullData.length == 4) {
           trainingAndCheckingDetails.add(splitData[1]);
         }
-      } else {
+        if (splitData[0] == "Recurrent …." || splitData[0] == "Other ....") {
+          trainingAndCheckingDetails.add("${splitData[0]}: ${splitData[1]}");
+        }
+      }
+       else {
         trainingAndCheckingDetails.add(element);
       }
     }
