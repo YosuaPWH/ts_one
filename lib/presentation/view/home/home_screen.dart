@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:ts_one/data/assessments/assessment_results.dart';
 import 'package:ts_one/data/users/user_preferences.dart';
@@ -100,164 +101,175 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AssessmentResultsViewModel>(
-      builder: (_, model, child) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Hi, $titleToGreet!",
-                        style: tsOneTextTheme.headlineLarge,
-                      ),
-                      // const Icon(
-                      //   Icons.notifications,
-                      //   color: Colors.black,
-                      // )
-                    ],
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Good $timeToGreet',
-                      style: tsOneTextTheme.labelMedium,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(right: 4.0),
-                          child: Icon(
-                            Icons.calendar_month_outlined,
-                            color: TsOneColor.onSecondary,
-                            size: 32,
-                          ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              Util.convertDateTimeDisplay(DateTime.now().toString(), "EEEE"),
-                              style: tsOneTextTheme.labelSmall,
-                            ),
-                            Text(
-                              Util.convertDateTimeDisplay(DateTime.now().toString(), "dd MMMM yyyy"),
-                              style: tsOneTextTheme.labelSmall,
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 10),
-                    child: Row(
+    return FocusDetector(
+      onFocusGained: () {
+        getAssessmentResults();
+      },
+      onVisibilityGained: () {
+        getAssessmentResults();
+      },
+      onForegroundGained: () {
+        getAssessmentResults();
+      },
+      child: Consumer<AssessmentResultsViewModel>(
+        builder: (_, model, child) {
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  children: [
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Assessment',
+                          "Hi, $titleToGreet!",
                           style: tsOneTextTheme.headlineLarge,
                         ),
-                        _isInstructor
-                        ? OutlinedButton.icon(
-                          onPressed: () {
-                            Navigator.pushNamed(context, NamedRoute.newAssessmentSimulatorFlight);
-                          },
-                          icon: const Icon(
-                            Icons.add,
-                            color: TsOneColor.primary,
-                          ),
-                          label: const Text('New Assessment'),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: TsOneColor.primary),
-                            backgroundColor: TsOneColor.onPrimary,
-                          ),
-                        )
-                        : Container()
+                        // const Icon(
+                        //   Icons.notifications,
+                        //   color: Colors.black,
+                        // )
                       ],
                     ),
-                  ),
-
-                  // DONT REMOVE - PILOT HOME
-                  if (userPreferences.getRank() != "Pilot Administrator")
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20, bottom: 10),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Need Confirmations',
-                              style: tsOneTextTheme.headlineLarge,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Good $timeToGreet',
+                        style: tsOneTextTheme.labelMedium,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(right: 4.0),
+                            child: Icon(
+                              Icons.calendar_month_outlined,
+                              color: TsOneColor.onSecondary,
+                              size: 32,
                             ),
                           ),
-                        ),
-                        viewModel.isLoading
-                            ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                            : assessmentResults.isNotEmpty
-                        // Confirmation Assessment For Pilot
-                            ? Column(
-                          children: cardAssessment(assessmentResults, false),
-                        )
-                            : const Center(child: Text('There is no data that needs confirmation')),
-                        if (_isCPTS)
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 20, bottom: 10),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    'Need Confirmations - CPTS',
-                                    style: tsOneTextTheme.headlineLarge,
+                              Text(
+                                Util.convertDateTimeDisplay(DateTime.now().toString(), "EEEE"),
+                                style: tsOneTextTheme.labelSmall,
+                              ),
+                              Text(
+                                Util.convertDateTimeDisplay(DateTime.now().toString(), "dd MMMM yyyy"),
+                                style: tsOneTextTheme.labelSmall,
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Assessment',
+                            style: tsOneTextTheme.headlineLarge,
+                          ),
+                          _isInstructor
+                          ? OutlinedButton.icon(
+                            onPressed: () {
+                              Navigator.pushNamed(context, NamedRoute.newAssessmentSimulatorFlight);
+                            },
+                            icon: const Icon(
+                              Icons.add,
+                              color: TsOneColor.primary,
+                            ),
+                            label: const Text('New Assessment'),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: TsOneColor.primary),
+                              backgroundColor: TsOneColor.onPrimary,
+                            ),
+                          )
+                          : Container()
+                        ],
+                      ),
+                    ),
+
+                    // DONT REMOVE - PILOT HOME
+                    if (userPreferences.getRank() != "Pilot Administrator")
+                      Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20, bottom: 10),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Need Confirmations',
+                                style: tsOneTextTheme.headlineLarge,
+                              ),
+                            ),
+                          ),
+                          viewModel.isLoading
+                              ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                              : assessmentResults.isNotEmpty
+                          // Confirmation Assessment For Pilot
+                              ? Column(
+                            children: cardAssessment(assessmentResults, false),
+                          )
+                              : const Center(child: Text('There is no data that needs confirmation')),
+                          if (_isCPTS)
+                            Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20, bottom: 10),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Need Confirmations - CPTS',
+                                      style: tsOneTextTheme.headlineLarge,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              viewModel.isLoading
-                                  ? const Center(
-                                child: CircularProgressIndicator(),
-                              )
-                                  : assessmentResultsNotConfirmedByCPTS.isNotEmpty
-                              // Confirmation Assessment For CPTS
-                                  ? Column(
-                                children: cardAssessment(assessmentResultsNotConfirmedByCPTS, true),
-                              )
-                                  : const Center(child: Text('There is no data that needs confirmation')),
-                            ],
-                          ),
-                      ],
-                    )
-                  else
-                    Column(
-                      children: [
-                        viewModel.isLoading
-                            ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                            : assessmentResults.isNotEmpty
-                        // Confirmation Assessment For Pilot
-                            ? Column(
-                          children: cardAssessment(assessmentResults, false),
-                        )
-                            : const Center(child: Text('There is no data')),
-                      ],
-                    )
-                ],
+                                viewModel.isLoading
+                                    ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                                    : assessmentResultsNotConfirmedByCPTS.isNotEmpty
+                                // Confirmation Assessment For CPTS
+                                    ? Column(
+                                  children: cardAssessment(assessmentResultsNotConfirmedByCPTS, true),
+                                )
+                                    : const Center(child: Text('There is no data that needs confirmation')),
+                              ],
+                            ),
+                        ],
+                      )
+                    else
+                      Column(
+                        children: [
+                          viewModel.isLoading
+                              ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                              : assessmentResults.isNotEmpty
+                          // Confirmation Assessment For Pilot
+                              ? Column(
+                            children: cardAssessment(assessmentResults, false),
+                          )
+                              : const Center(child: Text('There is no data')),
+                        ],
+                      )
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
